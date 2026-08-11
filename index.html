@@ -15,7 +15,7 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- LZ-String for Ultra-Short Sharing Links -->
+    <!-- LZ-String for Text Compression -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
     
     <script>
@@ -201,11 +201,19 @@
                     </div>
                 </button>
 
-                <button onclick="shareConfig()" class="flex items-center gap-3 w-full p-4 rounded-xl bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/30 text-left active:bg-amber-100 dark:active:bg-amber-900/20 transition-colors group">
-                    <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400 flex items-center justify-center text-lg group-hover:scale-110 transition-transform"><i class="fa-solid fa-share-nodes"></i></div>
+                <button onclick="exportConfigCode()" class="flex items-center gap-3 w-full p-4 rounded-xl bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/30 text-left active:bg-amber-100 dark:active:bg-amber-900/20 transition-colors group">
+                    <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400 flex items-center justify-center text-lg group-hover:scale-110 transition-transform"><i class="fa-solid fa-copy"></i></div>
                     <div>
-                        <div class="font-bold text-amber-800 dark:text-amber-400 text-sm">설정 공유 링크 복사</div>
-                        <div class="text-[11px] text-amber-600/70 dark:text-amber-400/70 mt-0.5">파트너에게 내 세팅 공유하기</div>
+                        <div class="font-bold text-amber-800 dark:text-amber-400 text-sm">공유 코드 복사하기</div>
+                        <div class="text-[11px] text-amber-600/70 dark:text-amber-400/70 mt-0.5">카톡으로 보낼 텍스트 코드 생성</div>
+                    </div>
+                </button>
+
+                <button onclick="importConfigCode()" class="flex items-center gap-3 w-full p-4 rounded-xl bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-900/30 text-left active:bg-emerald-100 dark:active:bg-emerald-900/20 transition-colors group">
+                    <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 flex items-center justify-center text-lg group-hover:scale-110 transition-transform"><i class="fa-solid fa-paste"></i></div>
+                    <div>
+                        <div class="font-bold text-emerald-800 dark:text-emerald-400 text-sm">공유 코드 입력하기</div>
+                        <div class="text-[11px] text-emerald-600/70 dark:text-emerald-400/70 mt-0.5">파트너의 코드를 붙여넣어 동기화</div>
                     </div>
                 </button>
 
@@ -468,42 +476,6 @@
         function initApp() {
             renderElectives();
 
-            // Check URL query for shared config data
-            const urlParams = new URLSearchParams(window.location.search);
-            const sharedParam = urlParams.get('data');
-            if (sharedParam) {
-                try {
-                    const jsonString = LZString.decompressFromEncodedURIComponent(sharedParam);
-                    if (jsonString) {
-                        const parsed = JSON.parse(jsonString);
-                        appState.mode = parsed.m;
-                        appState.users = parsed.u;
-                        appState.isSetupComplete = true;
-
-                        scheduleData = JSON.parse(JSON.stringify(initialSchedule));
-                        if (parsed.a) {
-                            scheduleData.forEach(day => {
-                                day.events.forEach(ev => {
-                                    if (parsed.a[ev.id]) {
-                                        ev.user1Role = parsed.a[ev.id][0] || 'none';
-                                        ev.user2Role = parsed.a[ev.id][1] || 'none';
-                                    }
-                                });
-                            });
-                        }
-
-                        localStorage.setItem('dt_appState_v7', JSON.stringify(appState));
-                        localStorage.setItem('dt_schedule_v7', JSON.stringify(scheduleData));
-
-                        // Clean URL
-                        window.history.replaceState({}, document.title, window.location.pathname);
-                        alert("파트너의 설정과 일정이 성공적으로 동기화되었습니다! ✨");
-                    }
-                } catch(e) {
-                    console.error("Failed to load shared link", e);
-                }
-            }
-
             const storedState = localStorage.getItem('dt_appState_v7');
             const storedSchedule = localStorage.getItem('dt_schedule_v7');
             
@@ -659,7 +631,6 @@
                 return html;
             };
 
-            // Fix checkmark styling via sibling selector in CSS or simple DOM check
             const u1 = appState.users && appState.users.length > 0 ? appState.users[0] : { name: '', icon: '👨', color: 'lime' };
             container.innerHTML += createProfileBlock(1, u1.icon, u1.color, u1.name, '내');
             
@@ -668,7 +639,6 @@
                 container.innerHTML += createProfileBlock(2, u2.icon, u2.color, u2.name, '파트너');
             }
             
-            // Add dynamic checkmark toggler script or CSS for radio inside label
             document.querySelectorAll('.color-radio').forEach(radio => {
                 radio.addEventListener('change', (e) => {
                     const parent = e.target.closest('.flex');
@@ -678,7 +648,6 @@
                         if (checkIcon) checkIcon.style.opacity = '1';
                     }
                 });
-                // init state
                 if (radio.checked) {
                     const checkIcon = radio.nextElementSibling.querySelector('.fa-check');
                     if (checkIcon) checkIcon.style.opacity = '1';
@@ -774,8 +743,7 @@
             }, 300);
         }
 
-        function shareConfig() {
-            // Compress only necessary profile and assignment data to keep URL ultra-short
+        function exportConfigCode() {
             const assignments = {};
             scheduleData.forEach(day => {
                 day.events.forEach(ev => {
@@ -792,19 +760,54 @@
             };
 
             const compressed = LZString.compressToEncodedURIComponent(JSON.stringify(compactData));
-            const shareUrl = window.location.origin + window.location.pathname + '?data=' + compressed;
-
+            
             const textarea = document.createElement('textarea');
-            textarea.value = shareUrl;
+            textarea.value = compressed;
             document.body.appendChild(textarea);
             textarea.select();
             try {
                 document.execCommand('copy');
-                alert("공유 링크가 클립보드에 복사되었습니다! 🔗\n카카오톡으로 파트너에게 전달해주세요.");
+                alert("공유 텍스트 코드가 클립보드에 복사되었습니다! 📋\n카카오톡 채팅창에 그대로 붙여넣어(Ctrl+V) 파트너에게 전달해주세요.");
             } catch (err) {
-                prompt("아래 링크를 복사해주세요:", shareUrl);
+                prompt("아래 코드를 복사해주세요:", compressed);
             }
             document.body.removeChild(textarea);
+            closeSettingsModal();
+        }
+
+        function importConfigCode() {
+            const code = prompt("파트너에게 받은 공유 텍스트 코드를 입력(붙여넣기)해주세요:");
+            if (!code) return;
+            try {
+                const cleanedCode = code.trim();
+                const jsonString = LZString.decompressFromEncodedURIComponent(cleanedCode);
+                if (!jsonString) throw new Error("Invalid");
+                const parsed = JSON.parse(jsonString);
+                
+                appState.mode = parsed.m;
+                appState.users = parsed.u;
+                appState.isSetupComplete = true;
+
+                scheduleData = JSON.parse(JSON.stringify(initialSchedule));
+                if (parsed.a) {
+                    scheduleData.forEach(day => {
+                        day.events.forEach(ev => {
+                            if (parsed.a[ev.id]) {
+                                ev.user1Role = parsed.a[ev.id][0] || 'none';
+                                ev.user2Role = parsed.a[ev.id][1] || 'none';
+                            }
+                        });
+                    });
+                }
+
+                localStorage.setItem('dt_appState_v7', JSON.stringify(appState));
+                localStorage.setItem('dt_schedule_v7', JSON.stringify(scheduleData));
+                
+                alert("파트너의 세팅과 일정이 성공적으로 동기화되었습니다! ✨");
+                location.reload();
+            } catch(e) {
+                alert("코드가 올바르지 않거나 손상되었습니다. 다시 확인해주세요.");
+            }
             closeSettingsModal();
         }
 
