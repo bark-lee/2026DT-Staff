@@ -247,6 +247,17 @@
                 <p id="wizardDesc" class="text-slate-500 dark:text-gray-400 text-sm">나만의 David Tent 일정표를 만들어보세요.</p>
             </div>
 
+            <button id="wizardImportBtn" onclick="importConfigCode()" class="w-full mb-8 p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-200 dark:border-emerald-900/40 text-left active:bg-emerald-100 dark:active:bg-emerald-900/20 active:scale-[0.99] transition-all flex items-center gap-3">
+                <div class="w-11 h-11 rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 flex items-center justify-center text-lg shrink-0">
+                    <i class="fa-solid fa-link"></i>
+                </div>
+                <div class="flex-1">
+                    <div class="font-bold text-emerald-800 dark:text-emerald-400 text-sm">공유 코드 입력하기</div>
+                    <div class="text-[11px] text-emerald-600/70 dark:text-emerald-400/70 mt-0.5">받은 코드로 사용자 설정 없이 바로 시작해요</div>
+                </div>
+                <i class="fa-solid fa-chevron-right text-emerald-400 text-xs"></i>
+            </button>
+
             <div class="mb-8" id="setupStep1">
                 <label class="block text-sm font-bold text-slate-700 dark:text-gray-300 mb-3">몇 명이서 사용하시나요?</label>
                 <div class="grid grid-cols-2 gap-3">
@@ -268,7 +279,7 @@
                 </div>
             </div>
 
-            <div id="setupProfilesArea" class="space-y-6"></div>
+            <div id="setupProfilesArea" class="space-y-4"></div>
 
             <button id="wizardSubmitBtn" onclick="startScheduleSetup()" class="w-full mt-10 py-4 bg-slate-900 text-white dark:bg-amber-500 dark:text-gray-900 rounded-xl font-bold shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-2">
                 다음: 내 일정표 만들기 <i class="fa-solid fa-arrow-right"></i>
@@ -347,10 +358,18 @@
             { id: 'blue', code: '#3b82f6', name: '블루', tailwindText: 'text-blue-500', tailwindBg: 'bg-blue-500', bgRgba: 'rgba(59, 130, 246, 0.15)' },
             { id: 'amber', code: '#f59e0b', name: '앰버', tailwindText: 'text-amber-500', tailwindBg: 'bg-amber-500', bgRgba: 'rgba(245, 158, 11, 0.15)' },
             { id: 'purple', code: '#a855f7', name: '퍼플', tailwindText: 'text-purple-500', tailwindBg: 'bg-purple-500', bgRgba: 'rgba(168, 85, 247, 0.15)' },
-            { id: 'teal', code: '#14b8a6', name: '민트', tailwindText: 'text-teal-500', tailwindBg: 'bg-teal-500', bgRgba: 'rgba(20, 184, 166, 0.15)' }
+            { id: 'teal', code: '#14b8a6', name: '민트', tailwindText: 'text-teal-500', tailwindBg: 'bg-teal-500', bgRgba: 'rgba(20, 184, 166, 0.15)' },
+            { id: 'orange', code: '#f97316', name: '오렌지', tailwindText: 'text-orange-500', tailwindBg: 'bg-orange-500', bgRgba: 'rgba(249, 115, 22, 0.15)' },
+            { id: 'red', code: '#ef4444', name: '레드', tailwindText: 'text-red-500', tailwindBg: 'bg-red-500', bgRgba: 'rgba(239, 68, 68, 0.15)' },
+            { id: 'indigo', code: '#6366f1', name: '인디고', tailwindText: 'text-indigo-500', tailwindBg: 'bg-indigo-500', bgRgba: 'rgba(99, 102, 241, 0.15)' }
         ];
 
-        const iconsList = ['👨', '👩', '🧑', '👦', '👧', '👤', '🎸', '🎹', '💻', '📷'];
+        const iconsList = [
+            '👨', '👩', '🧑',
+            '🎤', '🎸', '🎹', '🥁',
+            '🎧', '💻', '🎬', '📷',
+            '💬', '🚩', '🙏'
+        ];
 
         const roleMap = {
             'none': { label: '-' },
@@ -468,7 +487,7 @@
         let appState = {
             mode: 1,
             users: [
-                { name: '사용자1', icon: '👨', color: 'lime' }
+                { name: '', icon: '👨', color: 'lime' }
             ],
             isSetupComplete: false
         };
@@ -571,6 +590,7 @@
             const descEl = document.getElementById('wizardDesc');
             const btnEl = document.getElementById('wizardSubmitBtn');
             const closeBtn = document.getElementById('wizardCloseBtn');
+            const importBtn = document.getElementById('wizardImportBtn');
             
             // 환영/세팅 마법사 진입 시 대시보드 강제 숨김
             document.getElementById('dashboardContainer').classList.add('hidden');
@@ -580,12 +600,14 @@
                 descEl.textContent = '이름, 아이콘, 테마 색상을 변경할 수 있습니다.';
                 btnEl.innerHTML = '저장하기 <i class="fa-solid fa-check"></i>';
                 closeBtn.classList.remove('hidden');
+                importBtn.classList.add('hidden');
                 document.querySelector(`input[name="wizardMode"][value="${appState.mode}"]`).checked = true;
             } else {
                 titleEl.innerHTML = '환영합니다! 👋';
                 descEl.textContent = '나만의 David Tent 일정표를 만들어보세요.';
                 btnEl.innerHTML = '다음: 내 일정표 만들기 <i class="fa-solid fa-arrow-right"></i>';
                 closeBtn.classList.add('hidden');
+                importBtn.classList.remove('hidden');
                 document.querySelector(`input[name="wizardMode"][value="1"]`).checked = true;
             }
 
@@ -601,38 +623,38 @@
 
             const createProfileBlock = (index, defaultIcon, defaultColorId, defaultName, defaultNameLabel) => {
                 let html = `
-                    <div class="bg-slate-50 dark:bg-gray-900 rounded-2xl p-5 border border-slate-200 dark:border-gray-800">
-                        <h3 class="font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
-                            <span class="bg-slate-200 dark:bg-gray-700 text-slate-600 dark:text-gray-300 w-6 h-6 rounded-full flex items-center justify-center text-xs">${index}</span>
+                    <div class="bg-slate-50 dark:bg-gray-900 rounded-2xl p-4 border border-slate-200 dark:border-gray-800">
+                        <h3 class="font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
+                            <span class="bg-slate-200 dark:bg-gray-700 text-slate-600 dark:text-gray-300 w-5 h-5 rounded-full flex items-center justify-center text-[10px]">${index}</span>
                             ${defaultNameLabel} 정보
                         </h3>
                         
-                        <div class="mb-4">
-                            <label class="block text-xs font-bold text-slate-500 dark:text-gray-400 mb-2">이름 (또는 닉네임)</label>
-                            <input type="text" id="wizardName${index}" value="${defaultName}" placeholder="예: 바크리" class="w-full bg-white dark:bg-black border border-slate-300 dark:border-gray-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-amber-500 dark:focus:border-amber-500 transition-colors">
+                        <div class="mb-3">
+                            <label class="block text-[11px] font-bold text-slate-500 dark:text-gray-400 mb-1.5">이름 (또는 닉네임)</label>
+                            <input type="text" id="wizardName${index}" value="${defaultName}" placeholder="예: 바크리" class="w-full bg-white dark:bg-black border border-slate-300 dark:border-gray-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-amber-500 dark:focus:border-amber-500 transition-colors">
                         </div>
 
-                        <div class="mb-4">
-                            <label class="block text-xs font-bold text-slate-500 dark:text-gray-400 mb-2">아이콘 선택</label>
-                            <div class="flex gap-2 flex-wrap">
+                        <div class="mb-3">
+                            <label class="block text-[11px] font-bold text-slate-500 dark:text-gray-400 mb-1.5">아이콘 선택</label>
+                            <div class="flex gap-1.5 flex-wrap">
                 `;
                 
                 iconsList.forEach(icon => {
                     html += `
                         <label class="cursor-pointer">
                             <input type="radio" name="wizardIcon${index}" value="${icon}" class="hidden icon-radio" ${icon === defaultIcon ? 'checked' : ''}>
-                            <div class="w-10 h-10 rounded-xl border border-slate-200 dark:border-gray-700 flex items-center justify-center text-lg hover:bg-slate-100 dark:hover:bg-gray-800 transition-all">${icon}</div>
+                            <div class="w-9 h-9 rounded-lg border border-slate-200 dark:border-gray-700 flex items-center justify-center text-base hover:bg-slate-100 dark:hover:bg-gray-800 transition-all">${icon}</div>
                         </label>
                     `;
                 });
 
-                html += `</div></div><div><label class="block text-xs font-bold text-slate-500 dark:text-gray-400 mb-2">테마 색상 (선택됨 표시 확인)</label><div class="flex gap-3">`;
+                html += `</div></div><div><label class="block text-[11px] font-bold text-slate-500 dark:text-gray-400 mb-1.5">테마 색상</label><div class="flex gap-2 flex-wrap">`;
 
                 colorPalette.forEach(color => {
                     html += `
                         <label class="cursor-pointer relative">
                             <input type="radio" name="wizardColor${index}" value="${color.id}" class="hidden color-radio" ${color.id === defaultColorId ? 'checked' : ''}>
-                            <div class="w-9 h-9 rounded-full border-2 border-transparent transition-all flex justify-center items-center text-white text-xs font-bold shadow-sm" style="background-color: ${color.code};">
+                            <div class="w-8 h-8 rounded-full border-2 border-transparent transition-all flex justify-center items-center text-white text-[10px] font-bold shadow-sm" style="background-color: ${color.code};">
                                 <i class="fa-solid fa-check opacity-0 peer-checked:opacity-100"></i>
                             </div>
                         </label>
