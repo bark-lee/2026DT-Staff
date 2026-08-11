@@ -15,6 +15,9 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- LZ-String for Ultra-Short Sharing Links -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
+    
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -35,7 +38,6 @@
             }
         }
         
-        // Prevent FOUC
         if (localStorage.getItem('color-theme') === 'light') {
             document.documentElement.classList.remove('dark');
         } else {
@@ -55,7 +57,6 @@
         .fade-in { animation: fadeIn 0.3s ease-out forwards; }
         .pb-safe { padding-bottom: env(safe-area-inset-bottom, 20px); }
 
-        /* Dynamic Table Highlight Base */
         .row-highlight-u1 { background-color: var(--u1-bg, rgba(148, 163, 184, 0.1)); }
         .row-highlight-u2 { background-color: var(--u2-bg, rgba(148, 163, 184, 0.1)); }
         .row-highlight-both { background-color: rgba(245, 158, 11, 0.15); }
@@ -64,10 +65,8 @@
         html.dark .row-highlight-u2 { background-color: var(--u2-bg-dark, rgba(148, 163, 184, 0.15)); }
         html.dark .row-highlight-both { background-color: rgba(245, 158, 11, 0.2); }
 
-        /* Radio Button styling for Setup */
-        .color-radio:checked + div { border-width: 3px; transform: scale(1.1); box-shadow: 0 0 0 2px white, 0 0 0 4px var(--tw-ring-color); }
-        html.dark .color-radio:checked + div { box-shadow: 0 0 0 2px #020617, 0 0 0 4px var(--tw-ring-color); }
-        
+        .color-radio:checked + div { border-color: #0f172a; transform: scale(1.1); box-shadow: 0 0 0 2px #fff; }
+        html.dark .color-radio:checked + div { border-color: #f8fafc; }
         .icon-radio:checked + div { background-color: #f1f5f9; border-color: #94a3b8; }
         html.dark .icon-radio:checked + div { background-color: #334155; border-color: #64748b; }
     </style>
@@ -105,12 +104,10 @@
             </div>
         </div>
         
-        <div class="flex px-2 pb-2 gap-1 items-center justify-between w-full" id="dayTabs">
-            <!-- Tabs injected by JS -->
-        </div>
+        <div class="flex px-2 pb-2 gap-1 items-center justify-between w-full" id="dayTabs"></div>
     </header>
 
-    <div class="px-4 py-3 hidden" id="dashboardContainer">
+    <div class="px-4 py-3" id="dashboardContainer">
         <div class="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-2xl p-3 shadow-md border border-slate-200 dark:border-gray-700 relative overflow-hidden transition-colors">
             
             <div class="flex justify-between items-center mb-2">
@@ -131,10 +128,7 @@
                     <div id="dashEventTitle" class="text-[15px] font-bold text-slate-900 dark:text-white mb-0.5 truncate leading-tight">-</div>
                     <div id="dashEventLeader" class="text-[11px] text-slate-500 dark:text-gray-400 truncate">-</div>
                 </div>
-                
-                <div class="flex gap-1.5 shrink-0" id="dashboardRolesBox">
-                    <!-- Dashboard role boxes injected by JS -->
-                </div>
+                <div class="flex gap-1.5 shrink-0" id="dashboardRolesBox"></div>
             </div>
 
             <div class="flex justify-between items-center bg-slate-50 dark:bg-gray-900/60 rounded-lg px-2.5 py-1.5 border border-slate-100 dark:border-gray-700/50 transition-colors">
@@ -147,27 +141,16 @@
         </div>
     </div>
 
-    <!-- Filter Bar for Daily View -->
-    <div class="px-4 py-1.5 flex gap-2 overflow-x-auto no-scrollbar hidden" id="filterBar">
-        <!-- Filters injected by JS -->
-    </div>
+    <div class="px-4 py-1.5 flex gap-2 overflow-x-auto no-scrollbar hidden" id="filterBar"></div>
 
     <div id="tableLegendContainer" class="hidden px-4 py-2 flex justify-end items-center border-b border-slate-200 dark:border-gray-800/50 bg-slate-50 dark:bg-gray-900/30 transition-colors">
-        <div id="table-legend" class="flex gap-3 text-[10px] font-medium text-slate-500 dark:text-gray-400">
-            <!-- Legend injected by JS -->
-        </div>
+        <div id="table-legend" class="flex gap-3 text-[10px] font-medium text-slate-500 dark:text-gray-400"></div>
     </div>
 
-    <!-- Card Schedule Area -->
     <main class="flex-1 px-4 py-4 overflow-y-auto no-scrollbar relative fade-in hidden" id="scheduleContainer"></main>
-
-    <!-- Table View Area -->
     <main class="flex-1 px-2 py-4 overflow-y-auto hidden no-scrollbar relative fade-in pb-24" id="tableContainer"></main>
-
-    <!-- Electives Area -->
     <main class="flex-1 px-4 py-4 overflow-y-auto hidden no-scrollbar relative fade-in" id="electivesContainer"></main>
 
-    <!-- Setup Wizard Finish Banner (Floating) -->
     <div id="setupFinishBanner" class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] p-4 z-40 hidden flex-col pb-safe">
         <div class="bg-slate-800/95 dark:bg-amber-500/95 backdrop-blur-md rounded-2xl p-4 shadow-xl flex flex-col gap-2 border border-slate-700 dark:border-amber-400">
             <p class="text-xs text-white dark:text-gray-900 font-medium text-center">☝️ 위 표에서 내 일정을 터치해 역할을 배정하세요!</p>
@@ -180,43 +163,35 @@
     <!-- Role Edit Modal -->
     <div id="editModal" class="fixed inset-0 bg-slate-900/40 dark:bg-black/80 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center hidden opacity-0 transition-opacity duration-300">
         <div class="bg-white dark:bg-[#1e293b] w-full sm:w-[400px] rounded-t-3xl sm:rounded-3xl border-t border-slate-200 dark:border-gray-700 sm:border p-6 pb-safe transform translate-y-full sm:translate-y-0 transition-transform duration-300 flex flex-col max-h-[90vh]" id="editModalContent">
-            
             <div class="flex justify-between items-start mb-4 shrink-0">
                 <div>
                     <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-1">역할 배정</h3>
                     <p class="text-sm text-slate-500 dark:text-gray-400" id="modalEventTitle">이벤트 제목</p>
                     <p class="text-xs text-amber-500 mt-1" id="modalEventTime">00:00 ~ 00:00</p>
                 </div>
-                <button onclick="closeModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-gray-800 text-slate-400 dark:text-gray-400 hover:text-slate-600 dark:hover:text-white">
+                <button onclick="closeModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-gray-800 text-slate-400 hover:text-slate-600 dark:hover:text-white">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-
-            <div id="roleSelectionArea" class="flex-1 overflow-y-auto no-scrollbar space-y-6 mb-4">
-                <!-- Role grids injected by JS based on user count -->
-            </div>
-
+            <div id="roleSelectionArea" class="flex-1 overflow-y-auto no-scrollbar space-y-6 mb-4"></div>
             <div class="flex gap-3 shrink-0">
-                <button onclick="closeModal()" class="flex-1 py-3 rounded-xl bg-slate-100 dark:bg-gray-800 text-slate-600 dark:text-white font-bold border border-slate-200 dark:border-gray-700 active:bg-slate-200 transition-colors text-sm">취소</button>
-                <button onclick="saveAssignment()" class="flex-1 py-3 rounded-xl bg-slate-800 text-white dark:bg-gradient-to-r dark:from-amber-500 dark:to-amber-600 dark:text-gray-900 font-bold shadow-md active:scale-95 transition-transform text-sm">저장하기</button>
+                <button onclick="closeModal()" class="flex-1 py-3 rounded-xl bg-slate-100 dark:bg-gray-800 text-slate-600 dark:text-white font-bold border border-slate-200 dark:border-gray-700 text-sm">취소</button>
+                <button onclick="saveAssignment()" class="flex-1 py-3 rounded-xl bg-slate-800 text-white dark:bg-gradient-to-r dark:from-amber-500 dark:to-amber-600 dark:text-gray-900 font-bold shadow-md text-sm">저장하기</button>
             </div>
-            
             <input type="hidden" id="modalDayId">
             <input type="hidden" id="modalEventId">
         </div>
     </div>
 
-    <!-- Settings Modal -->
-    <div id="settingsModal" class="fixed inset-0 bg-slate-900/40 dark:bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
-        <div class="bg-white dark:bg-[#1e293b] w-[90%] max-w-[340px] rounded-3xl border border-slate-200 dark:border-gray-700 p-6 transform scale-95 transition-transform duration-300 shadow-2xl" id="settingsModalContent">
-            
+    <!-- Settings Modal (Popup) -->
+    <div id="settingsModal" class="fixed inset-0 bg-slate-900/40 dark:bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300 px-4">
+        <div class="bg-white dark:bg-[#1e293b] w-full max-w-[340px] rounded-3xl border border-slate-200 dark:border-gray-700 p-6 shadow-2xl scale-95 transition-transform duration-300" id="settingsModalContent">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-lg font-bold text-slate-900 dark:text-white">설정</h3>
                 <button onclick="closeSettingsModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-gray-800 text-slate-400 hover:text-slate-600 dark:hover:text-white">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
-
             <div class="flex flex-col gap-3">
                 <button onclick="editProfile()" class="flex items-center gap-3 w-full p-4 rounded-xl bg-slate-50 dark:bg-gray-800/50 border border-slate-200 dark:border-gray-700 text-left active:bg-slate-100 dark:active:bg-gray-800 transition-colors group">
                     <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400 flex items-center justify-center text-lg group-hover:scale-110 transition-transform"><i class="fa-solid fa-user-pen"></i></div>
@@ -226,28 +201,23 @@
                     </div>
                 </button>
 
-                <button onclick="shareConfig()" class="flex items-center gap-3 w-full p-4 rounded-xl bg-blue-50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-900/30 text-left active:bg-blue-100 dark:active:bg-blue-900/20 transition-colors group">
-                    <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400 flex items-center justify-center text-lg group-hover:scale-110 transition-transform"><i class="fa-solid fa-share-nodes"></i></div>
+                <button onclick="shareConfig()" class="flex items-center gap-3 w-full p-4 rounded-xl bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/30 text-left active:bg-amber-100 dark:active:bg-amber-900/20 transition-colors group">
+                    <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400 flex items-center justify-center text-lg group-hover:scale-110 transition-transform"><i class="fa-solid fa-share-nodes"></i></div>
                     <div>
-                        <div class="font-bold text-blue-700 dark:text-blue-400 text-sm">설정 공유하기</div>
-                        <div class="text-[11px] text-blue-500 dark:text-blue-500/70 mt-0.5">현재 설정과 일정을 링크로 공유</div>
+                        <div class="font-bold text-amber-800 dark:text-amber-400 text-sm">설정 공유 링크 복사</div>
+                        <div class="text-[11px] text-amber-600/70 dark:text-amber-400/70 mt-0.5">파트너에게 내 세팅 공유하기</div>
                     </div>
                 </button>
 
-                <button onclick="confirmReset()" class="flex items-center gap-3 w-full p-4 rounded-xl bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30 text-left active:bg-red-100 dark:active:bg-red-900/20 transition-colors group mt-2">
+                <button onclick="confirmReset()" class="flex items-center gap-3 w-full p-4 rounded-xl bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30 text-left active:bg-red-100 dark:active:bg-red-900/20 transition-colors group">
                     <div class="w-10 h-10 rounded-full bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-400 flex items-center justify-center text-lg group-hover:scale-110 transition-transform"><i class="fa-solid fa-rotate-right"></i></div>
                     <div>
                         <div class="font-bold text-red-700 dark:text-red-400 text-sm">처음부터 다시 세팅</div>
-                        <div class="text-[11px] text-red-500 dark:text-red-500/70 mt-0.5">모든 설정 및 배정된 역할 초기화</div>
+                        <div class="text-[11px] text-red-500/70 mt-0.5">모든 설정 및 배정 역할 초기화</div>
                     </div>
                 </button>
             </div>
         </div>
-    </div>
-
-    <!-- Toast Notification -->
-    <div id="toastNotification" class="fixed top-20 left-1/2 -translate-x-1/2 z-[100] px-4 py-2 rounded-full bg-slate-800 text-white dark:bg-white dark:text-slate-900 text-sm font-bold shadow-lg transition-all duration-300 transform -translate-y-10 opacity-0 pointer-events-none">
-        <i class="fa-solid fa-check-circle text-lime-400 dark:text-lime-600 mr-2"></i><span id="toastMessage"></span>
     </div>
 
     <!-- Setup Wizard Full Screen -->
@@ -261,7 +231,6 @@
                 <p id="wizardDesc" class="text-slate-500 dark:text-gray-400 text-sm">나만의 David Tent 일정표를 만들어보세요.</p>
             </div>
 
-            <!-- Step 1: User Count -->
             <div class="mb-8" id="setupStep1">
                 <label class="block text-sm font-bold text-slate-700 dark:text-gray-300 mb-3">몇 명이서 사용하시나요?</label>
                 <div class="grid grid-cols-2 gap-3">
@@ -283,10 +252,7 @@
                 </div>
             </div>
 
-            <!-- Step 2: Profiles Container -->
-            <div id="setupProfilesArea" class="space-y-6">
-                <!-- Injected via JS -->
-            </div>
+            <div id="setupProfilesArea" class="space-y-6"></div>
 
             <button id="wizardSubmitBtn" onclick="startScheduleSetup()" class="w-full mt-10 py-4 bg-slate-900 text-white dark:bg-amber-500 dark:text-gray-900 rounded-xl font-bold shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-2">
                 다음: 내 일정표 만들기 <i class="fa-solid fa-arrow-right"></i>
@@ -360,12 +326,12 @@
 
     <script>
         const colorPalette = [
-            { id: 'lime', code: '#84cc16', ring: 'var(--tw-colors-lime-400)', name: '라임', tailwindText: 'text-lime-500', tailwindBg: 'bg-lime-500', bgRgba: 'rgba(132, 204, 22, 0.15)', tailwindBorder: 'border-lime-500' },
-            { id: 'pink', code: '#ec4899', ring: 'var(--tw-colors-pink-400)', name: '핑크', tailwindText: 'text-pink-500', tailwindBg: 'bg-pink-500', bgRgba: 'rgba(236, 72, 153, 0.15)', tailwindBorder: 'border-pink-500' },
-            { id: 'blue', code: '#3b82f6', ring: 'var(--tw-colors-blue-400)', name: '블루', tailwindText: 'text-blue-500', tailwindBg: 'bg-blue-500', bgRgba: 'rgba(59, 130, 246, 0.15)', tailwindBorder: 'border-blue-500' },
-            { id: 'amber', code: '#f59e0b', ring: 'var(--tw-colors-amber-400)', name: '앰버', tailwindText: 'text-amber-500', tailwindBg: 'bg-amber-500', bgRgba: 'rgba(245, 158, 11, 0.15)', tailwindBorder: 'border-amber-500' },
-            { id: 'purple', code: '#a855f7', ring: 'var(--tw-colors-purple-400)', name: '퍼플', tailwindText: 'text-purple-500', tailwindBg: 'bg-purple-500', bgRgba: 'rgba(168, 85, 247, 0.15)', tailwindBorder: 'border-purple-500' },
-            { id: 'teal', code: '#14b8a6', ring: 'var(--tw-colors-teal-400)', name: '민트', tailwindText: 'text-teal-500', tailwindBg: 'bg-teal-500', bgRgba: 'rgba(20, 184, 166, 0.15)', tailwindBorder: 'border-teal-500' }
+            { id: 'lime', code: '#84cc16', name: '라임', tailwindText: 'text-lime-500', tailwindBg: 'bg-lime-500', bgRgba: 'rgba(132, 204, 22, 0.15)' },
+            { id: 'pink', code: '#ec4899', name: '핑크', tailwindText: 'text-pink-500', tailwindBg: 'bg-pink-500', bgRgba: 'rgba(236, 72, 153, 0.15)' },
+            { id: 'blue', code: '#3b82f6', name: '블루', tailwindText: 'text-blue-500', tailwindBg: 'bg-blue-500', bgRgba: 'rgba(59, 130, 246, 0.15)' },
+            { id: 'amber', code: '#f59e0b', name: '앰버', tailwindText: 'text-amber-500', tailwindBg: 'bg-amber-500', bgRgba: 'rgba(245, 158, 11, 0.15)' },
+            { id: 'purple', code: '#a855f7', name: '퍼플', tailwindText: 'text-purple-500', tailwindBg: 'bg-purple-500', bgRgba: 'rgba(168, 85, 247, 0.15)' },
+            { id: 'teal', code: '#14b8a6', name: '민트', tailwindText: 'text-teal-500', tailwindBg: 'bg-teal-500', bgRgba: 'rgba(20, 184, 166, 0.15)' }
         ];
 
         const iconsList = ['👨', '👩', '🧑', '👦', '👧', '👤', '🎸', '🎹', '💻', '📷'];
@@ -494,94 +460,55 @@
         let scheduleData = [];
         let currentActiveDay = 'day1';
         let currentFilter = 'all';
-        let currentView = 'card'; // 'card', 'table', 'electives'
+        let currentView = 'card';
         let clockInterval;
         let isSettingUp = false;
         let isEditingProfile = false;
 
-        function checkUrlForSharedData() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const dataParam = urlParams.get('data');
-            
-            if (dataParam) {
-                try {
-                    const decodedStr = decodeURIComponent(escape(atob(dataParam)));
-                    const sharedData = JSON.parse(decodedStr);
-                    
-                    if (sharedData.appState && sharedData.scheduleData) {
-                        localStorage.setItem('dt_appState_v8', JSON.stringify(sharedData.appState));
-                        localStorage.setItem('dt_schedule_v8', JSON.stringify(sharedData.scheduleData));
-                        
-                        const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-                        window.history.replaceState({path:newUrl}, '', newUrl);
-                        
-                        showToast("공유된 설정을 성공적으로 불러왔습니다!");
-                        return true;
-                    }
-                } catch (e) {
-                    console.error("Failed to parse shared data:", e);
-                    showToast("공유 링크가 유효하지 않습니다.");
-                }
-            }
-            return false;
-        }
-
-        function shareConfig() {
-            const dataToShare = {
-                appState: appState,
-                scheduleData: scheduleData
-            };
-            
-            try {
-                const jsonStr = JSON.stringify(dataToShare);
-                const base64Str = btoa(unescape(encodeURIComponent(jsonStr)));
-                
-                const shareUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + "?data=" + base64Str;
-                
-                const textArea = document.createElement("textarea");
-                textArea.value = shareUrl;
-                document.body.appendChild(textArea);
-                textArea.select();
-                try {
-                    document.execCommand('copy');
-                    showToast("설정 공유 링크가 클립보드에 복사되었습니다!");
-                    closeSettingsModal();
-                } catch (err) {
-                    showToast("링크 복사에 실패했습니다. 수동으로 복사해주세요.");
-                }
-                document.body.removeChild(textArea);
-            } catch(e) {
-                console.error("Sharing failed", e);
-                showToast("공유 링크 생성 중 오류가 발생했습니다.");
-            }
-        }
-
-        function showToast(message) {
-            const toast = document.getElementById('toastNotification');
-            const toastMsg = document.getElementById('toastMessage');
-            
-            toastMsg.textContent = message;
-            
-            toast.classList.remove('-translate-y-10', 'opacity-0');
-            toast.classList.add('translate-y-0', 'opacity-100');
-            
-            setTimeout(() => {
-                toast.classList.remove('translate-y-0', 'opacity-100');
-                toast.classList.add('-translate-y-10', 'opacity-0');
-            }, 3000);
-        }
-
         function initApp() {
             renderElectives();
-            
-            checkUrlForSharedData();
 
-            const storedState = localStorage.getItem('dt_appState_v8');
-            const storedSchedule = localStorage.getItem('dt_schedule_v8');
+            // Check URL query for shared config data
+            const urlParams = new URLSearchParams(window.location.search);
+            const sharedParam = urlParams.get('data');
+            if (sharedParam) {
+                try {
+                    const jsonString = LZString.decompressFromEncodedURIComponent(sharedParam);
+                    if (jsonString) {
+                        const parsed = JSON.parse(jsonString);
+                        appState.mode = parsed.m;
+                        appState.users = parsed.u;
+                        appState.isSetupComplete = true;
+
+                        scheduleData = JSON.parse(JSON.stringify(initialSchedule));
+                        if (parsed.a) {
+                            scheduleData.forEach(day => {
+                                day.events.forEach(ev => {
+                                    if (parsed.a[ev.id]) {
+                                        ev.user1Role = parsed.a[ev.id][0] || 'none';
+                                        ev.user2Role = parsed.a[ev.id][1] || 'none';
+                                    }
+                                });
+                            });
+                        }
+
+                        localStorage.setItem('dt_appState_v7', JSON.stringify(appState));
+                        localStorage.setItem('dt_schedule_v7', JSON.stringify(scheduleData));
+
+                        // Clean URL
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                        alert("파트너의 설정과 일정이 성공적으로 동기화되었습니다! ✨");
+                    }
+                } catch(e) {
+                    console.error("Failed to load shared link", e);
+                }
+            }
+
+            const storedState = localStorage.getItem('dt_appState_v7');
+            const storedSchedule = localStorage.getItem('dt_schedule_v7');
             
             if (!storedState) {
                 scheduleData = JSON.parse(JSON.stringify(initialSchedule));
-                document.getElementById('dashboardContainer').classList.add('hidden');
                 openSetupWizard();
                 return;
             }
@@ -594,7 +521,6 @@
                 applyDynamicStyles();
                 renderTabs();
                 switchView('table');
-                document.getElementById('dashboardContainer').classList.add('hidden');
                 document.getElementById('setupFinishBanner').classList.remove('hidden');
                 document.getElementById('setupFinishBanner').classList.add('flex');
             } else {
@@ -606,7 +532,6 @@
             isSettingUp = false;
             document.getElementById('setupFinishBanner').classList.add('hidden');
             document.getElementById('setupFinishBanner').classList.remove('flex');
-            document.getElementById('dashboardContainer').classList.remove('hidden');
             
             applyDynamicStyles();
             
@@ -660,7 +585,6 @@
 
         function openSetupWizard(isEdit = false) {
             isEditingProfile = isEdit;
-            document.getElementById('dashboardContainer').classList.add('hidden');
             const wizard = document.getElementById('setupWizard');
             const titleEl = document.getElementById('wizardTitle');
             const descEl = document.getElementById('wizardDesc');
@@ -718,14 +642,14 @@
                     `;
                 });
 
-                html += `</div></div><div><label class="block text-xs font-bold text-slate-500 dark:text-gray-400 mb-2">테마 색상</label><div class="flex gap-3">`;
+                html += `</div></div><div><label class="block text-xs font-bold text-slate-500 dark:text-gray-400 mb-2">테마 색상 (선택됨 표시 확인)</label><div class="flex gap-3">`;
 
                 colorPalette.forEach(color => {
                     html += `
-                        <label class="cursor-pointer">
+                        <label class="cursor-pointer relative">
                             <input type="radio" name="wizardColor${index}" value="${color.id}" class="hidden color-radio" ${color.id === defaultColorId ? 'checked' : ''}>
-                            <div class="w-8 h-8 rounded-full border border-slate-200 dark:border-gray-700 transition-all flex justify-center items-center relative" style="background-color: ${color.code}; --tw-ring-color: ${color.ring};">
-                                <i class="fa-solid fa-check text-white text-[10px] opacity-0 transition-opacity"></i>
+                            <div class="w-9 h-9 rounded-full border-2 border-transparent transition-all flex justify-center items-center text-white text-xs font-bold shadow-sm" style="background-color: ${color.code};">
+                                <i class="fa-solid fa-check opacity-0 peer-checked:opacity-100"></i>
                             </div>
                         </label>
                     `;
@@ -735,6 +659,7 @@
                 return html;
             };
 
+            // Fix checkmark styling via sibling selector in CSS or simple DOM check
             const u1 = appState.users && appState.users.length > 0 ? appState.users[0] : { name: '', icon: '👨', color: 'lime' };
             container.innerHTML += createProfileBlock(1, u1.icon, u1.color, u1.name, '내');
             
@@ -742,6 +667,23 @@
                 const u2 = appState.users && appState.users.length > 1 ? appState.users[1] : { name: '', icon: '👩', color: 'pink' };
                 container.innerHTML += createProfileBlock(2, u2.icon, u2.color, u2.name, '파트너');
             }
+            
+            // Add dynamic checkmark toggler script or CSS for radio inside label
+            document.querySelectorAll('.color-radio').forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    const parent = e.target.closest('.flex');
+                    parent.querySelectorAll('.fa-check').forEach(chk => chk.style.opacity = '0');
+                    if (e.target.checked) {
+                        const checkIcon = e.target.nextElementSibling.querySelector('.fa-check');
+                        if (checkIcon) checkIcon.style.opacity = '1';
+                    }
+                });
+                // init state
+                if (radio.checked) {
+                    const checkIcon = radio.nextElementSibling.querySelector('.fa-check');
+                    if (checkIcon) checkIcon.style.opacity = '1';
+                }
+            });
         }
 
         function closeWizard() {
@@ -769,7 +711,7 @@
             }
 
             if (isEditingProfile) {
-                localStorage.setItem('dt_appState_v8', JSON.stringify(appState));
+                localStorage.setItem('dt_appState_v7', JSON.stringify(appState));
                 closeWizard();
                 
                 applyDynamicStyles();
@@ -783,14 +725,13 @@
                 if(currentView === 'table') renderTable();
                 
                 updateCurrentStatus();
-                showToast("사용자 정보가 성공적으로 수정되었습니다.");
                 return;
             }
 
             appState.isSetupComplete = false;
             
-            localStorage.setItem('dt_appState_v8', JSON.stringify(appState));
-            localStorage.setItem('dt_schedule_v8', JSON.stringify(scheduleData));
+            localStorage.setItem('dt_appState_v7', JSON.stringify(appState));
+            localStorage.setItem('dt_schedule_v7', JSON.stringify(scheduleData));
             
             const wizard = document.getElementById('setupWizard');
             wizard.classList.add('opacity-0');
@@ -802,9 +743,8 @@
 
         function finishSetup() {
             appState.isSetupComplete = true;
-            localStorage.setItem('dt_appState_v8', JSON.stringify(appState));
+            localStorage.setItem('dt_appState_v7', JSON.stringify(appState));
             completeAppLaunch();
-            showToast("역할 배정이 완료되었습니다!");
         }
 
         function openSettingsModal() {
@@ -834,11 +774,45 @@
             }, 300);
         }
 
+        function shareConfig() {
+            // Compress only necessary profile and assignment data to keep URL ultra-short
+            const assignments = {};
+            scheduleData.forEach(day => {
+                day.events.forEach(ev => {
+                    if (ev.user1Role !== 'none' || ev.user2Role !== 'none') {
+                        assignments[ev.id] = [ev.user1Role, ev.user2Role];
+                    }
+                });
+            });
+
+            const compactData = {
+                m: appState.mode,
+                u: appState.users,
+                a: assignments
+            };
+
+            const compressed = LZString.compressToEncodedURIComponent(JSON.stringify(compactData));
+            const shareUrl = window.location.origin + window.location.pathname + '?data=' + compressed;
+
+            const textarea = document.createElement('textarea');
+            textarea.value = shareUrl;
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand('copy');
+                alert("공유 링크가 클립보드에 복사되었습니다! 🔗\n카카오톡으로 파트너에게 전달해주세요.");
+            } catch (err) {
+                prompt("아래 링크를 복사해주세요:", shareUrl);
+            }
+            document.body.removeChild(textarea);
+            closeSettingsModal();
+        }
+
         function confirmReset() {
             if(confirm("모든 설정과 일정이 초기화됩니다. 처음부터 다시 세팅하시겠습니까?")) {
-                localStorage.removeItem('dt_appState_v8');
-                localStorage.removeItem('dt_schedule_v8');
-                location.href = window.location.pathname;
+                localStorage.removeItem('dt_appState_v7');
+                localStorage.removeItem('dt_schedule_v7');
+                location.reload();
             }
         }
 
@@ -854,7 +828,7 @@
             if (mode === 'card') {
                 document.getElementById('scheduleContainer').classList.remove('hidden');
                 document.getElementById('filterBar').classList.remove('hidden');
-                if(!isSettingUp) document.getElementById('dashboardContainer').classList.remove('hidden');
+                document.getElementById('dashboardContainer').classList.remove('hidden');
                 if(!skipRender) renderSchedule();
             } else if (mode === 'table') {
                 document.getElementById('tableContainer').classList.remove('hidden');
@@ -925,8 +899,8 @@
             const legendContainer = document.getElementById('table-legend');
             legendContainer.innerHTML = '';
             if (is2P) legendContainer.innerHTML += `<span class="flex items-center gap-1"><div class="w-2.5 h-2.5 bg-amber-400 rounded-sm"></div>함께</span>`;
-            legendContainer.innerHTML += `<span class="flex items-center gap-1"><div class="w-2.5 h-2.5 bg-${u1Color.id}-500 rounded-sm" style="background-color: ${u1Color.code}"></div>${u1.name}</span>`;
-            if (is2P) legendContainer.innerHTML += `<span class="flex items-center gap-1"><div class="w-2.5 h-2.5 bg-${u2Color.id}-500 rounded-sm" style="background-color: ${u2Color.code}"></div>${u2.name}</span>`;
+            legendContainer.innerHTML += `<span class="flex items-center gap-1"><div class="w-2.5 h-2.5 rounded-sm" style="background-color: ${u1Color.code}"></div>${u1.name}</span>`;
+            if (is2P) legendContainer.innerHTML += `<span class="flex items-center gap-1"><div class="w-2.5 h-2.5 rounded-sm" style="background-color: ${u2Color.code}"></div>${u2.name}</span>`;
 
             let html = '<div class="w-full pb-4 bg-white dark:bg-transparent rounded-xl shadow-sm dark:shadow-none border border-slate-200 dark:border-transparent overflow-hidden"><table class="w-full text-left text-xs whitespace-nowrap border-collapse">';
             
@@ -1259,7 +1233,7 @@
             const area = document.getElementById('roleSelectionArea');
             area.innerHTML = '';
 
-            const createRoleGrid = (user, roleKey, userIndex) => {
+            const createRoleGrid = (user, roleKey) => {
                 const c = colorPalette.find(p => p.id === user.color);
                 let html = `
                     <div class="mb-2">
@@ -1281,10 +1255,10 @@
                 return html;
             };
 
-            area.innerHTML += createRoleGrid(appState.users[0], 'user1Role', 1);
+            area.innerHTML += createRoleGrid(appState.users[0], 'user1Role');
             if (appState.mode === 2) {
                 area.innerHTML += `<div class="h-px bg-slate-200 dark:bg-gray-800 my-4"></div>`;
-                area.innerHTML += createRoleGrid(appState.users[1], 'user2Role', 2);
+                area.innerHTML += createRoleGrid(appState.users[1], 'user2Role');
             }
 
             const modal = document.getElementById('editModal');
@@ -1320,14 +1294,12 @@
             scheduleData[dayIdx].events[evIdx].user1Role = u1Role;
             scheduleData[dayIdx].events[evIdx].user2Role = u2Role;
             
-            localStorage.setItem('dt_schedule_v8', JSON.stringify(scheduleData));
+            localStorage.setItem('dt_schedule_v7', JSON.stringify(scheduleData));
             
             closeModal();
             if (currentView === 'card') renderSchedule();
             else if (currentView === 'table') renderTable();
             updateCurrentStatus();
-            
-            showToast("역할이 성공적으로 저장되었습니다.");
         }
 
         function openBibleModal() {
