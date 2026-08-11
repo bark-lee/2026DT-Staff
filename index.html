@@ -67,7 +67,6 @@
         /* Radio Button styling for Setup */
         .color-radio:checked + div { border-width: 3px; transform: scale(1.1); box-shadow: 0 0 0 2px white, 0 0 0 4px var(--tw-ring-color); }
         html.dark .color-radio:checked + div { box-shadow: 0 0 0 2px #020617, 0 0 0 4px var(--tw-ring-color); }
-        .color-radio:checked + div i { opacity: 1; }
         
         .icon-radio:checked + div { background-color: #f1f5f9; border-color: #94a3b8; }
         html.dark .icon-radio:checked + div { background-color: #334155; border-color: #64748b; }
@@ -111,7 +110,7 @@
         </div>
     </header>
 
-    <div class="px-4 py-3" id="dashboardContainer">
+    <div class="px-4 py-3 hidden" id="dashboardContainer">
         <div class="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-2xl p-3 shadow-md border border-slate-200 dark:border-gray-700 relative overflow-hidden transition-colors">
             
             <div class="flex justify-between items-center mb-2">
@@ -129,7 +128,7 @@
             
             <div class="flex justify-between items-center mb-3 gap-2">
                 <div class="flex-1 min-w-0">
-                    <div id="dashEventTitle" class="text-[15px] font-bold text-slate-900 dark:text-white mb-0.5 truncate leading-tight">로딩중...</div>
+                    <div id="dashEventTitle" class="text-[15px] font-bold text-slate-900 dark:text-white mb-0.5 truncate leading-tight">-</div>
                     <div id="dashEventLeader" class="text-[11px] text-slate-500 dark:text-gray-400 truncate">-</div>
                 </div>
                 
@@ -307,7 +306,6 @@
                 </button>
             </div>
             <div class="flex-1 overflow-y-auto no-scrollbar p-5 text-[14px] text-slate-700 dark:text-gray-300 leading-relaxed space-y-4 pb-8" style="word-break: keep-all;">
-                <!-- Full bible text injected dynamically to save space in HTML skeleton, but let's include directly -->
                 <p><sup class="font-bold text-amber-500 mr-1">1</sup>많은 날이 지나고 제삼년에 여호와의 말씀이 엘리야에게 임하여 이르시되 너는 가서 아합에게 보이라 내가 비를 지면에 내리리라</p>
                 <p><sup class="font-bold text-amber-500 mr-1">2</sup>엘리야가 아합에게 보이려고 가니 그 때에 사마리아에 기근이 심하였더라</p>
                 <p><sup class="font-bold text-amber-500 mr-1">3</sup>아합이 왕궁 맡은 자 오바댜를 불렀으니 이 오바댜는 여호와를 크게 경외하는 자라</p>
@@ -514,7 +512,6 @@
                         localStorage.setItem('dt_appState_v8', JSON.stringify(sharedData.appState));
                         localStorage.setItem('dt_schedule_v8', JSON.stringify(sharedData.scheduleData));
                         
-                        // Remove the parameter from URL to prevent infinite loading loop
                         const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
                         window.history.replaceState({path:newUrl}, '', newUrl);
                         
@@ -536,13 +533,11 @@
             };
             
             try {
-                // Serialize, encode to Base64 to make it URL safe
                 const jsonStr = JSON.stringify(dataToShare);
                 const base64Str = btoa(unescape(encodeURIComponent(jsonStr)));
                 
                 const shareUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + "?data=" + base64Str;
                 
-                // Fallback copy mechanism for restricted iframes
                 const textArea = document.createElement("textarea");
                 textArea.value = shareUrl;
                 document.body.appendChild(textArea);
@@ -579,7 +574,6 @@
         function initApp() {
             renderElectives();
             
-            // Check if we arrived via a share link
             checkUrlForSharedData();
 
             const storedState = localStorage.getItem('dt_appState_v8');
@@ -587,6 +581,7 @@
             
             if (!storedState) {
                 scheduleData = JSON.parse(JSON.stringify(initialSchedule));
+                document.getElementById('dashboardContainer').classList.add('hidden');
                 openSetupWizard();
                 return;
             }
@@ -599,6 +594,7 @@
                 applyDynamicStyles();
                 renderTabs();
                 switchView('table');
+                document.getElementById('dashboardContainer').classList.add('hidden');
                 document.getElementById('setupFinishBanner').classList.remove('hidden');
                 document.getElementById('setupFinishBanner').classList.add('flex');
             } else {
@@ -610,6 +606,7 @@
             isSettingUp = false;
             document.getElementById('setupFinishBanner').classList.add('hidden');
             document.getElementById('setupFinishBanner').classList.remove('flex');
+            document.getElementById('dashboardContainer').classList.remove('hidden');
             
             applyDynamicStyles();
             
@@ -663,6 +660,7 @@
 
         function openSetupWizard(isEdit = false) {
             isEditingProfile = isEdit;
+            document.getElementById('dashboardContainer').classList.add('hidden');
             const wizard = document.getElementById('setupWizard');
             const titleEl = document.getElementById('wizardTitle');
             const descEl = document.getElementById('wizardDesc');
@@ -723,7 +721,6 @@
                 html += `</div></div><div><label class="block text-xs font-bold text-slate-500 dark:text-gray-400 mb-2">테마 색상</label><div class="flex gap-3">`;
 
                 colorPalette.forEach(color => {
-                    // Injecting dynamic CSS variable for ring color in inline style
                     html += `
                         <label class="cursor-pointer">
                             <input type="radio" name="wizardColor${index}" value="${color.id}" class="hidden color-radio" ${color.id === defaultColorId ? 'checked' : ''}>
@@ -775,7 +772,6 @@
                 localStorage.setItem('dt_appState_v8', JSON.stringify(appState));
                 closeWizard();
                 
-                // 새로운 설정 즉시 UI에 반영
                 applyDynamicStyles();
                 const names = appState.users.map(u => u.name).join(' & ');
                 document.getElementById('headerNameSpan').textContent = names ? `- ${names}` : '';
@@ -800,7 +796,7 @@
             wizard.classList.add('opacity-0');
             setTimeout(() => {
                 wizard.classList.add('hidden');
-                initApp(); // triggers setup mode table view
+                initApp();
             }, 300);
         }
 
@@ -842,7 +838,7 @@
             if(confirm("모든 설정과 일정이 초기화됩니다. 처음부터 다시 세팅하시겠습니까?")) {
                 localStorage.removeItem('dt_appState_v8');
                 localStorage.removeItem('dt_schedule_v8');
-                location.href = window.location.pathname; // Clear any URL parameters
+                location.href = window.location.pathname;
             }
         }
 
@@ -858,7 +854,7 @@
             if (mode === 'card') {
                 document.getElementById('scheduleContainer').classList.remove('hidden');
                 document.getElementById('filterBar').classList.remove('hidden');
-                document.getElementById('dashboardContainer').classList.remove('hidden');
+                if(!isSettingUp) document.getElementById('dashboardContainer').classList.remove('hidden');
                 if(!skipRender) renderSchedule();
             } else if (mode === 'table') {
                 document.getElementById('tableContainer').classList.remove('hidden');
@@ -926,7 +922,6 @@
             const u2 = is2P ? appState.users[1] : null;
             const u2Color = is2P ? colorPalette.find(c => c.id === u2.color) : null;
 
-            // Render Legend
             const legendContainer = document.getElementById('table-legend');
             legendContainer.innerHTML = '';
             if (is2P) legendContainer.innerHTML += `<span class="flex items-center gap-1"><div class="w-2.5 h-2.5 bg-amber-400 rounded-sm"></div>함께</span>`;
