@@ -512,6 +512,7 @@
             isSettingUp = false;
             document.getElementById('setupFinishBanner').classList.add('hidden');
             document.getElementById('setupFinishBanner').classList.remove('flex');
+            document.getElementById('dashboardContainer').classList.remove('hidden');
             
             applyDynamicStyles();
             
@@ -570,6 +571,9 @@
             const descEl = document.getElementById('wizardDesc');
             const btnEl = document.getElementById('wizardSubmitBtn');
             const closeBtn = document.getElementById('wizardCloseBtn');
+            
+            // 환영/세팅 마법사 진입 시 대시보드 강제 숨김
+            document.getElementById('dashboardContainer').classList.add('hidden');
             
             if (isEdit) {
                 titleEl.innerHTML = '정보 수정 <i class="fa-solid fa-pen ml-1"></i>';
