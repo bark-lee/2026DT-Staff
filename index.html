@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
@@ -89,7 +89,7 @@
                 <div class="flex items-center gap-2 mb-0.5 cursor-pointer group" onclick="openBibleModal()">
                     <div class="w-1 h-3 bg-amber-500 rounded-full shadow-[0_0_8px_rgba(245,158,11,0.5)] group-hover:bg-amber-400 transition-colors"></div>
                     <span class="text-[10px] font-bold tracking-widest text-slate-500 dark:text-amber-500/90 uppercase group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors flex items-center gap-1">
-                        二쇱젣: �댁솗湲곗긽 18�� <i class="fa-solid fa-book-open text-[9px] opacity-70 mb-0.5"></i>
+                        주제: 열왕기상 18장 <i class="fa-solid fa-book-open text-[9px] opacity-70 mb-0.5"></i>
                     </span>
                 </div>
                 <h1 class="text-[18px] font-extrabold tracking-tight text-slate-900 dark:text-white flex items-end gap-1.5">
@@ -125,7 +125,7 @@
                           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                           <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
                         </span>
-                        <h2 class="text-[11px] font-bold text-amber-600 dark:text-amber-400" id="dashTimeContext">�꾩옱 吏꾪뻾以�</h2>
+                        <h2 class="text-[11px] font-bold text-amber-600 dark:text-amber-400" id="dashTimeContext">현재 진행중</h2>
                     </div>
                     <div class="text-[10px] text-slate-400 dark:text-gray-400 font-mono" id="dashCurrentTime">--/-- --:--</div>
                 </div>
@@ -142,7 +142,7 @@
             <div class="flex justify-between items-center bg-slate-50 dark:bg-gray-900/60 rounded-lg px-2.5 py-1.5 border border-slate-100 dark:border-gray-700/50 transition-colors">
                 <div class="flex items-center gap-2 overflow-hidden">
                     <div class="text-[9px] bg-slate-200 text-slate-600 dark:bg-amber-500/20 dark:text-amber-400 px-1.5 py-0.5 rounded font-bold shrink-0">NEXT</div>
-                    <div id="dashNextEvent" class="text-[11px] text-slate-600 dark:text-gray-300 font-medium truncate">�ㅼ쓬 �쇱젙</div>
+                    <div id="dashNextEvent" class="text-[11px] text-slate-600 dark:text-gray-300 font-medium truncate">다음 일정</div>
                 </div>
                 <div id="dashNextTime" class="text-[10px] font-mono font-medium text-slate-400 dark:text-gray-500 shrink-0 ml-2">--:--</div>
             </div>
@@ -161,9 +161,9 @@
 
     <div id="setupFinishBanner" class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] p-4 z-40 hidden flex-col pb-safe">
         <div class="bg-slate-800/95 dark:bg-amber-500/95 backdrop-blur-md rounded-2xl p-4 shadow-xl flex flex-col gap-2 border border-slate-700 dark:border-amber-400">
-            <p class="text-xs text-white dark:text-gray-900 font-medium text-center">�앾툘 �� �쒖뿉�� �� �쇱젙�� �곗튂�� ��븷�� 諛곗젙�섏꽭��!</p>
+            <p class="text-xs text-white dark:text-gray-900 font-medium text-center">☝️ 위 표에서 내 일정을 터치해 역할을 배정하세요!</p>
             <button onclick="finishSetup()" class="w-full py-3 bg-white text-slate-900 dark:bg-gray-900 dark:text-white rounded-xl font-bold text-sm shadow-md active:scale-95 transition-transform">
-                ��븷 諛곗젙 �꾨즺 & �쒖옉�섍린
+                역할 배정 완료 & 시작하기
             </button>
         </div>
     </div>
@@ -173,8 +173,8 @@
         <div class="bg-white dark:bg-[#1e293b] w-full sm:w-[400px] rounded-t-3xl sm:rounded-3xl border-t border-slate-200 dark:border-gray-700 sm:border p-6 pb-safe transform translate-y-full sm:translate-y-0 transition-transform duration-300 flex flex-col max-h-[90vh]" id="editModalContent">
             <div class="flex justify-between items-start mb-4 shrink-0">
                 <div>
-                    <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-1">��븷 諛곗젙</h3>
-                    <p class="text-sm text-slate-500 dark:text-gray-400" id="modalEventTitle">�대깽�� �쒕ぉ</p>
+                    <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-1">역할 배정</h3>
+                    <p class="text-sm text-slate-500 dark:text-gray-400" id="modalEventTitle">이벤트 제목</p>
                     <p class="text-xs text-amber-500 mt-1" id="modalEventTime">00:00 ~ 00:00</p>
                 </div>
                 <button onclick="closeModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-gray-800 text-slate-400 hover:text-slate-600 dark:hover:text-white">
@@ -183,8 +183,8 @@
             </div>
             <div id="roleSelectionArea" class="flex-1 overflow-y-auto no-scrollbar space-y-6 mb-4"></div>
             <div class="flex gap-3 shrink-0">
-                <button onclick="closeModal()" class="flex-1 py-3 rounded-xl bg-slate-100 dark:bg-gray-800 text-slate-600 dark:text-white font-bold border border-slate-200 dark:border-gray-700 text-sm">痍⑥냼</button>
-                <button onclick="saveAssignment()" class="flex-1 py-3 rounded-xl bg-slate-800 text-white dark:bg-gradient-to-r dark:from-amber-500 dark:to-amber-600 dark:text-gray-900 font-bold shadow-md text-sm">���ν븯湲�</button>
+                <button onclick="closeModal()" class="flex-1 py-3 rounded-xl bg-slate-100 dark:bg-gray-800 text-slate-600 dark:text-white font-bold border border-slate-200 dark:border-gray-700 text-sm">취소</button>
+                <button onclick="saveAssignment()" class="flex-1 py-3 rounded-xl bg-slate-800 text-white dark:bg-gradient-to-r dark:from-amber-500 dark:to-amber-600 dark:text-gray-900 font-bold shadow-md text-sm">저장하기</button>
             </div>
             <input type="hidden" id="modalDayId">
             <input type="hidden" id="modalEventId">
@@ -195,7 +195,7 @@
     <div id="settingsModal" class="fixed inset-0 bg-slate-900/40 dark:bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300 px-4">
         <div class="bg-white dark:bg-[#1e293b] w-full max-w-[340px] rounded-3xl border border-slate-200 dark:border-gray-700 p-6 shadow-2xl scale-95 transition-transform duration-300" id="settingsModalContent">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-lg font-bold text-slate-900 dark:text-white">�ㅼ젙</h3>
+                <h3 class="text-lg font-bold text-slate-900 dark:text-white">설정</h3>
                 <button onclick="closeSettingsModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-gray-800 text-slate-400 hover:text-slate-600 dark:hover:text-white">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
@@ -204,32 +204,32 @@
                 <button onclick="editProfile()" class="flex items-center gap-3 w-full p-4 rounded-xl bg-slate-50 dark:bg-gray-800/50 border border-slate-200 dark:border-gray-700 text-left active:bg-slate-100 dark:active:bg-gray-800 transition-colors group">
                     <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400 flex items-center justify-center text-lg group-hover:scale-110 transition-transform"><i class="fa-solid fa-user-pen"></i></div>
                     <div>
-                        <div class="font-bold text-slate-800 dark:text-gray-200 text-sm">�ъ슜�� �뺣낫 �섏젙</div>
-                        <div class="text-[11px] text-slate-500 dark:text-gray-400 mt-0.5">�대쫫, �꾩씠肄�, �됱긽, �몄썝 蹂�寃�</div>
+                        <div class="font-bold text-slate-800 dark:text-gray-200 text-sm">사용자 정보 수정</div>
+                        <div class="text-[11px] text-slate-500 dark:text-gray-400 mt-0.5">이름, 아이콘, 색상, 인원 변경</div>
                     </div>
                 </button>
 
                 <button onclick="exportConfigCode()" class="flex items-center gap-3 w-full p-4 rounded-xl bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/30 text-left active:bg-amber-100 dark:active:bg-amber-900/20 transition-colors group">
                     <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400 flex items-center justify-center text-lg group-hover:scale-110 transition-transform"><i class="fa-solid fa-copy"></i></div>
                     <div>
-                        <div class="font-bold text-amber-800 dark:text-amber-400 text-sm">怨듭쑀 肄붾뱶 蹂듭궗�섍린</div>
-                        <div class="text-[11px] text-amber-600/70 dark:text-amber-400/70 mt-0.5">移댄넚�쇰줈 蹂대궪 �띿뒪�� 肄붾뱶 �앹꽦</div>
+                        <div class="font-bold text-amber-800 dark:text-amber-400 text-sm">공유 코드 복사하기</div>
+                        <div class="text-[11px] text-amber-600/70 dark:text-amber-400/70 mt-0.5">카톡으로 보낼 텍스트 코드 생성</div>
                     </div>
                 </button>
 
                 <button onclick="importConfigCode()" class="flex items-center gap-3 w-full p-4 rounded-xl bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-900/30 text-left active:bg-emerald-100 dark:active:bg-emerald-900/20 transition-colors group">
                     <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 flex items-center justify-center text-lg group-hover:scale-110 transition-transform"><i class="fa-solid fa-paste"></i></div>
                     <div>
-                        <div class="font-bold text-emerald-800 dark:text-emerald-400 text-sm">怨듭쑀 肄붾뱶 �낅젰�섍린</div>
-                        <div class="text-[11px] text-emerald-600/70 dark:text-emerald-400/70 mt-0.5">�뚰듃�덉쓽 肄붾뱶瑜� 遺숈뿬�ｌ뼱 �숆린��</div>
+                        <div class="font-bold text-emerald-800 dark:text-emerald-400 text-sm">공유 코드 입력하기</div>
+                        <div class="text-[11px] text-emerald-600/70 dark:text-emerald-400/70 mt-0.5">파트너의 코드를 붙여넣어 동기화</div>
                     </div>
                 </button>
 
                 <button onclick="confirmReset()" class="flex items-center gap-3 w-full p-4 rounded-xl bg-red-50 dark:bg-red-900/10 border border-red-100 dark:border-red-900/30 text-left active:bg-red-100 dark:active:bg-red-900/20 transition-colors group">
                     <div class="w-10 h-10 rounded-full bg-red-100 text-red-600 dark:bg-red-500/20 dark:text-red-400 flex items-center justify-center text-lg group-hover:scale-110 transition-transform"><i class="fa-solid fa-rotate-right"></i></div>
                     <div>
-                        <div class="font-bold text-red-700 dark:text-red-400 text-sm">泥섏쓬遺��� �ㅼ떆 �명똿</div>
-                        <div class="text-[11px] text-red-500/70 mt-0.5">紐⑤뱺 �ㅼ젙 諛� 諛곗젙 ��븷 珥덇린��</div>
+                        <div class="font-bold text-red-700 dark:text-red-400 text-sm">처음부터 다시 세팅</div>
+                        <div class="text-[11px] text-red-500/70 mt-0.5">모든 설정 및 배정 역할 초기화</div>
                     </div>
                 </button>
             </div>
@@ -243,8 +243,8 @@
         </button>
         <div class="flex-1 overflow-y-auto no-scrollbar p-6 max-w-[480px] mx-auto w-full relative">
             <div class="pt-8 pb-6">
-                <h2 id="wizardTitle" class="text-2xl font-extrabold text-slate-900 dark:text-white mb-2">�섏쁺�⑸땲��! �몝</h2>
-                <p id="wizardDesc" class="text-slate-500 dark:text-gray-400 text-sm">�섎쭔�� David Tent �쇱젙�쒕� 留뚮뱾�대낫�몄슂.</p>
+                <h2 id="wizardTitle" class="text-2xl font-extrabold text-slate-900 dark:text-white mb-2">환영합니다! 👋</h2>
+                <p id="wizardDesc" class="text-slate-500 dark:text-gray-400 text-sm">나만의 David Tent 일정표를 만들어보세요.</p>
             </div>
 
             <button id="wizardImportBtn" onclick="importConfigCode()" class="w-full mb-8 p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-200 dark:border-emerald-900/40 text-left active:bg-emerald-100 dark:active:bg-emerald-900/20 active:scale-[0.99] transition-all flex items-center gap-3">
@@ -252,28 +252,28 @@
                     <i class="fa-solid fa-link"></i>
                 </div>
                 <div class="flex-1">
-                    <div class="font-bold text-emerald-800 dark:text-emerald-400 text-sm">怨듭쑀 肄붾뱶 �낅젰�섍린</div>
-                    <div class="text-[11px] text-emerald-600/70 dark:text-emerald-400/70 mt-0.5">諛쏆� 肄붾뱶濡� �ъ슜�� �ㅼ젙 �놁씠 諛붾줈 �쒖옉�댁슂</div>
+                    <div class="font-bold text-emerald-800 dark:text-emerald-400 text-sm">공유 코드 입력하기</div>
+                    <div class="text-[11px] text-emerald-600/70 dark:text-emerald-400/70 mt-0.5">받은 코드로 사용자 설정 없이 바로 시작해요</div>
                 </div>
                 <i class="fa-solid fa-chevron-right text-emerald-400 text-xs"></i>
             </button>
 
             <div class="mb-8" id="setupStep1">
-                <label class="block text-sm font-bold text-slate-700 dark:text-gray-300 mb-3">紐� 紐낆씠�� �ъ슜�섏떆�섏슂?</label>
+                <label class="block text-sm font-bold text-slate-700 dark:text-gray-300 mb-3">몇 명이서 사용하시나요?</label>
                 <div class="grid grid-cols-2 gap-3">
                     <label class="cursor-pointer">
                         <input type="radio" name="wizardMode" value="1" class="hidden peer" onchange="renderWizardProfiles()" checked>
                         <div class="peer-checked:border-amber-500 peer-checked:bg-amber-50 dark:peer-checked:bg-amber-900/20 border-2 border-slate-200 dark:border-gray-700 rounded-xl p-4 text-center transition-all">
-                            <span class="text-3xl block mb-2">�뫀</span>
-                            <span class="font-bold text-slate-800 dark:text-white text-sm block">�쇱옄 �몃옒��</span>
+                            <span class="text-3xl block mb-2">👤</span>
+                            <span class="font-bold text-slate-800 dark:text-white text-sm block">혼자 쓸래요</span>
                         </div>
                     </label>
                     <label class="cursor-pointer">
                         <input type="radio" name="wizardMode" value="2" class="hidden peer" onchange="renderWizardProfiles()">
                         <div class="peer-checked:border-amber-500 peer-checked:bg-amber-50 dark:peer-checked:bg-amber-900/20 border-2 border-slate-200 dark:border-gray-700 rounded-xl p-4 text-center transition-all">
-                            <span class="text-3xl block mb-2">�뫉</span>
-                            <span class="font-bold text-slate-800 dark:text-white text-sm block">�섏씠�� �몃옒��</span>
-                            <span class="text-[10px] text-slate-400 dark:text-gray-500 block mt-1">(遺�遺�/而ㅽ뵆/移쒓뎄)</span>
+                            <span class="text-3xl block mb-2">👫</span>
+                            <span class="font-bold text-slate-800 dark:text-white text-sm block">둘이서 쓸래요</span>
+                            <span class="text-[10px] text-slate-400 dark:text-gray-500 block mt-1">(부부/커플/친구)</span>
                         </div>
                     </label>
                 </div>
@@ -282,7 +282,7 @@
             <div id="setupProfilesArea" class="space-y-4"></div>
 
             <button id="wizardSubmitBtn" onclick="startScheduleSetup()" class="w-full mt-10 py-4 bg-slate-900 text-white dark:bg-amber-500 dark:text-gray-900 rounded-xl font-bold shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-2">
-                �ㅼ쓬: �� �쇱젙�� 留뚮뱾湲� <i class="fa-solid fa-arrow-right"></i>
+                다음: 내 일정표 만들기 <i class="fa-solid fa-arrow-right"></i>
             </button>
         </div>
     </div>
@@ -292,59 +292,59 @@
         <div id="bibleModalContent" class="bg-white dark:bg-[#1e293b] w-full max-w-[400px] h-[75vh] rounded-2xl flex flex-col shadow-2xl scale-95 transition-transform duration-300 overflow-hidden border border-slate-200 dark:border-gray-700">
             <div class="flex justify-between items-center p-4 border-b border-slate-200 dark:border-gray-700 bg-slate-50 dark:bg-slate-800 shrink-0">
                 <h3 class="font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                    <i class="fa-solid fa-book-bible text-amber-500"></i> �댁솗湲곗긽 18��
+                    <i class="fa-solid fa-book-bible text-amber-500"></i> 열왕기상 18장
                 </h3>
                 <button onclick="closeBibleModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-200/50 dark:bg-gray-700/50 text-slate-500 dark:text-gray-400 hover:bg-slate-200 dark:hover:text-white transition-colors">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
             <div class="flex-1 overflow-y-auto no-scrollbar p-5 text-[14px] text-slate-700 dark:text-gray-300 leading-relaxed space-y-4 pb-8" style="word-break: keep-all;">
-                <p><sup class="font-bold text-amber-500 mr-1">1</sup>留롮� �좎씠 吏��섍퀬 �쒖궪�꾩뿉 �ы샇���� 留먯��� �섎━�쇱뿉寃� �꾪븯�� �대Ⅴ�쒕릺 �덈뒗 媛��� �꾪빀�먭쾶 蹂댁씠�� �닿� 鍮꾨� 吏�硫댁뿉 �대━由щ씪</p>
-                <p><sup class="font-bold text-amber-500 mr-1">2</sup>�섎━�쇨� �꾪빀�먭쾶 蹂댁씠�ㅺ퀬 媛��� 洹� �뚯뿉 �щ쭏由ъ븘�� 湲곌렐�� �ы븯���붾씪</p>
-                <p><sup class="font-bold text-amber-500 mr-1">3</sup>�꾪빀�� �뺢턿 留≪� �� �ㅻ컮�쒕� 遺덈��쇰땲 �� �ㅻ컮�쒕뒗 �ы샇��瑜� �ш쾶 寃쎌쇅�섎뒗 �먮씪</p>
-                <p><sup class="font-bold text-amber-500 mr-1">4</sup>�댁꽭踰⑥씠 �ы샇���� �좎��먮뱾�� 硫명븷 �뚯뿉 �ㅻ컮�쒓� �좎��� 諛� 紐낆쓣 媛�吏�怨� �ㅼ떗 紐낆뵫 援댁뿉 �④린怨� �↔낵 臾쇱쓣 癒뱀��붾씪</p>
-                <p><sup class="font-bold text-amber-500 mr-1">5</sup>�꾪빀�� �ㅻ컮�쒖뿉寃� �대Ⅴ�� �� �낆쓽 紐⑤뱺 臾� 洹쇱썝怨� 紐⑤뱺 �대줈 媛��� �뱀떆 瑗댁쓣 �살쑝由щ씪 洹몃━�섎㈃ 留먭낵 �몄깉瑜� �대━由щ땲 吏먯듅�� �� �껋� �딄쾶 �섎━�� �섍퀬</p>
-                <p><sup class="font-bold text-amber-500 mr-1">6</sup>�� �щ엺�� �먮（ �ㅻ땺 �낆쓣 �섎늻�� �꾪빀�� ��濡� �� 湲몃줈 媛�怨� �ㅻ컮�쒕뒗 ��濡� �� 湲몃줈 媛��덈씪</p>
-                <p><sup class="font-bold text-amber-500 mr-1">7</sup>�ㅻ컮�쒓� 湲몄뿉 �덉쓣 �뚯뿉 �섎━�쇨� 洹몃� 留뚮궃吏��� 洹멸� �뚯븘蹂닿퀬 �롫뱶�� 留먰븯�� �� 二� �섎━�쇱뿬 �뱀떊�댁떆�덉씠源�</p>
-                <p><sup class="font-bold text-amber-500 mr-1">8</sup>洹멸� 洹몄뿉寃� ���듯븯�� 洹몃윭�섎떎 媛��� �� 二쇱뿉寃� 留먰븯湲곕� �섎━�쇨� �ш린 �덈떎 �섎씪</p>
-                <p><sup class="font-bold text-amber-500 mr-1">9</sup>�대Ⅴ�� �닿� 臾댁뒯 二꾨� 吏��덇린�� �뱀떊�� �뱀떊�� 醫낆쓣 �꾪빀�� �먯뿉 �섍꺼 二쎌씠寃� �섎젮 �섏떆�섏씠源�</p>
-                <p><sup class="font-bold text-amber-500 mr-1">10</sup>�뱀떊�� �섎굹�� �ы샇��猿섏꽌 �댁븘 怨꾩떖�� �먭퀬 留뱀꽭�섎끂�� �� 二쇨퍡�� �щ엺�� 蹂대궡�� �뱀떊�� 李얠� �꾨땲�� 議깆냽�대굹 �섎씪媛� �놁뿀�붾뜲 洹몃뱾�� 留먰븯湲곕� �섎━�쇨� �녿떎 �섎㈃ 洹� �섎씪�� 洹� 議깆냽�쇰줈 �뱀떊�� 蹂댁� 紐삵븯���ㅻ뒗 留뱀꽭瑜� �섍쾶 �섏�嫄곕뒛</p>
-                <p><sup class="font-bold text-amber-500 mr-1">11</sup>�댁젣 �뱀떊�� 留먯��� 媛��� �� 二쇱뿉寃� 留먰븯湲곕� �섎━�쇨� �ш린 �덈떎 �섎씪 �섏떆��</p>
-                <p><sup class="font-bold text-amber-500 mr-1">12</sup>�닿� �뱀떊�� �좊굹媛� �꾩뿉 �ы샇���� �곸씠 �닿� �뚯� 紐삵븯�� 怨녹쑝濡� �뱀떊�� �대걣�� 媛��쒕━�� �닿� 媛��� �꾪빀�먭쾶 留먰븯���ㅺ� 洹멸� �뱀떊�� 李얠� 紐삵븯硫� �닿� 二쎌엫�� �뱁븯由ъ씠�� �뱀떊�� 醫낆� �대젮�쒕��� �ы샇��瑜� 寃쎌쇅�섎뒗 �먮씪</p>
-                <p><sup class="font-bold text-amber-500 mr-1">13</sup>�댁꽭踰⑥씠 �ы샇���� �좎��먮뱾�� 二쎌씪 �뚯뿉 �닿� �ы샇���� �좎��� 以묒뿉 諛� 紐낆쓣 �ㅼ떗 紐낆뵫 援댁뿉 �④린怨� �↔낵 臾쇰줈 癒뱀씤 �쇱씠 �� 二쇱뿉寃� �ㅻ━吏� �꾨땲�섏��섏씠源�</p>
-                <p><sup class="font-bold text-amber-500 mr-1">14</sup>�댁젣 �뱀떊�� 留먯��� 媛��� �� 二쇱뿉寃� 留먰븯湲곕� �섎━�쇨� �ш린 �덈떎 �섎씪 �섏떆�� 洹몃━�섎㈃ 洹멸� �섎� 二쎌씠由ъ씠��</p>
-                <p><sup class="font-bold text-amber-500 mr-1">15</sup>�섎━�쇨� �대Ⅴ�� �닿� 紐⑥떆�� 留뚭뎔�� �ы샇��猿섏꽌 �댁븘 怨꾩떖�� �먭퀬 留뱀꽭�섎끂�� �닿� �ㅻ뒛 �꾪빀�먭쾶 蹂댁씠由щ씪</p>
-                <p><sup class="font-bold text-amber-500 mr-1">16</sup>�ㅻ컮�쒓� 媛��� �꾪빀�� 留뚮굹 洹몄뿉寃� 留먰븯留� �꾪빀�� �섎━�쇰� 留뚮굹�� 媛��ㅺ�</p>
-                <p><sup class="font-bold text-amber-500 mr-1">17</sup>�섎━�쇰� 蹂� �뚯뿉 �꾪빀�� 洹몄뿉寃� �대Ⅴ�� �댁뒪�쇱뿕�� 愿대∼寃� �섎뒗 �먯뿬 �덈깘</p>
-                <p><sup class="font-bold text-amber-500 mr-1">18</sup>洹멸� ���듯븯�� �닿� �댁뒪�쇱뿕�� 愿대∼寃� �� 寃껋씠 �꾨땲�� �뱀떊怨� �뱀떊�� �꾨쾭吏��� 吏묒씠 愿대∼寃� �섏��쇰땲 �대뒗 �ы샇���� 紐낅졊�� 踰꾨졇怨� �뱀떊�� 諛붿븣�ㅼ쓣 �곕옄�뚯씠��</p>
-                <p><sup class="font-bold text-amber-500 mr-1">19</sup>洹몃윴利� �щ엺�� 蹂대궡 �� �댁뒪�쇱뿕怨� �댁꽭踰⑥쓽 �곸뿉�� 癒밸뒗 諛붿븣�� �좎��� �щ갚�ㅼ떗 紐낃낵 �꾩꽭�쇱쓽 �좎��� �щ갚 紐낆쓣 媛덈찞 �곗쑝濡� 紐⑥븘 �닿쾶濡� �섏븘�ㅺ쾶 �섏냼��</p>
-                <p><sup class="font-bold text-amber-500 mr-1">20</sup>�꾪빀�� �댁뿉 �댁뒪�쇱뿕�� 紐⑤뱺 �먯넀�먭쾶濡� �щ엺�� 蹂대궡 �좎��먮뱾�� 媛덈찞 �곗쑝濡� 紐⑥쑝�덈씪</p>
-                <p><sup class="font-bold text-amber-500 mr-1">21</sup>�섎━�쇨� 紐⑤뱺 諛깆꽦�먭쾶 媛�源뚯씠 �섏븘媛� �대Ⅴ�� �덊씗媛� �대뒓 �뚭퉴吏� �� �ъ씠�먯꽌 癒몃춪癒몃춪 �섎젮�먮깘 �ы샇��媛� 留뚯씪 �섎굹�섏씠硫� 洹몃� �곕Ⅴ怨� 諛붿븣�� 留뚯씪 �섎굹�섏씠硫� 洹몃� �곕�吏��덈씪 �섎땲 諛깆꽦�� 留� �쒕쭏�붾룄 ���듯븯吏� �꾨땲�섎뒗吏���</p>
-                <p><sup class="font-bold text-amber-500 mr-1">22</sup>�섎━�쇨� 諛깆꽦�먭쾶 �대Ⅴ�� �ы샇���� �좎��먮뒗 �섎쭔 ��濡� �⑥븯�쇰굹 諛붿븣�� �좎��먮뒗 �щ갚�ㅼ떗 紐낆씠濡쒕떎</p>
-                <p><sup class="font-bold text-amber-500 mr-1">23</sup>洹몃윴利� �≪븘吏� �섏쓣 �곕━�먭쾶 媛��몄삤寃� �섍퀬 洹몃뱾�� �≪븘吏� �� 留덈━瑜� �앺븯�� 媛곸쓣 �좎꽌 �섎Т �꾩뿉 �볤퀬 遺덉� 遺숈씠吏� 留먮ŉ �섎룄 �≪븘吏� �� 留덈━瑜� �≪븘 �섎Т �꾩뿉 �볤퀬 遺덉� 遺숈씠吏� �딄퀬</p>
-                <p><sup class="font-bold text-amber-500 mr-1">24</sup>�덊씗�� �덊씗 �좎쓽 �대쫫�� 遺�瑜대씪 �섎뒗 �ы샇���� �대쫫�� 遺�瑜대━�� �댁뿉 遺덈줈 �묐떟�섎뒗 �� 洹멸� �섎굹�섏씠�덈씪 諛깆꽦�� �� ���듯븯�� 洹� 留먯씠 �노룄�� �섎땲��</p>
-                <p><sup class="font-bold text-amber-500 mr-1">25</sup>�섎━�쇨� 諛붿븣�� �좎��먮뱾�먭쾶 �대Ⅴ�� �덊씗�� 留롮쑝�� 癒쇱� �≪븘吏� �� 留덈━瑜� �앺븯�� �↔퀬 �덊씗 �좎쓽 �대쫫�� 遺�瑜대씪 洹몃윭�� 遺덉쓣 遺숈씠吏� 留먮씪</p>
-                <p><sup class="font-bold text-amber-500 mr-1">26</sup>洹몃뱾�� 諛쏆� �≪븘吏�瑜� 媛��몃떎媛� �↔퀬 �꾩묠遺��� ��퉴吏� 諛붿븣�� �대쫫�� 遺덈윭 �대Ⅴ�� 諛붿븣�댁뿬 �곕━�먭쾶 �묐떟�섏냼�� �섎굹 �꾨Т �뚮━�� �녾퀬 �꾨Т �묐떟�섎뒗 �먮룄 �놁쑝誘�濡� 洹몃뱾�� 洹� �볦� �쒕떒 二쇱쐞�먯꽌 �곕��붾씪</p>
-                <p><sup class="font-bold text-amber-500 mr-1">27</sup>�뺤삤�� �대Ⅴ�щ뒗 �섎━�쇨� 洹몃뱾�� 議곕”�섏뿬 �대Ⅴ�� �� �뚮━濡� 遺�瑜대씪 洹몃뒗 �좎씤利� 臾듭긽�섍퀬 �덈뒗吏� �뱀� 洹멸� �좉퉸 �섍컮�붿� �뱀� 洹멸� 湲몄쓣 �됲븯�붿� �뱀� 洹멸� �좎씠 �ㅼ뼱�� 源⑥썙�� �� 寃껋씤吏� �섎ℓ</p>
-                <p><sup class="font-bold text-amber-500 mr-1">28</sup>�댁뿉 洹몃뱾�� �� �뚮━濡� 遺�瑜닿퀬 洹몃뱾�� 洹쒕�瑜� �곕씪 �쇨� �먮Ⅴ湲곌퉴吏� 移쇨낵 李쎌쑝濡� 洹몃뱾�� 紐몄쓣 �곹븯寃� �섎뜑��</p>
-                <p><sup class="font-bold text-amber-500 mr-1">29</sup>�닿컳�� �섏뿬 �뺤삤媛� 吏��ш퀬 洹몃뱾�� 誘몄튇 ��씠 �좊뱾�� ���� �뚯젣 �쒕┫ �뚭퉴吏� �대Ⅴ���쇰굹 �꾨Т �뚮━�� �녾퀬 �묐떟�섎뒗 �먮굹 �뚯븘蹂대뒗 �먭� �꾨Т�� �녿뜑��</p>
-                <p><sup class="font-bold text-amber-500 mr-1">30</sup>�섎━�쇨� 紐⑤뱺 諛깆꽦�� �ν븯�� �대Ⅴ�� �닿쾶濡� 媛�源뚯씠 �ㅻ씪 諛깆꽦�� �� 洹몄뿉寃� 媛�源뚯씠 媛�留� 洹멸� 臾대꼫吏� �ы샇���� �쒕떒�� �섏텞�섎릺</p>
-                <p><sup class="font-bold text-amber-500 mr-1">31</sup>�쇨낢�� �꾨뱾�ㅼ쓽 吏��뚯쓽 �섑슚瑜� �곕씪 �섎━�쇨� �� �대몢 媛쒕� 痍⑦븯�� �� �쇨낢�� �쏆쟻�� �ы샇���� 留먯��� �꾪븯�� �대Ⅴ�쒓린瑜� �� �대쫫�� �댁뒪�쇱뿕�대씪 �섎━�� �섏떊 �먮뜑��</p>
-                <p><sup class="font-bold text-amber-500 mr-1">32</sup>洹멸� �ы샇���� �대쫫�� �섏��섏뿬 洹� �뚮줈 �쒕떒�� �볤퀬 �쒕떒�� �뚯븘媛�硫� 怨≪떇 醫낆옄 �� �몄븘瑜� �� 留뚰븳 �꾨옉�� 留뚮뱾怨�</p>
-                <p><sup class="font-bold text-amber-500 mr-1">33</sup>�� �섎Т瑜� 踰뚯씠怨� �≪븘吏��� 媛곸쓣 �좎꽌 �섎Т �꾩뿉 �볤퀬 �대Ⅴ�� �� �룹뿉 臾쇱쓣 梨꾩썙�ㅺ� 踰덉젣臾쇨낵 �섎Т �꾩뿉 遺��쇰씪 �섍퀬</p>
-                <p><sup class="font-bold text-amber-500 mr-1">34</sup>�� �대Ⅴ�� �ㅼ떆 洹몃━�섎씪 �섏뿬 �ㅼ떆 洹몃━�섎땲 �� �대Ⅴ�� �� 踰덉㎏濡� 洹몃━�섎씪 �섏뿬 �� 踰덉㎏濡� 洹몃━�섎땲</p>
-                <p><sup class="font-bold text-amber-500 mr-1">35</sup>臾쇱씠 �쒕떒�쇰줈 �먮（ �먮Ⅴ怨� �꾨옉�먮룄 臾쇱씠 媛��� 李쇰뜑��</p>
-                <p><sup class="font-bold text-amber-500 mr-1">36</sup>���� �뚯젣 �쒕┫ �뚯뿉 �대Ⅴ�� �좎��� �섎━�쇨� �섏븘媛��� 留먰븯�� �꾨툕�쇳븿怨� �댁궘怨� �댁뒪�쇱뿕�� �섎굹�� �ы샇���� 二쇨퍡�� �댁뒪�쇱뿕 以묒뿉�� �섎굹�섏씠�� 寃껉낵 �닿� 二쇱쓽 醫낆씤 寃껉낵 �닿� 二쇱쓽 留먯���濡� �� 紐⑤뱺 �쇱쓣 �됲븯�� 寃껋쓣 �ㅻ뒛 �뚭쾶 �섏샃�뚯꽌</p>
-                <p><sup class="font-bold text-amber-500 mr-1">37</sup>�ы샇���� �닿쾶 �묐떟�섏샃�뚯꽌 �닿쾶 �묐떟�섏샃�뚯꽌 �� 諛깆꽦�먭쾶 二� �ы샇���� �섎굹�섏씠�� 寃껉낵 二쇰뒗 洹몃뱾�� 留덉쓬�� �섎룎�댄궎�ъ쓣 �뚭쾶 �섏샃�뚯꽌 �섎ℓ</p>
-                <p><sup class="font-bold text-amber-500 mr-1">38</sup>�댁뿉 �ы샇���� 遺덉씠 �대젮�� 踰덉젣臾쇨낵 �섎Т�� �뚭낵 �숈쓣 �쒖슦怨� �� �꾨옉�� 臾쇱쓣 �μ�吏���</p>
-                <p><sup class="font-bold text-amber-500 mr-1">39</sup>紐⑤뱺 諛깆꽦�� 蹂닿퀬 �롫뱶�� 留먰븯�� �ы샇���� 洹몃뒗 �섎굹�섏씠�쒕줈�� �ы샇���� 洹몃뒗 �섎굹�섏씠�쒕줈�� �섎땲</p>
-                <p><sup class="font-bold text-amber-500 mr-1">40</sup>�섎━�쇨� 洹몃뱾�먭쾶 �대Ⅴ�� 諛붿븣�� �좎��먮� �〓릺 洹몃뱾 以� �섎굹�� �꾨쭩�섏� 紐삵븯寃� �섎씪 �섎ℓ 怨� �≪�吏��� �섎━�쇨� 洹몃뱾�� 湲곗넀 �쒕궡濡� �대젮�ㅺ� 嫄곌린�� 二쎌씠�덈씪</p>
-                <p><sup class="font-bold text-amber-500 mr-1">41</sup>�섎━�쇨� �꾪빀�먭쾶 �대Ⅴ�� �щ씪媛��� 癒밴퀬 留덉떆�뚯꽌 �� 鍮� �뚮━媛� �덈굹�대떎</p>
-                <p><sup class="font-bold text-amber-500 mr-1">42</sup>�꾪빀�� 癒밴퀬 留덉떆�� �щ씪媛��덈씪 �섎━�쇨� 媛덈찞 �� 瑗��湲곕줈 �щ씪媛��� �낆뿉 轅뉗뼱 �롫뱶�� 洹몄쓽 �쇨뎬�� 臾대쫷 �ъ씠�� �ｊ퀬</p>
-                <p><sup class="font-bold text-amber-500 mr-1">43</sup>洹몄쓽 �ы솚�먭쾶 �대Ⅴ�� �щ씪媛� 諛붾떎 履쎌쓣 諛붾씪蹂대씪 洹멸� �щ씪媛� 諛붾씪蹂닿퀬 留먰븯�� �꾨Т寃껊룄 �녿굹�대떎 �대Ⅴ�� �쇨낢 踰덇퉴吏� �ㅼ떆 媛���</p>
-                <p><sup class="font-bold text-amber-500 mr-1">44</sup>�쇨낢 踰덉㎏ �대Ⅴ�ъ꽌�� 洹멸� 留먰븯�� 諛붾떎�먯꽌 �щ엺�� �� 留뚰븳 �묒� 援щ쫫�� �쇱뼱�섎굹�대떎 �대Ⅴ�� �щ씪媛� �꾪빀�먭쾶 留먰븯湲곕� 鍮꾩뿉 留됲엳吏� �꾨땲�섎룄濡� 留덉감瑜� 媛뽰텛怨� �대젮媛��뚯꽌 �섎씪 �섎땲��</p>
-                <p><sup class="font-bold text-amber-500 mr-1">45</sup>議곌툑 �꾩뿉 援щ쫫怨� 諛붾엺�� �쇱뼱�섏꽌 �섎뒛�� 罹꾩틖�댁�硫� �� 鍮꾧� �대━�붿��� �꾪빀�� 留덉감瑜� ��怨� �댁뒪瑜댁뿕濡� 媛���</p>
-                <p><sup class="font-bold text-amber-500 mr-1">46</sup>�ы샇���� �λ젰�� �섎━�쇱뿉寃� �꾪븯留� 洹멸� �덈━瑜� �숈씠怨� �댁뒪瑜댁뿕濡� �ㅼ뼱媛��� 怨녠퉴吏� �꾪빀 �욎뿉�� �щ젮媛붾뜑��</p>
+                <p><sup class="font-bold text-amber-500 mr-1">1</sup>많은 날이 지나고 제삼년에 여호와의 말씀이 엘리야에게 임하여 이르시되 너는 가서 아합에게 보이라 내가 비를 지면에 내리리라</p>
+                <p><sup class="font-bold text-amber-500 mr-1">2</sup>엘리야가 아합에게 보이려고 가니 그 때에 사마리아에 기근이 심하였더라</p>
+                <p><sup class="font-bold text-amber-500 mr-1">3</sup>아합이 왕궁 맡은 자 오바댜를 불렀으니 이 오바댜는 여호와를 크게 경외하는 자라</p>
+                <p><sup class="font-bold text-amber-500 mr-1">4</sup>이세벨이 여호와의 선지자들을 멸할 때에 오바댜가 선지자 백 명을 가지고 오십 명씩 굴에 숨기고 떡과 물을 먹였더라</p>
+                <p><sup class="font-bold text-amber-500 mr-1">5</sup>아합이 오바댜에게 이르되 이 땅의 모든 물 근원과 모든 내로 가자 혹시 꼴을 얻으리라 그리하면 말과 노새를 살리리니 짐승을 다 잃지 않게 되리라 하고</p>
+                <p><sup class="font-bold text-amber-500 mr-1">6</sup>두 사람이 두루 다닐 땅을 나누어 아합은 홀로 이 길로 가고 오바댜는 홀로 저 길로 가니라</p>
+                <p><sup class="font-bold text-amber-500 mr-1">7</sup>오바댜가 길에 있을 때에 엘리야가 그를 만난지라 그가 알아보고 엎드려 말하되 내 주 엘리야여 당신이시니이까</p>
+                <p><sup class="font-bold text-amber-500 mr-1">8</sup>그가 그에게 대답하되 그러하다 가서 네 주에게 말하기를 엘리야가 여기 있다 하라</p>
+                <p><sup class="font-bold text-amber-500 mr-1">9</sup>이르되 내가 무슨 죄를 지었기에 당신이 당신의 종을 아합의 손에 넘겨 죽이게 하려 하시나이까</p>
+                <p><sup class="font-bold text-amber-500 mr-1">10</sup>당신의 하나님 여호와께서 살아 계심을 두고 맹세하노니 내 주께서 사람을 보내어 당신을 찾지 아니한 족속이나 나라가 없었는데 그들이 말하기를 엘리야가 없다 하면 그 나라와 그 족속으로 당신을 보지 못하였다는 맹세를 하게 하였거늘</p>
+                <p><sup class="font-bold text-amber-500 mr-1">11</sup>이제 당신의 말씀이 가서 네 주에게 말하기를 엘리야가 여기 있다 하라 하시나</p>
+                <p><sup class="font-bold text-amber-500 mr-1">12</sup>내가 당신을 떠나간 후에 여호와의 영이 내가 알지 못하는 곳으로 당신을 이끌어 가시리니 내가 가서 아합에게 말하였다가 그가 당신을 찾지 못하면 내가 죽임을 당하리이다 당신의 종은 어려서부터 여호와를 경외하는 자라</p>
+                <p><sup class="font-bold text-amber-500 mr-1">13</sup>이세벨이 여호와의 선지자들을 죽일 때에 내가 여호와의 선지자 중에 백 명을 오십 명씩 굴에 숨기고 떡과 물로 먹인 일이 내 주에게 들리지 아니하였나이까</p>
+                <p><sup class="font-bold text-amber-500 mr-1">14</sup>이제 당신의 말씀이 가서 네 주에게 말하기를 엘리야가 여기 있다 하라 하시니 그리하면 그가 나를 죽이리이다</p>
+                <p><sup class="font-bold text-amber-500 mr-1">15</sup>엘리야가 이르되 내가 모시는 만군의 여호와께서 살아 계심을 두고 맹세하노니 내가 오늘 아합에게 보이리라</p>
+                <p><sup class="font-bold text-amber-500 mr-1">16</sup>오바댜가 가서 아합을 만나 그에게 말하매 아합이 엘리야를 만나러 가다가</p>
+                <p><sup class="font-bold text-amber-500 mr-1">17</sup>엘리야를 볼 때에 아합이 그에게 이르되 이스라엘을 괴롭게 하는 자여 너냐</p>
+                <p><sup class="font-bold text-amber-500 mr-1">18</sup>그가 대답하되 내가 이스라엘을 괴롭게 한 것이 아니라 당신과 당신의 아버지의 집이 괴롭게 하였으니 이는 여호와의 명령을 버렸고 당신이 바알들을 따랐음이라</p>
+                <p><sup class="font-bold text-amber-500 mr-1">19</sup>그런즉 사람을 보내 온 이스라엘과 이세벨의 상에서 먹는 바알의 선지자 사백오십 명과 아세라의 선지자 사백 명을 갈멜 산으로 모아 내게로 나아오게 하소서</p>
+                <p><sup class="font-bold text-amber-500 mr-1">20</sup>아합이 이에 이스라엘의 모든 자손에게로 사람을 보내 선지자들을 갈멜 산으로 모으니라</p>
+                <p><sup class="font-bold text-amber-500 mr-1">21</sup>엘리야가 모든 백성에게 가까이 나아가 이르되 너희가 어느 때까지 둘 사이에서 머뭇머뭇 하려느냐 여호와가 만일 하나님이면 그를 따르고 바알이 만일 하나님이면 그를 따를지니라 하니 백성이 말 한마디도 대답하지 아니하는지라</p>
+                <p><sup class="font-bold text-amber-500 mr-1">22</sup>엘리야가 백성에게 이르되 여호와의 선지자는 나만 홀로 남았으나 바알의 선지자는 사백오십 명이로다</p>
+                <p><sup class="font-bold text-amber-500 mr-1">23</sup>그런즉 송아지 둘을 우리에게 가져오게 하고 그들은 송아지 한 마리를 택하여 각을 떠서 나무 위에 놓고 불은 붙이지 말며 나도 송아지 한 마리를 잡아 나무 위에 놓고 불은 붙이지 않고</p>
+                <p><sup class="font-bold text-amber-500 mr-1">24</sup>너희는 너희 신의 이름을 부르라 나는 여호와의 이름을 부르리니 이에 불로 응답하는 신 그가 하나님이니라 백성이 다 대답하되 그 말이 옳도다 하니라</p>
+                <p><sup class="font-bold text-amber-500 mr-1">25</sup>엘리야가 바알의 선지자들에게 이르되 너희는 많으니 먼저 송아지 한 마리를 택하여 잡고 너희 신의 이름을 부르라 그러나 불을 붙이지 말라</p>
+                <p><sup class="font-bold text-amber-500 mr-1">26</sup>그들이 받은 송아지를 가져다가 잡고 아침부터 낮까지 바알의 이름을 불러 이르되 바알이여 우리에게 응답하소서 하나 아무 소리도 없고 아무 응답하는 자도 없으므로 그들이 그 쌓은 제단 주위에서 뛰놀더라</p>
+                <p><sup class="font-bold text-amber-500 mr-1">27</sup>정오에 이르러는 엘리야가 그들을 조롱하여 이르되 큰 소리로 부르라 그는 신인즉 묵상하고 있는지 혹은 그가 잠깐 나갔는지 혹은 그가 길을 행하는지 혹은 그가 잠이 들어서 깨워야 할 것인지 하매</p>
+                <p><sup class="font-bold text-amber-500 mr-1">28</sup>이에 그들이 큰 소리로 부르고 그들의 규례를 따라 피가 흐르기까지 칼과 창으로 그들의 몸을 상하게 하더라</p>
+                <p><sup class="font-bold text-amber-500 mr-1">29</sup>이같이 하여 정오가 지났고 그들이 미친 듯이 떠들어 저녁 소제 드릴 때까지 이르렀으나 아무 소리도 없고 응답하는 자나 돌아보는 자가 아무도 없더라</p>
+                <p><sup class="font-bold text-amber-500 mr-1">30</sup>엘리야가 모든 백성을 향하여 이르되 내게로 가까이 오라 백성이 다 그에게 가까이 가매 그가 무너진 여호와의 제단을 수축하되</p>
+                <p><sup class="font-bold text-amber-500 mr-1">31</sup>야곱의 아들들의 지파의 수효를 따라 엘리야가 돌 열두 개를 취하니 이 야곱은 옛적에 여호와의 말씀이 임하여 이르시기를 네 이름을 이스라엘이라 하리라 하신 자더라</p>
+                <p><sup class="font-bold text-amber-500 mr-1">32</sup>그가 여호와의 이름을 의지하여 그 돌로 제단을 쌓고 제단을 돌아가며 곡식 종자 두 세아를 둘 만한 도랑을 만들고</p>
+                <p><sup class="font-bold text-amber-500 mr-1">33</sup>또 나무를 벌이고 송아지의 각을 떠서 나무 위에 놓고 이르되 통 넷에 물을 채워다가 번제물과 나무 위에 부으라 하고</p>
+                <p><sup class="font-bold text-amber-500 mr-1">34</sup>또 이르되 다시 그리하라 하여 다시 그리하니 또 이르되 세 번째로 그리하라 하여 세 번째로 그리하니</p>
+                <p><sup class="font-bold text-amber-500 mr-1">35</sup>물이 제단으로 두루 흐르고 도랑에도 물이 가득 찼더라</p>
+                <p><sup class="font-bold text-amber-500 mr-1">36</sup>저녁 소제 드릴 때에 이르러 선지자 엘리야가 나아가서 말하되 아브라함과 이삭과 이스라엘의 하나님 여호와여 주께서 이스라엘 중에서 하나님이신 것과 내가 주의 종인 것과 내가 주의 말씀대로 이 모든 일을 행하는 것을 오늘 알게 하옵소서</p>
+                <p><sup class="font-bold text-amber-500 mr-1">37</sup>여호와여 내게 응답하옵소서 내게 응답하옵소서 이 백성에게 주 여호와는 하나님이신 것과 주는 그들의 마음을 되돌이키심을 알게 하옵소서 하매</p>
+                <p><sup class="font-bold text-amber-500 mr-1">38</sup>이에 여호와의 불이 내려서 번제물과 나무와 돌과 흙을 태우고 또 도랑의 물을 핥은지라</p>
+                <p><sup class="font-bold text-amber-500 mr-1">39</sup>모든 백성이 보고 엎드려 말하되 여호와는 그는 하나님이시로다 여호와는 그는 하나님이시로다 하니</p>
+                <p><sup class="font-bold text-amber-500 mr-1">40</sup>엘리야가 그들에게 이르되 바알의 선지자를 잡되 그들 중 하나도 도망하지 못하게 하라 하매 곧 잡은지라 엘리야가 그들을 기손 시내로 내려다가 거기서 죽이니라</p>
+                <p><sup class="font-bold text-amber-500 mr-1">41</sup>엘리야가 아합에게 이르되 올라가서 먹고 마시소서 큰 비 소리가 있나이다</p>
+                <p><sup class="font-bold text-amber-500 mr-1">42</sup>아합이 먹고 마시러 올라가니라 엘리야가 갈멜 산 꼭대기로 올라가서 땅에 꿇어 엎드려 그의 얼굴을 무릎 사이에 넣고</p>
+                <p><sup class="font-bold text-amber-500 mr-1">43</sup>그의 사환에게 이르되 올라가 바다 쪽을 바라보라 그가 올라가 바라보고 말하되 아무것도 없나이다 이르되 일곱 번까지 다시 가라</p>
+                <p><sup class="font-bold text-amber-500 mr-1">44</sup>일곱 번째 이르러서는 그가 말하되 바다에서 사람의 손 만한 작은 구름이 일어나나이다 이르되 올라가 아합에게 말하기를 비에 막히지 아니하도록 마차를 갖추고 내려가소서 하라 하니라</p>
+                <p><sup class="font-bold text-amber-500 mr-1">45</sup>조금 후에 구름과 바람이 일어나서 하늘이 캄캄해지며 큰 비가 내리는지라 아합이 마차를 타고 이스르엘로 가니</p>
+                <p><sup class="font-bold text-amber-500 mr-1">46</sup>여호와의 능력이 엘리야에게 임하매 그가 허리를 동이고 이스르엘로 들어가는 곳까지 아합 앞에서 달려갔더라</p>
             </div>
         </div>
     </div>
@@ -353,137 +353,137 @@
 
     <script>
         const colorPalette = [
-            { id: 'lime', code: '#84cc16', name: '�쇱엫', tailwindText: 'text-lime-500', tailwindBg: 'bg-lime-500', bgRgba: 'rgba(132, 204, 22, 0.15)' },
-            { id: 'pink', code: '#ec4899', name: '�묓겕', tailwindText: 'text-pink-500', tailwindBg: 'bg-pink-500', bgRgba: 'rgba(236, 72, 153, 0.15)' },
-            { id: 'blue', code: '#3b82f6', name: '釉붾（', tailwindText: 'text-blue-500', tailwindBg: 'bg-blue-500', bgRgba: 'rgba(59, 130, 246, 0.15)' },
-            { id: 'amber', code: '#f59e0b', name: '�곕쾭', tailwindText: 'text-amber-500', tailwindBg: 'bg-amber-500', bgRgba: 'rgba(245, 158, 11, 0.15)' },
-            { id: 'purple', code: '#a855f7', name: '�쇳뵆', tailwindText: 'text-purple-500', tailwindBg: 'bg-purple-500', bgRgba: 'rgba(168, 85, 247, 0.15)' },
-            { id: 'teal', code: '#14b8a6', name: '誘쇳듃', tailwindText: 'text-teal-500', tailwindBg: 'bg-teal-500', bgRgba: 'rgba(20, 184, 166, 0.15)' },
-            { id: 'orange', code: '#f97316', name: '�ㅻ젋吏�', tailwindText: 'text-orange-500', tailwindBg: 'bg-orange-500', bgRgba: 'rgba(249, 115, 22, 0.15)' },
-            { id: 'red', code: '#ef4444', name: '�덈뱶', tailwindText: 'text-red-500', tailwindBg: 'bg-red-500', bgRgba: 'rgba(239, 68, 68, 0.15)' },
-            { id: 'indigo', code: '#6366f1', name: '�몃뵒怨�', tailwindText: 'text-indigo-500', tailwindBg: 'bg-indigo-500', bgRgba: 'rgba(99, 102, 241, 0.15)' }
+            { id: 'lime', code: '#84cc16', name: '라임', tailwindText: 'text-lime-500', tailwindBg: 'bg-lime-500', bgRgba: 'rgba(132, 204, 22, 0.15)' },
+            { id: 'pink', code: '#ec4899', name: '핑크', tailwindText: 'text-pink-500', tailwindBg: 'bg-pink-500', bgRgba: 'rgba(236, 72, 153, 0.15)' },
+            { id: 'blue', code: '#3b82f6', name: '블루', tailwindText: 'text-blue-500', tailwindBg: 'bg-blue-500', bgRgba: 'rgba(59, 130, 246, 0.15)' },
+            { id: 'amber', code: '#f59e0b', name: '앰버', tailwindText: 'text-amber-500', tailwindBg: 'bg-amber-500', bgRgba: 'rgba(245, 158, 11, 0.15)' },
+            { id: 'purple', code: '#a855f7', name: '퍼플', tailwindText: 'text-purple-500', tailwindBg: 'bg-purple-500', bgRgba: 'rgba(168, 85, 247, 0.15)' },
+            { id: 'teal', code: '#14b8a6', name: '민트', tailwindText: 'text-teal-500', tailwindBg: 'bg-teal-500', bgRgba: 'rgba(20, 184, 166, 0.15)' },
+            { id: 'orange', code: '#f97316', name: '오렌지', tailwindText: 'text-orange-500', tailwindBg: 'bg-orange-500', bgRgba: 'rgba(249, 115, 22, 0.15)' },
+            { id: 'red', code: '#ef4444', name: '레드', tailwindText: 'text-red-500', tailwindBg: 'bg-red-500', bgRgba: 'rgba(239, 68, 68, 0.15)' },
+            { id: 'indigo', code: '#6366f1', name: '인디고', tailwindText: 'text-indigo-500', tailwindBg: 'bg-indigo-500', bgRgba: 'rgba(99, 102, 241, 0.15)' }
         ];
 
         const iconsList = [
-            '�뫅', '�뫆', '�쭛',
-            '�렎', '�렪', '�렫', '�쪇',
-            '�렒', '�뮲', '�렗', '�벜',
-            '�뮠', '�슜', '�솋'
+            '👨', '👩', '🧑',
+            '🎤', '🎸', '🎹', '🥁',
+            '🎧', '💻', '🎬', '📷',
+            '💬', '🚩', '🙏'
         ];
 
         const roleMap = {
             'none': { label: '-' },
-            'lead': { label: '�덈같�몃룄' },
-            'singer': { label: '�깆뼱' },
-            'keyboard': { label: '嫄대컲' },
-            'second': { label: '�몄빻' },
-            'elec': { label: '�쇰젆' },
-            'bass': { label: '踰좎씠��' },
-            'drum': { label: '�쒕읆' },
-            'subtitle': { label: '�먮쭑' },
-            'switcher': { label: '�ㅼ쐞泥�' },
-            'chat': { label: '梨꾪똿' },
-            'handy': { label: '�몃뵒' },
-            'film': { label: '珥ъ쁺' },
-            'sound': { label: '�뚰뼢' },
-            'flag': { label: '源껊컻' },
-            'inside': { label: '�λ궡' },
-            'outside': { label: '�μ쇅' },
-            'prayerCoordinator': { label: '湲곕룄肄붾뵒' },
-            'briefing': { label: '釉뚮━��' },
-            'debriefing': { label: '�붾툕由ы븨' },
-            'rehearsal': { label: '�⑹＜' },
-            'other': { label: '湲고�' }
+            'lead': { label: '예배인도' },
+            'singer': { label: '싱어' },
+            'keyboard': { label: '건반' },
+            'second': { label: '세컨' },
+            'elec': { label: '일렉' },
+            'bass': { label: '베이스' },
+            'drum': { label: '드럼' },
+            'subtitle': { label: '자막' },
+            'switcher': { label: '스위처' },
+            'chat': { label: '채팅' },
+            'handy': { label: '핸디' },
+            'film': { label: '촬영' },
+            'sound': { label: '음향' },
+            'flag': { label: '깃발' },
+            'inside': { label: '장내' },
+            'outside': { label: '장외' },
+            'prayerCoordinator': { label: '기도코디' },
+            'briefing': { label: '브리핑' },
+            'debriefing': { label: '디브리핑' },
+            'rehearsal': { label: '합주' },
+            'other': { label: '기타' }
         };
 
         const electivesData = [
             {
-                dateStr: '8/15(��) 14:00 ~ 16:00',
+                dateStr: '8/15(토) 14:00 ~ 16:00',
                 classes: [
-                    { room: '�щ옉�섏쭛 以묒븰�� 1', title: '湲곕룄�섏쭛 �덈같 �좏븰怨� �곸꽦', speaker: '源��멸린 �섎젴紐⑹궗' },
-                    { room: '�щ옉�섏쭛 以묒븰�� 2', title: '以묐낫湲곕룄', speaker: '�대뱶蹂대씪 �좉탳��' }
+                    { room: '사랑의집 중앙홀 1', title: '기도의집 예배 신학과 영성', speaker: '김인기 수련목사' },
+                    { room: '사랑의집 중앙홀 2', title: '중보기도', speaker: '이드보라 선교사' }
                 ]
             },
             {
-                dateStr: '8/15(��) 16:00 ~ 18:00',
+                dateStr: '8/15(토) 16:00 ~ 18:00',
                 classes: [
-                    { room: '�щ옉�섏쭛 以묒븰�� 1', title: '湲곕룄�� 吏묎낵 湲곕룄�� �댁쁺', speaker: '�좊룞泥� 紐⑹궗' },
-                    { room: '�щ옉�섏쭛 以묒븰�� 2', title: '湲곕룄�� 吏� 以묒떖�� 鍮꾩��덉뒪', speaker: '�댁��� ����' }
+                    { room: '사랑의집 중앙홀 1', title: '기도의 집과 기도실 운영', speaker: '신동철 목사' },
+                    { room: '사랑의집 중앙홀 2', title: '기도의 집 중심의 비지니스', speaker: '이준희 대표' }
                 ]
             },
             {
-                dateStr: '8/16(��) 15:00 ~ 17:00',
+                dateStr: '8/16(일) 15:00 ~ 17:00',
                 classes: [
-                    { room: '�щ옉�섏쭛 以묒븰�� 1', title: '�됰났�� 遺�遺� �몃���', speaker: '�댄씗踰� 紐⑹궗' },
-                    { room: '�щ옉�섏쭛 以묒븰�� 2', title: 'AI �쒕� �ㅼ쓬�몃� 援먯쑁', speaker: '�≪쁺愿� ����' }
+                    { room: '사랑의집 중앙홀 1', title: '행복한 부부 세미나', speaker: '이희범 목사' },
+                    { room: '사랑의집 중앙홀 2', title: 'AI 시대 다음세대 교육', speaker: '송영광 대표' }
                 ]
             }
         ];
 
         const initialSchedule = [
             {
-                id: 'day1', date: '2026-08-14', title: '8/14(湲�)', theme: '�섏텞 (�쒖쥌�� �쒕떒 �볤린)',
+                id: 'day1', date: '2026-08-14', title: '8/14(금)', theme: '수축 (순종의 제단 쌓기)',
                 events: [
-                    { id: '1-1', start: '10:00', end: '10:30', title: '�ㅽ뀦 ���깆쟾 吏묓빀', leader: '�꾩껜', section: 2, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '1-2', start: '14:00', end: '16:00', title: '留먯��덈같', leader: '議곕���', section: 3, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '1-3', start: '16:00', end: '18:00', title: 'Harp&Bowl', leader: '�좊룞泥�', section: 3, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '1-4', start: '18:00', end: '19:00', title: '�붾낫��', leader: '�뺤삁��, �쒖젙��', section: 4, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '1-5', start: '19:00', end: '21:00', title: '吏묓쉶 1', leader: '�대뱷吏� 紐⑹궗 (Levistance)', section: 4, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '1-6', start: '21:00', end: '22:00', title: '留롮� 臾쇱냼由�', leader: '�꾩껜', section: 4, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '1-7', start: '22:00', end: '24:00', title: '�꾨━�ㅽ���', leader: '�먯떊��', section: 4, user1Role: 'none', user2Role: 'none', note: '' }
+                    { id: '1-1', start: '10:00', end: '10:30', title: '스텝 대성전 집합', leader: '전체', section: 2, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '1-2', start: '14:00', end: '16:00', title: '말씀예배', leader: '조미선', section: 3, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '1-3', start: '16:00', end: '18:00', title: 'Harp&Bowl', leader: '신동철', section: 3, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '1-4', start: '18:00', end: '19:00', title: '디보션', leader: '정예은, 한정훈', section: 4, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '1-5', start: '19:00', end: '21:00', title: '집회 1', leader: '이득진 목사 (Levistance)', section: 4, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '1-6', start: '21:00', end: '22:00', title: '많은 물소리', leader: '전체', section: 4, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '1-7', start: '22:00', end: '24:00', title: '프리스타일', leader: '원신호', section: 4, user1Role: 'none', user2Role: 'none', note: '' }
                 ]
             },
             {
-                id: 'day2', date: '2026-08-15', title: '8/15(��)', theme: '�쒕Ъ (�덉뼵�� �됱쐞�� �쒕┝)',
+                id: 'day2', date: '2026-08-15', title: '8/15(토)', theme: '제물 (예언적 행위와 드림)',
                 events: [
-                    { id: '2-1', start: '00:00', end: '02:00', title: '以묐낫�덈같', leader: '�μ븘由�', section: 1, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '2-2', start: '02:00', end: '03:00', title: '���붾낫', leader: '瑜섎끂��', section: 1, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '2-3', start: '03:00', end: '05:00', title: 'Harp&Bowl', leader: '媛뺤뿰��', section: 1, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '2-4', start: '05:00', end: '06:00', title: '吏묓쉶 2', leader: '源�紐⑥꽭 紐⑹궗', section: 1, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '2-5', start: '06:00', end: '08:00', title: '留먯��덈같', leader: '�몄궛TCC', section: 2, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '2-6', start: '08:00', end: '09:00', title: '�붾낫��', leader: '湲몃굹��', section: 2, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '2-7', start: '09:00', end: '11:00', title: '吏묓쉶 3', leader: '�댁꽦�� 蹂��몄궗 (源��멸린)', section: 2, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '2-8', start: '11:00', end: '12:00', title: '留롮� 臾쇱냼由�', leader: '�꾩껜', section: 2, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '2-9', start: '12:00', end: '14:00', title: '以묐낫�덈같', leader: '�뺤삁��', section: 3, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '2-10', start: '14:00', end: '16:00', title: '留먯��덈같', leader: 'Levistance', section: 3, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '2-11', start: '16:00', end: '18:00', title: 'Harp&Bowl', leader: '�댁긽', section: 3, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '2-12', start: '18:00', end: '19:00', title: '�붾낫��', leader: '���붿뒪�꾨�', section: 4, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '2-13', start: '19:00', end: '21:00', title: '吏묓쉶 4', leader: '諛뺥샇醫� 紐⑹궗 (�먯떊��)', section: 4, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '2-14', start: '21:00', end: '22:00', title: '留롮� 臾쇱냼由�', leader: '�꾩껜', section: 4, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '2-15', start: '22:00', end: '24:00', title: '�꾨━�ㅽ���', leader: '源��멸린', section: 4, user1Role: 'none', user2Role: 'none', note: '' }
+                    { id: '2-1', start: '00:00', end: '02:00', title: '중보예배', leader: '장아름', section: 1, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '2-2', start: '02:00', end: '03:00', title: '팀디보', leader: '류노아', section: 1, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '2-3', start: '03:00', end: '05:00', title: 'Harp&Bowl', leader: '강연서', section: 1, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '2-4', start: '05:00', end: '06:00', title: '집회 2', leader: '김모세 목사', section: 1, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '2-5', start: '06:00', end: '08:00', title: '말씀예배', leader: '울산TCC', section: 2, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '2-6', start: '08:00', end: '09:00', title: '디보션', leader: '길나율', section: 2, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '2-7', start: '09:00', end: '11:00', title: '집회 3', leader: '이성희 변호사 (김인기)', section: 2, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '2-8', start: '11:00', end: '12:00', title: '많은 물소리', leader: '전체', section: 2, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '2-9', start: '12:00', end: '14:00', title: '중보예배', leader: '정예은', section: 3, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '2-10', start: '14:00', end: '16:00', title: '말씀예배', leader: 'Levistance', section: 3, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '2-11', start: '16:00', end: '18:00', title: 'Harp&Bowl', leader: '이상', section: 3, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '2-12', start: '18:00', end: '19:00', title: '디보션', leader: '대디스아미', section: 4, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '2-13', start: '19:00', end: '21:00', title: '집회 4', leader: '박호종 목사 (원신호)', section: 4, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '2-14', start: '21:00', end: '22:00', title: '많은 물소리', leader: '전체', section: 4, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '2-15', start: '22:00', end: '24:00', title: '프리스타일', leader: '김인기', section: 4, user1Role: 'none', user2Role: 'none', note: '' }
                 ]
             },
             {
-                id: 'day3', date: '2026-08-16', title: '8/16(��)', theme: '遺� �꾪븿',
+                id: 'day3', date: '2026-08-16', title: '8/16(일)', theme: '불 임함',
                 events: [
-                    { id: '3-1', start: '00:00', end: '02:00', title: '以묐낫�덈같', leader: '源�吏���', section: 1, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '3-2', start: '02:00', end: '03:00', title: '���붾낫', leader: '�좏씗��', section: 1, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '3-1', start: '00:00', end: '02:00', title: '중보예배', leader: '김지선', section: 1, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '3-2', start: '02:00', end: '03:00', title: '팀디보', leader: '신희양', section: 1, user1Role: 'none', user2Role: 'none', note: '' },
                     { id: '3-3', start: '03:00', end: '05:00', title: 'Harp&Bowl', leader: 'Levistance', section: 1, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '3-4', start: '05:00', end: '06:00', title: '吏묓쉶 5', leader: '源��섍낀 紐⑹궗', section: 1, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '3-5', start: '06:00', end: '08:00', title: '留먯��덈같', leader: '�⑹삁吏�', section: 2, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '3-6', start: '08:00', end: '10:00', title: '以묐낫�덈같', leader: '�대낫諛�', section: 2, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '3-7', start: '10:00', end: '11:00', title: '�붾낫��', leader: '源�吏���', section: 2, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '3-8', start: '11:00', end: '13:00', title: '吏묓쉶 6', leader: '諛뺥샇醫� 紐⑹궗 (�덉궗��)', section: 2, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '3-9', start: '13:00', end: '14:00', title: '留롮� 臾쇱냼由�', leader: '�꾩껜', section: 3, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '3-10', start: '14:00', end: '16:00', title: '留먯��덈같', leader: '理쒖���', section: 3, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '3-11', start: '16:00', end: '18:00', title: 'Harp&Bowl', leader: '諛뺤냼��', section: 3, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '3-12', start: '18:00', end: '19:00', title: '�붾낫��', leader: '�먯떊��', section: 4, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '3-13', start: '19:00', end: '21:00', title: '吏묓쉶 7', leader: '諛뺥븳�� 紐⑹궗 (�좏씗��)', section: 4, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '3-14', start: '21:00', end: '22:00', title: '留롮� 臾쇱냼由�', leader: '�꾩껜', section: 4, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '3-15', start: '22:00', end: '24:00', title: '�꾨━�ㅽ���', leader: '諛뺤쭊沅�', section: 4, user1Role: 'none', user2Role: 'none', note: '' }
+                    { id: '3-4', start: '05:00', end: '06:00', title: '집회 5', leader: '김수곤 목사', section: 1, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '3-5', start: '06:00', end: '08:00', title: '말씀예배', leader: '황예진', section: 2, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '3-6', start: '08:00', end: '10:00', title: '중보예배', leader: '이보배', section: 2, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '3-7', start: '10:00', end: '11:00', title: '디보션', leader: '김지후', section: 2, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '3-8', start: '11:00', end: '13:00', title: '집회 6', leader: '박호종 목사 (예사연)', section: 2, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '3-9', start: '13:00', end: '14:00', title: '많은 물소리', leader: '전체', section: 3, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '3-10', start: '14:00', end: '16:00', title: '말씀예배', leader: '최지영', section: 3, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '3-11', start: '16:00', end: '18:00', title: 'Harp&Bowl', leader: '박소현', section: 3, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '3-12', start: '18:00', end: '19:00', title: '디보션', leader: '원신호', section: 4, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '3-13', start: '19:00', end: '21:00', title: '집회 7', leader: '박한수 목사 (신희양)', section: 4, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '3-14', start: '21:00', end: '22:00', title: '많은 물소리', leader: '전체', section: 4, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '3-15', start: '22:00', end: '24:00', title: '프리스타일', leader: '박진권', section: 4, user1Role: 'none', user2Role: 'none', note: '' }
                 ]
             },
             {
-                id: 'day4', date: '2026-08-17', title: '8/17(��)', theme: '�밸━',
+                id: 'day4', date: '2026-08-17', title: '8/17(월)', theme: '승리',
                 events: [
-                    { id: '4-1', start: '00:00', end: '02:00', title: '以묐낫�덈같', leader: '由щ튃�쇳꽣泥섏튂', section: 1, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '4-2', start: '02:00', end: '03:00', title: '���붾낫', leader: '�댁긽', section: 1, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '4-3', start: '03:00', end: '05:00', title: 'Harp&Bowl', leader: '�댄쁽吏�', section: 1, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '4-4', start: '05:00', end: '06:00', title: '吏묓쉶 8', leader: '李⑥꽦�� 紐⑹궗', section: 1, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '4-5', start: '06:00', end: '08:00', title: '留먯��덈같', leader: '�뺤삁��', section: 2, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '4-6', start: '08:00', end: '10:00', title: '以묐낫�덈같', leader: '�댁삁��, �쒗씗��', section: 2, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '4-7', start: '10:00', end: '14:00', title: '吏묓쉶 9', leader: '諛뺤쭊�� 紐⑹궗 / 諛뺥샇醫� 紐⑹궗', section: 2, user1Role: 'none', user2Role: 'none', note: '' },
-                    { id: '4-8', start: '14:00', end: '18:00', title: '�뺣━ 諛� �댁궛', leader: '�꾩껜', section: 3, user1Role: 'none', user2Role: 'none', note: '' }
+                    { id: '4-1', start: '00:00', end: '02:00', title: '중보예배', leader: '리빙센터처치', section: 1, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '4-2', start: '02:00', end: '03:00', title: '팀디보', leader: '이상', section: 1, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '4-3', start: '03:00', end: '05:00', title: 'Harp&Bowl', leader: '이현진', section: 1, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '4-4', start: '05:00', end: '06:00', title: '집회 8', leader: '차성헌 목사', section: 1, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '4-5', start: '06:00', end: '08:00', title: '말씀예배', leader: '정예은', section: 2, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '4-6', start: '08:00', end: '10:00', title: '중보예배', leader: '이예은, 한희운', section: 2, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '4-7', start: '10:00', end: '14:00', title: '집회 9', leader: '박진혁 목사 / 박호종 목사', section: 2, user1Role: 'none', user2Role: 'none', note: '' },
+                    { id: '4-8', start: '14:00', end: '18:00', title: '정리 및 해산', leader: '전체', section: 3, user1Role: 'none', user2Role: 'none', note: '' }
                 ]
             }
         ];
@@ -491,7 +491,7 @@
         let appState = {
             mode: 1,
             users: [
-                { name: '', icon: '�뫅', color: 'lime' }
+                { name: '', icon: '👨', color: 'lime' }
             ],
             isSetupComplete: false
         };
@@ -596,20 +596,20 @@
             const closeBtn = document.getElementById('wizardCloseBtn');
             const importBtn = document.getElementById('wizardImportBtn');
             
-            // �섏쁺/�명똿 留덈쾿�� 吏꾩엯 �� ���쒕낫�� 媛뺤젣 �④�
+            // 환영/세팅 마법사 진입 시 대시보드 강제 숨김
             document.getElementById('dashboardContainer').classList.add('hidden');
             
             if (isEdit) {
-                titleEl.innerHTML = '�뺣낫 �섏젙 <i class="fa-solid fa-pen ml-1"></i>';
-                descEl.textContent = '�대쫫, �꾩씠肄�, �뚮쭏 �됱긽�� 蹂�寃쏀븷 �� �덉뒿�덈떎.';
-                btnEl.innerHTML = '���ν븯湲� <i class="fa-solid fa-check"></i>';
+                titleEl.innerHTML = '정보 수정 <i class="fa-solid fa-pen ml-1"></i>';
+                descEl.textContent = '이름, 아이콘, 테마 색상을 변경할 수 있습니다.';
+                btnEl.innerHTML = '저장하기 <i class="fa-solid fa-check"></i>';
                 closeBtn.classList.remove('hidden');
                 importBtn.classList.add('hidden');
                 document.querySelector(`input[name="wizardMode"][value="${appState.mode}"]`).checked = true;
             } else {
-                titleEl.innerHTML = '�섏쁺�⑸땲��! �몝';
-                descEl.textContent = '�섎쭔�� David Tent �쇱젙�쒕� 留뚮뱾�대낫�몄슂.';
-                btnEl.innerHTML = '�ㅼ쓬: �� �쇱젙�� 留뚮뱾湲� <i class="fa-solid fa-arrow-right"></i>';
+                titleEl.innerHTML = '환영합니다! 👋';
+                descEl.textContent = '나만의 David Tent 일정표를 만들어보세요.';
+                btnEl.innerHTML = '다음: 내 일정표 만들기 <i class="fa-solid fa-arrow-right"></i>';
                 closeBtn.classList.add('hidden');
                 importBtn.classList.remove('hidden');
                 document.querySelector(`input[name="wizardMode"][value="1"]`).checked = true;
@@ -630,16 +630,16 @@
                     <div class="bg-slate-50 dark:bg-gray-900 rounded-2xl p-4 border border-slate-200 dark:border-gray-800">
                         <h3 class="font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
                             <span class="bg-slate-200 dark:bg-gray-700 text-slate-600 dark:text-gray-300 w-5 h-5 rounded-full flex items-center justify-center text-[10px]">${index}</span>
-                            ${defaultNameLabel} �뺣낫
+                            ${defaultNameLabel} 정보
                         </h3>
                         
                         <div class="mb-3">
-                            <label class="block text-[11px] font-bold text-slate-500 dark:text-gray-400 mb-1.5">�대쫫 (�먮뒗 �됰꽕��)</label>
-                            <input type="text" id="wizardName${index}" value="${defaultName}" placeholder="��: 諛뷀겕由�" class="w-full bg-white dark:bg-black border border-slate-300 dark:border-gray-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-amber-500 dark:focus:border-amber-500 transition-colors">
+                            <label class="block text-[11px] font-bold text-slate-500 dark:text-gray-400 mb-1.5">이름 (또는 닉네임)</label>
+                            <input type="text" id="wizardName${index}" value="${defaultName}" placeholder="예: 바크리" class="w-full bg-white dark:bg-black border border-slate-300 dark:border-gray-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-amber-500 dark:focus:border-amber-500 transition-colors">
                         </div>
 
                         <div class="mb-3">
-                            <label class="block text-[11px] font-bold text-slate-500 dark:text-gray-400 mb-1.5">�꾩씠肄� �좏깮</label>
+                            <label class="block text-[11px] font-bold text-slate-500 dark:text-gray-400 mb-1.5">아이콘 선택</label>
                             <div class="flex gap-1.5 flex-wrap">
                 `;
                 
@@ -652,7 +652,7 @@
                     `;
                 });
 
-                html += `</div></div><div><label class="block text-[11px] font-bold text-slate-500 dark:text-gray-400 mb-1.5">�뚮쭏 �됱긽</label><div class="flex gap-2 flex-wrap">`;
+                html += `</div></div><div><label class="block text-[11px] font-bold text-slate-500 dark:text-gray-400 mb-1.5">테마 색상</label><div class="flex gap-2 flex-wrap">`;
 
                 colorPalette.forEach(color => {
                     html += `
@@ -669,12 +669,12 @@
                 return html;
             };
 
-            const u1 = appState.users && appState.users.length > 0 ? appState.users[0] : { name: '', icon: '�뫅', color: 'lime' };
-            container.innerHTML += createProfileBlock(1, u1.icon, u1.color, u1.name, '��');
+            const u1 = appState.users && appState.users.length > 0 ? appState.users[0] : { name: '', icon: '👨', color: 'lime' };
+            container.innerHTML += createProfileBlock(1, u1.icon, u1.color, u1.name, '내');
             
             if (mode === '2') {
-                const u2 = appState.users && appState.users.length > 1 ? appState.users[1] : { name: '', icon: '�뫆', color: 'pink' };
-                container.innerHTML += createProfileBlock(2, u2.icon, u2.color, u2.name, '�뚰듃��');
+                const u2 = appState.users && appState.users.length > 1 ? appState.users[1] : { name: '', icon: '👩', color: 'pink' };
+                container.innerHTML += createProfileBlock(2, u2.icon, u2.color, u2.name, '파트너');
             }
             
             document.querySelectorAll('.color-radio').forEach(radio => {
@@ -703,7 +703,7 @@
         function startScheduleSetup() {
             const mode = parseInt(document.querySelector('input[name="wizardMode"]:checked').value);
             
-            const name1 = document.getElementById('wizardName1').value.trim() || '�ъ슜��1';
+            const name1 = document.getElementById('wizardName1').value.trim() || '사용자1';
             const icon1 = document.querySelector('input[name="wizardIcon1"]:checked').value;
             const color1 = document.querySelector('input[name="wizardColor1"]:checked').value;
             
@@ -711,7 +711,7 @@
             appState.users = [{ name: name1, icon: icon1, color: color1 }];
             
             if (mode === 2) {
-                const name2 = document.getElementById('wizardName2').value.trim() || '�ъ슜��2';
+                const name2 = document.getElementById('wizardName2').value.trim() || '사용자2';
                 const icon2 = document.querySelector('input[name="wizardIcon2"]:checked').value;
                 const color2 = document.querySelector('input[name="wizardColor2"]:checked').value;
                 appState.users.push({ name: name2, icon: icon2, color: color2 });
@@ -805,16 +805,16 @@
             textarea.select();
             try {
                 document.execCommand('copy');
-                alert("怨듭쑀 �띿뒪�� 肄붾뱶媛� �대┰蹂대뱶�� 蹂듭궗�섏뿀�듬땲��! �뱥\n移댁뭅�ㅽ넚 梨꾪똿李쎌뿉 洹몃�濡� 遺숈뿬�ｌ뼱(Ctrl+V) �뚰듃�덉뿉寃� �꾨떖�댁＜�몄슂.");
+                alert("공유 텍스트 코드가 클립보드에 복사되었습니다! 📋\n카카오톡 채팅창에 그대로 붙여넣어(Ctrl+V) 파트너에게 전달해주세요.");
             } catch (err) {
-                prompt("�꾨옒 肄붾뱶瑜� 蹂듭궗�댁＜�몄슂:", compressed);
+                prompt("아래 코드를 복사해주세요:", compressed);
             }
             document.body.removeChild(textarea);
             closeSettingsModal();
         }
 
         function importConfigCode() {
-            const code = prompt("�뚰듃�덉뿉寃� 諛쏆� 怨듭쑀 �띿뒪�� 肄붾뱶瑜� �낅젰(遺숈뿬�ｊ린)�댁＜�몄슂:");
+            const code = prompt("파트너에게 받은 공유 텍스트 코드를 입력(붙여넣기)해주세요:");
             if (!code) return;
             try {
                 const cleanedCode = code.trim();
@@ -841,16 +841,16 @@
                 localStorage.setItem('dt_appState_v7', JSON.stringify(appState));
                 localStorage.setItem('dt_schedule_v7', JSON.stringify(scheduleData));
                 
-                alert("�뚰듃�덉쓽 �명똿怨� �쇱젙�� �깃났�곸쑝濡� �숆린�붾릺�덉뒿�덈떎! ��");
+                alert("파트너의 세팅과 일정이 성공적으로 동기화되었습니다! ✨");
                 location.reload();
             } catch(e) {
-                alert("肄붾뱶媛� �щ컮瑜댁� �딄굅�� �먯긽�섏뿀�듬땲��. �ㅼ떆 �뺤씤�댁＜�몄슂.");
+                alert("코드가 올바르지 않거나 손상되었습니다. 다시 확인해주세요.");
             }
             closeSettingsModal();
         }
 
         function confirmReset() {
-            if(confirm("紐⑤뱺 �ㅼ젙怨� �쇱젙�� 珥덇린�붾맗�덈떎. 泥섏쓬遺��� �ㅼ떆 �명똿�섏떆寃좎뒿�덇퉴?")) {
+            if(confirm("모든 설정과 일정이 초기화됩니다. 처음부터 다시 세팅하시겠습니까?")) {
                 localStorage.removeItem('dt_appState_v7');
                 localStorage.removeItem('dt_schedule_v7');
                 location.reload();
@@ -908,7 +908,7 @@
                 return btn;
             };
 
-            tabsContainer.appendChild(createTabBtn('�꾩껜�쇱젙', '<i class="fa-solid fa-list-ul text-[9px] mr-0.5"></i>', currentView === 'table', () => switchView('table')));
+            tabsContainer.appendChild(createTabBtn('전체일정', '<i class="fa-solid fa-list-ul text-[9px] mr-0.5"></i>', currentView === 'table', () => switchView('table')));
             
             const sep1 = document.createElement('div');
             sep1.className = "w-px h-3.5 bg-slate-300 dark:bg-gray-700 shrink-0";
@@ -926,7 +926,7 @@
             sep2.className = "w-px h-3.5 bg-slate-300 dark:bg-gray-700 shrink-0";
             tabsContainer.appendChild(sep2);
 
-            tabsContainer.appendChild(createTabBtn('�좏깮媛뺤쓽', '<i class="fa-solid fa-book-open text-[9px] mr-0.5"></i>', currentView === 'electives', () => switchView('electives')));
+            tabsContainer.appendChild(createTabBtn('선택강의', '<i class="fa-solid fa-book-open text-[9px] mr-0.5"></i>', currentView === 'electives', () => switchView('electives')));
         }
 
         function renderTable() {
@@ -939,7 +939,7 @@
 
             const legendContainer = document.getElementById('table-legend');
             legendContainer.innerHTML = '';
-            if (is2P) legendContainer.innerHTML += `<span class="flex items-center gap-1"><div class="w-2.5 h-2.5 bg-amber-400 rounded-sm"></div>�④퍡</span>`;
+            if (is2P) legendContainer.innerHTML += `<span class="flex items-center gap-1"><div class="w-2.5 h-2.5 bg-amber-400 rounded-sm"></div>함께</span>`;
             legendContainer.innerHTML += `<span class="flex items-center gap-1"><div class="w-2.5 h-2.5 rounded-sm" style="background-color: ${u1Color.code}"></div>${u1.name}</span>`;
             if (is2P) legendContainer.innerHTML += `<span class="flex items-center gap-1"><div class="w-2.5 h-2.5 rounded-sm" style="background-color: ${u2Color.code}"></div>${u2.name}</span>`;
 
@@ -954,8 +954,8 @@
                             </th>
                         </tr>
                         <tr class="bg-white/90 dark:bg-gray-900/90 text-slate-500 dark:text-gray-400 border-b border-slate-200 dark:border-gray-700 sticky top-[45px] z-10 backdrop-blur-sm">
-                            <th class="px-2 py-2 font-medium w-16">�쒓컙</th>
-                            <th class="px-2 py-2 font-medium w-full min-w-[110px]">�쇱젙</th>
+                            <th class="px-2 py-2 font-medium w-16">시간</th>
+                            <th class="px-2 py-2 font-medium w-full min-w-[110px]">일정</th>
                             <th class="px-1 py-2 font-medium text-center w-12 ${u1Color.tailwindText}">${u1.name}</th>
                             ${is2P ? `<th class="px-1 py-2 font-medium text-center w-12 ${u2Color.tailwindText}">${u2.name}</th>` : ''}
                         </tr>
@@ -1000,15 +1000,15 @@
             const bar = document.getElementById('filterBar');
             if(appState.mode === 1) {
                 bar.innerHTML = `
-                    <button onclick="setFilter('all')" id="filter-all" class="filter-btn px-4 py-1.5 rounded-full text-[11px] font-bold transition-all whitespace-nowrap">�꾩껜 �쇱젙</button>
-                    <button onclick="setFilter('u1')" id="filter-u1" class="filter-btn px-4 py-1.5 rounded-full text-[11px] font-bold transition-all whitespace-nowrap">�� �쇱젙留�</button>
+                    <button onclick="setFilter('all')" id="filter-all" class="filter-btn px-4 py-1.5 rounded-full text-[11px] font-bold transition-all whitespace-nowrap">전체 일정</button>
+                    <button onclick="setFilter('u1')" id="filter-u1" class="filter-btn px-4 py-1.5 rounded-full text-[11px] font-bold transition-all whitespace-nowrap">내 일정만</button>
                 `;
             } else {
                 bar.innerHTML = `
-                    <button onclick="setFilter('all')" id="filter-all" class="filter-btn px-4 py-1.5 rounded-full text-[11px] font-bold transition-all whitespace-nowrap">�꾩껜</button>
+                    <button onclick="setFilter('all')" id="filter-all" class="filter-btn px-4 py-1.5 rounded-full text-[11px] font-bold transition-all whitespace-nowrap">전체</button>
                     <button onclick="setFilter('u1')" id="filter-u1" class="filter-btn px-4 py-1.5 rounded-full text-[11px] font-bold transition-all whitespace-nowrap">${appState.users[0].name}</button>
                     <button onclick="setFilter('u2')" id="filter-u2" class="filter-btn px-4 py-1.5 rounded-full text-[11px] font-bold transition-all whitespace-nowrap">${appState.users[1].name}</button>
-                    <button onclick="setFilter('together')" id="filter-together" class="filter-btn px-4 py-1.5 rounded-full text-[11px] font-bold transition-all whitespace-nowrap">�④퍡</button>
+                    <button onclick="setFilter('together')" id="filter-together" class="filter-btn px-4 py-1.5 rounded-full text-[11px] font-bold transition-all whitespace-nowrap">함께</button>
                 `;
             }
             setFilter(isSettingUp ? 'all' : (appState.mode === 1 ? 'u1' : 'all'));
@@ -1063,14 +1063,14 @@
                 container.innerHTML = `
                     <div class="text-center py-12 text-slate-400 dark:text-gray-500 flex flex-col items-center">
                         <i class="fa-solid fa-mug-hot text-3xl mb-3 text-slate-300 dark:text-gray-600"></i>
-                        <p class="font-bold">�대떦 議곌굔�� 留욌뒗 �쇱젙�� �놁뒿�덈떎</p>
-                        <p class="text-xs mt-1">�� �щŉ 異⑹쟾�섏꽭��!</p>
+                        <p class="font-bold">해당 조건에 맞는 일정이 없습니다</p>
+                        <p class="text-xs mt-1">푹 쉬며 충전하세요!</p>
                     </div>
                 `;
                 return;
             }
 
-            const getSecTitle = (sec) => ["�ъ빞~�덈꼍", "�ㅼ쟾", "�ㅽ썑", "����~�ъ빞"][sec-1];
+            const getSecTitle = (sec) => ["심야~새벽", "오전", "오후", "저녁~심야"][sec-1];
 
             [1, 2, 3, 4].forEach(secNum => {
                 const secEvents = sections[secNum];
@@ -1128,7 +1128,7 @@
 
         function renderElectives() {
             const container = document.getElementById('electivesContainer');
-            let html = '<div class="mb-6"><h2 class="text-lg font-extrabold text-slate-800 dark:text-white flex items-center gap-2"><i class="fa-solid fa-book-open text-amber-500"></i> �좏깮 媛뺤쓽 �덈궡</h2><p class="text-xs text-slate-500 dark:text-gray-400 mt-1">�μ냼: �щ옉�섏쭛 以묒븰��</p></div>';
+            let html = '<div class="mb-6"><h2 class="text-lg font-extrabold text-slate-800 dark:text-white flex items-center gap-2"><i class="fa-solid fa-book-open text-amber-500"></i> 선택 강의 안내</h2><p class="text-xs text-slate-500 dark:text-gray-400 mt-1">장소: 사랑의집 중앙홀</p></div>';
             
             electivesData.forEach(slot => {
                 html += `
@@ -1222,7 +1222,7 @@
             };
 
             if (currentEvent) {
-                ctxEl.textContent = "�꾩옱 吏꾪뻾以�";
+                ctxEl.textContent = "현재 진행중";
                 ctxEl.className = "text-[11px] font-bold text-amber-600 dark:text-amber-400";
                 pingEl.style.display = 'flex';
                 titleEl.textContent = currentEvent.title;
@@ -1232,20 +1232,20 @@
                 if (appState.mode === 2) roleBoxContainer.innerHTML += createRoleBox(appState.users[1], 'user2Role', currentEvent);
 
             } else if (nextEvent) {
-                ctxEl.textContent = "��湲곗쨷 (�댁떇)";
+                ctxEl.textContent = "대기중 (휴식)";
                 ctxEl.className = "text-[11px] font-bold text-slate-500 dark:text-gray-400";
                 pingEl.style.display = 'none';
-                titleEl.textContent = "�먯쑀 �쒓컙 / �댁떇";
-                leaderEl.textContent = "異⑹쟾�� �쒓컙�� 媛�吏��몄슂!";
+                titleEl.textContent = "자유 시간 / 휴식";
+                leaderEl.textContent = "충전의 시간을 가지세요!";
                 
                 roleBoxContainer.innerHTML += createRoleBox(appState.users[0], 'user1Role', null);
                 if (appState.mode === 2) roleBoxContainer.innerHTML += createRoleBox(appState.users[1], 'user2Role', null);
             } else {
-                ctxEl.textContent = "�쇱젙 醫낅즺";
+                ctxEl.textContent = "일정 종료";
                 ctxEl.className = "text-[11px] font-bold text-slate-500 dark:text-gray-400";
                 pingEl.style.display = 'none';
-                titleEl.textContent = "紐⑤뱺 �쇱젙�� 醫낅즺�섏뿀�듬땲��";
-                leaderEl.textContent = "�섍퀬�섏뀲�듬땲��!";
+                titleEl.textContent = "모든 일정이 종료되었습니다";
+                leaderEl.textContent = "수고하셨습니다!";
                 
                 roleBoxContainer.innerHTML += createRoleBox(appState.users[0], 'user1Role', null);
                 if (appState.mode === 2) roleBoxContainer.innerHTML += createRoleBox(appState.users[1], 'user2Role', null);
@@ -1257,7 +1257,7 @@
                 nextEventEl.textContent = `${nextEvent.title} (${nextEvent.leader})`;
                 nextTimeEl.textContent = nextEvent.start;
             } else {
-                nextEventEl.textContent = "�ㅼ쓬 �쇱젙�� �놁뒿�덈떎.";
+                nextEventEl.textContent = "다음 일정이 없습니다.";
                 nextTimeEl.textContent = "-";
             }
         }
@@ -1278,7 +1278,7 @@
                 const c = colorPalette.find(p => p.id === user.color);
                 let html = `
                     <div class="mb-2">
-                        <label class="block text-sm font-bold ${c.tailwindText} mb-2">${user.icon} ${user.name} ��븷</label>
+                        <label class="block text-sm font-bold ${c.tailwindText} mb-2">${user.icon} ${user.name} 역할</label>
                         <div class="grid grid-cols-4 gap-2">
                 `;
                 
