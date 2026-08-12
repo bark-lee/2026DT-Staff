@@ -115,36 +115,35 @@
         <div class="flex px-2 pb-2 gap-1 items-center justify-between w-full" id="dayTabs"></div>
     </header>
 
-    <div class="px-4 py-3" id="dashboardContainer">
-        <div class="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-2xl p-3 shadow-md border border-slate-200 dark:border-gray-700 relative overflow-hidden transition-colors">
-            
-            <div class="flex justify-between items-center mb-2">
-                <div class="flex items-center gap-2">
-                    <div class="flex items-center gap-1.5">
-                        <span class="relative flex h-2 w-2" id="dashPingIndicator">
-                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                          <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
-                        </span>
-                        <h2 class="text-[11px] font-bold text-amber-600 dark:text-amber-400" id="dashTimeContext">현재 진행중</h2>
-                    </div>
-                    <div class="text-[10px] text-slate-400 dark:text-gray-400 font-mono" id="dashCurrentTime">--/-- --:--</div>
+    <div class="px-4 pt-3 pb-2" id="dashboardContainer">
+        <div class="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-2xl p-4 shadow-md border border-slate-200 dark:border-gray-700 relative overflow-hidden transition-colors">
+            <div class="absolute -right-8 -top-10 w-28 h-28 rounded-full bg-amber-400/10 dark:bg-amber-400/5 pointer-events-none"></div>
+
+            <div class="relative flex justify-between items-start gap-3 mb-3">
+                <div class="flex items-center gap-2 min-w-0">
+                    <span class="relative flex h-2.5 w-2.5 shrink-0" id="dashPingIndicator">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
+                    </span>
+                    <h2 class="text-[12px] font-extrabold text-amber-600 dark:text-amber-400" id="dashTimeContext">현재 진행중</h2>
+                    <span id="dashCountdown" class="text-[10px] font-bold text-slate-500 dark:text-gray-400 bg-slate-100 dark:bg-gray-700/70 px-2 py-0.5 rounded-full truncate">-</span>
                 </div>
-            </div>
-            
-            <div class="flex justify-between items-center mb-3 gap-2">
-                <div class="flex-1 min-w-0">
-                    <div id="dashEventTitle" class="text-[15px] font-bold text-slate-900 dark:text-white mb-0.5 truncate leading-tight">-</div>
-                    <div id="dashEventLeader" class="text-[11px] text-slate-500 dark:text-gray-400 truncate">-</div>
-                </div>
-                <div class="flex gap-1.5 shrink-0" id="dashboardRolesBox"></div>
+                <div class="text-[10px] text-slate-400 dark:text-gray-400 font-mono shrink-0 pt-0.5" id="dashCurrentTime">--/-- --:--</div>
             </div>
 
-            <div class="flex justify-between items-center bg-slate-50 dark:bg-gray-900/60 rounded-lg px-2.5 py-1.5 border border-slate-100 dark:border-gray-700/50 transition-colors">
-                <div class="flex items-center gap-2 overflow-hidden">
-                    <div class="text-[9px] bg-slate-200 text-slate-600 dark:bg-amber-500/20 dark:text-amber-400 px-1.5 py-0.5 rounded font-bold shrink-0">NEXT</div>
-                    <div id="dashNextEvent" class="text-[11px] text-slate-600 dark:text-gray-300 font-medium truncate">다음 일정</div>
+            <div class="relative min-w-0">
+                <div id="dashEventTitle" class="text-[17px] font-extrabold text-slate-900 dark:text-white leading-snug break-keep">-</div>
+                <div id="dashEventLeader" class="text-[11px] text-slate-500 dark:text-gray-400 mt-1 leading-relaxed break-keep">-</div>
+            </div>
+
+            <div class="relative flex flex-wrap gap-2 mt-3" id="dashboardRolesBox"></div>
+
+            <div class="relative flex justify-between items-center gap-2 bg-slate-50 dark:bg-gray-900/60 rounded-xl px-3 py-2 mt-3 border border-slate-100 dark:border-gray-700/50 transition-colors">
+                <div class="flex items-center gap-2 min-w-0">
+                    <div id="dashNextLabel" class="text-[9px] bg-slate-200 text-slate-600 dark:bg-amber-500/20 dark:text-amber-400 px-1.5 py-0.5 rounded font-bold shrink-0">NEXT</div>
+                    <div id="dashNextEvent" class="text-[11px] text-slate-600 dark:text-gray-300 font-semibold truncate">다음 일정</div>
                 </div>
-                <div id="dashNextTime" class="text-[10px] font-mono font-medium text-slate-400 dark:text-gray-500 shrink-0 ml-2">--:--</div>
+                <div id="dashNextTime" class="text-[10px] font-mono font-semibold text-slate-400 dark:text-gray-500 shrink-0">--:--</div>
             </div>
         </div>
     </div>
@@ -488,6 +487,84 @@
             }
         ];
 
+        const STORAGE_KEYS = {
+            appState: 'dt_appState_v7',
+            schedule: 'dt_schedule_v7',
+            contentVersion: 'dt_content_version'
+        };
+        const CONTENT_VERSION = 8;
+
+        function safeParseJSON(value) {
+            if (!value) return null;
+            try {
+                return JSON.parse(value);
+            } catch (error) {
+                return null;
+            }
+        }
+
+        function hasBrokenText(value) {
+            return typeof value === 'string' && /\uFFFD|ï¿½|Ã|Â|ì|ë|ê/.test(value);
+        }
+
+        function sanitizeStoredState(storedState) {
+            const mode = storedState?.mode === 2 ? 2 : 1;
+            const defaults = [
+                { name: '사용자 1', icon: '👨', color: 'lime' },
+                { name: '사용자 2', icon: '👩', color: 'pink' }
+            ];
+            const users = [];
+
+            for (let i = 0; i < mode; i++) {
+                const savedUser = storedState?.users?.[i] || {};
+                const fallback = defaults[i];
+                const savedName = typeof savedUser.name === 'string' ? savedUser.name.trim() : '';
+                const savedIcon = typeof savedUser.icon === 'string' ? savedUser.icon : '';
+                const colorExists = colorPalette.some(color => color.id === savedUser.color);
+
+                users.push({
+                    name: savedName && !hasBrokenText(savedName) ? savedName : fallback.name,
+                    icon: savedIcon && !hasBrokenText(savedIcon) ? savedIcon : fallback.icon,
+                    color: colorExists ? savedUser.color : fallback.color
+                });
+            }
+
+            return {
+                mode,
+                users,
+                isSetupComplete: Boolean(storedState?.isSetupComplete)
+            };
+        }
+
+        function mergeScheduleWithLatest(storedSchedule) {
+            const previousEvents = new Map();
+
+            if (Array.isArray(storedSchedule)) {
+                storedSchedule.forEach(day => {
+                    if (!Array.isArray(day?.events)) return;
+                    day.events.forEach(event => {
+                        if (event?.id) previousEvents.set(event.id, event);
+                    });
+                });
+            }
+
+            const latestSchedule = JSON.parse(JSON.stringify(initialSchedule));
+            latestSchedule.forEach(day => {
+                day.events.forEach(event => {
+                    const previous = previousEvents.get(event.id);
+                    if (!previous) return;
+
+                    if (roleMap[previous.user1Role]) event.user1Role = previous.user1Role;
+                    if (roleMap[previous.user2Role]) event.user2Role = previous.user2Role;
+                    if (typeof previous.note === 'string' && !hasBrokenText(previous.note)) {
+                        event.note = previous.note;
+                    }
+                });
+            });
+
+            return latestSchedule;
+        }
+
         let appState = {
             mode: 1,
             users: [
@@ -507,8 +584,8 @@
         function initApp() {
             renderElectives();
 
-            const storedState = localStorage.getItem('dt_appState_v7');
-            const storedSchedule = localStorage.getItem('dt_schedule_v7');
+            const storedState = safeParseJSON(localStorage.getItem(STORAGE_KEYS.appState));
+            const storedSchedule = safeParseJSON(localStorage.getItem(STORAGE_KEYS.schedule));
             
             if (!storedState) {
                 scheduleData = JSON.parse(JSON.stringify(initialSchedule));
@@ -516,8 +593,12 @@
                 return;
             }
 
-            appState = JSON.parse(storedState);
-            scheduleData = JSON.parse(storedSchedule || JSON.stringify(initialSchedule));
+            appState = sanitizeStoredState(storedState);
+            scheduleData = mergeScheduleWithLatest(storedSchedule);
+
+            localStorage.setItem(STORAGE_KEYS.appState, JSON.stringify(appState));
+            localStorage.setItem(STORAGE_KEYS.schedule, JSON.stringify(scheduleData));
+            localStorage.setItem(STORAGE_KEYS.contentVersion, String(CONTENT_VERSION));
 
             if (!appState.isSetupComplete) {
                 isSettingUp = true;
@@ -544,7 +625,7 @@
 
             updateThemeIcon();
 
-            const todayStr = new Date().toISOString().split('T')[0];
+            const todayStr = getLocalDateString();
             const foundDay = scheduleData.find(d => d.date === todayStr);
             if(foundDay) currentActiveDay = foundDay.id;
 
@@ -698,6 +779,10 @@
             wizard.classList.add('opacity-0');
             setTimeout(() => wizard.classList.add('hidden'), 300);
             isEditingProfile = false;
+            if (currentView !== 'electives' && appState.isSetupComplete) {
+                document.getElementById('dashboardContainer').classList.remove('hidden');
+                updateCurrentStatus();
+            }
         }
 
         function startScheduleSetup() {
@@ -718,7 +803,7 @@
             }
 
             if (isEditingProfile) {
-                localStorage.setItem('dt_appState_v7', JSON.stringify(appState));
+                localStorage.setItem(STORAGE_KEYS.appState, JSON.stringify(appState));
                 closeWizard();
                 
                 applyDynamicStyles();
@@ -737,8 +822,8 @@
 
             appState.isSetupComplete = false;
             
-            localStorage.setItem('dt_appState_v7', JSON.stringify(appState));
-            localStorage.setItem('dt_schedule_v7', JSON.stringify(scheduleData));
+            localStorage.setItem(STORAGE_KEYS.appState, JSON.stringify(appState));
+            localStorage.setItem(STORAGE_KEYS.schedule, JSON.stringify(scheduleData));
             
             const wizard = document.getElementById('setupWizard');
             wizard.classList.add('opacity-0');
@@ -750,7 +835,7 @@
 
         function finishSetup() {
             appState.isSetupComplete = true;
-            localStorage.setItem('dt_appState_v7', JSON.stringify(appState));
+            localStorage.setItem(STORAGE_KEYS.appState, JSON.stringify(appState));
             completeAppLaunch();
         }
 
@@ -838,8 +923,9 @@
                     });
                 }
 
-                localStorage.setItem('dt_appState_v7', JSON.stringify(appState));
-                localStorage.setItem('dt_schedule_v7', JSON.stringify(scheduleData));
+                localStorage.setItem(STORAGE_KEYS.appState, JSON.stringify(appState));
+                localStorage.setItem(STORAGE_KEYS.schedule, JSON.stringify(scheduleData));
+                localStorage.setItem(STORAGE_KEYS.contentVersion, String(CONTENT_VERSION));
                 
                 alert("파트너의 세팅과 일정이 성공적으로 동기화되었습니다! ✨");
                 location.reload();
@@ -851,8 +937,9 @@
 
         function confirmReset() {
             if(confirm("모든 설정과 일정이 초기화됩니다. 처음부터 다시 세팅하시겠습니까?")) {
-                localStorage.removeItem('dt_appState_v7');
-                localStorage.removeItem('dt_schedule_v7');
+                localStorage.removeItem(STORAGE_KEYS.appState);
+                localStorage.removeItem(STORAGE_KEYS.schedule);
+                localStorage.removeItem(STORAGE_KEYS.contentVersion);
                 location.reload();
             }
         }
@@ -874,17 +961,14 @@
             } else if (mode === 'table') {
                 document.getElementById('tableContainer').classList.remove('hidden');
                 document.getElementById('tableLegendContainer').classList.remove('hidden');
-                
-                if (isSettingUp) {
-                    document.getElementById('dashboardContainer').classList.add('hidden');
-                } else {
-                    document.getElementById('dashboardContainer').classList.remove('hidden');
-                }
+                document.getElementById('dashboardContainer').classList.remove('hidden');
                 if(!skipRender) renderTable();
             } else if (mode === 'electives') {
                 document.getElementById('electivesContainer').classList.remove('hidden');
                 document.getElementById('dashboardContainer').classList.add('hidden');
             }
+
+            if (mode !== 'electives') updateCurrentStatus();
             
             renderTabs();
         }
@@ -1157,9 +1241,37 @@
             container.innerHTML = html;
         }
 
+        function getLocalDateString(date = new Date()) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
         function parseEventTime(dateStr, timeStr) {
-            let t = timeStr === '24:00' ? '23:59:59' : timeStr + ':00';
-            return new Date(`${dateStr}T${t}`);
+            if (timeStr === '24:00') {
+                const nextDay = new Date(`${dateStr}T00:00:00`);
+                nextDay.setDate(nextDay.getDate() + 1);
+                return nextDay;
+            }
+            return new Date(`${dateStr}T${timeStr}:00`);
+        }
+
+        function formatRemaining(milliseconds) {
+            const totalMinutes = Math.max(1, Math.ceil(milliseconds / 60000));
+            const days = Math.floor(totalMinutes / 1440);
+            const hours = Math.floor((totalMinutes % 1440) / 60);
+            const minutes = totalMinutes % 60;
+
+            if (days > 0) return `${days}일${hours > 0 ? ` ${hours}시간` : ''}`;
+            if (hours > 0) return `${hours}시간${minutes > 0 ? ` ${minutes}분` : ''}`;
+            return `${minutes}분`;
+        }
+
+        function escapeHTML(value) {
+            return String(value ?? '').replace(/[&<>'"]/g, character => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+            })[character]);
         }
 
         function updateCurrentStatus() {
@@ -1171,94 +1283,92 @@
             const minutes = now.getMinutes().toString().padStart(2, '0');
             document.getElementById('dashCurrentTime').textContent = `${month}/${date} ${hours}:${minutes}`;
 
-            let currentEvent = null;
-            let nextEvent = null;
+            const timeline = scheduleData.flatMap(day => day.events.map(event => ({
+                day,
+                event,
+                startTime: parseEventTime(day.date, event.start),
+                endTime: parseEventTime(day.date, event.end)
+            }))).sort((a, b) => a.startTime - b.startTime);
 
-            for (let i = 0; i < scheduleData.length; i++) {
-                const day = scheduleData[i];
-                for (let j = 0; j < day.events.length; j++) {
-                    const ev = day.events[j];
-                    const startT = parseEventTime(day.date, ev.start);
-                    const endT = parseEventTime(day.date, ev.end);
-
-                    if (now >= startT && now < endT) {
-                        currentEvent = ev;
-                        if (j + 1 < day.events.length) nextEvent = day.events[j+1];
-                        else if (i + 1 < scheduleData.length) nextEvent = scheduleData[i+1].events[0];
-                        break;
-                    } else if (now < startT && !currentEvent && !nextEvent) {
-                        nextEvent = ev;
-                        break;
-                    }
-                }
-                if (currentEvent) break;
-            }
+            const currentIndex = timeline.findIndex(item => now >= item.startTime && now < item.endTime);
+            const nextIndex = currentIndex >= 0
+                ? currentIndex + 1
+                : timeline.findIndex(item => now < item.startTime);
+            const currentItem = currentIndex >= 0 ? timeline[currentIndex] : null;
+            const nextItem = nextIndex >= 0 && nextIndex < timeline.length ? timeline[nextIndex] : null;
+            const followingItem = nextItem && nextIndex + 1 < timeline.length ? timeline[nextIndex + 1] : null;
 
             const ctxEl = document.getElementById('dashTimeContext');
             const pingEl = document.getElementById('dashPingIndicator');
             const titleEl = document.getElementById('dashEventTitle');
             const leaderEl = document.getElementById('dashEventLeader');
+            const countdownEl = document.getElementById('dashCountdown');
             const roleBoxContainer = document.getElementById('dashboardRolesBox');
-            
-            roleBoxContainer.innerHTML = '';
+            const nextLabelEl = document.getElementById('dashNextLabel');
+            const nextEventEl = document.getElementById('dashNextEvent');
+            const nextTimeEl = document.getElementById('dashNextTime');
 
-            const createRoleBox = (user, roleKey, ev) => {
+            const createRoleChip = (user, roleKey, event) => {
                 const c = colorPalette.find(p => p.id === user.color);
-                const hasRole = ev && ev[roleKey] !== 'none';
-                const label = hasRole ? roleMap[ev[roleKey]].label : '-';
-                
-                const boxClass = hasRole 
-                    ? `rounded-lg py-1 px-1.5 flex flex-col justify-center items-center border transition-colors border-${c.id}-200 bg-${c.id}-50 dark:border-${c.id}-900/50 dark:bg-${c.id}-900/20 w-12` 
-                    : `rounded-lg py-1 px-1.5 flex flex-col justify-center items-center border transition-colors border-slate-200 bg-slate-50 dark:border-gray-700 dark:bg-black/30 w-12`;
-                
-                const textClass = hasRole ? c.tailwindText : 'text-slate-400 dark:text-gray-500';
+                const role = event?.[roleKey] || 'none';
+                const hasRole = role !== 'none' && Boolean(roleMap[role]);
+                const label = hasRole ? roleMap[role].label : '배정 없음';
+                const borderColor = hasRole ? `${c.code}55` : 'rgba(148, 163, 184, 0.28)';
+                const backgroundColor = hasRole ? c.bgRgba : 'rgba(148, 163, 184, 0.08)';
+                const roleColor = hasRole ? c.code : '#94a3b8';
 
                 return `
-                    <div class="${boxClass}">
-                        <span class="text-[9px] text-slate-400 dark:text-gray-400 mb-0.5 truncate max-w-full">${user.icon} ${user.name}</span>
-                        <span class="text-[11px] font-bold ${textClass}">${label}</span>
+                    <div class="min-w-0 flex items-center gap-2 rounded-lg border px-2.5 py-1.5" style="border-color:${borderColor};background-color:${backgroundColor}">
+                        <span class="text-[11px] text-slate-500 dark:text-gray-300 truncate">${escapeHTML(user.icon)} ${escapeHTML(user.name)}</span>
+                        <span class="text-[11px] font-extrabold shrink-0" style="color:${roleColor}">${escapeHTML(label)}</span>
                     </div>
                 `;
             };
 
-            if (currentEvent) {
+            const renderPrimaryEvent = item => {
+                titleEl.textContent = item.event.title;
+                leaderEl.textContent = `${item.day.title} · ${item.event.start}–${item.event.end} · ${item.event.leader}`;
+                roleBoxContainer.innerHTML = createRoleChip(appState.users[0], 'user1Role', item.event);
+                if (appState.mode === 2) {
+                    roleBoxContainer.innerHTML += createRoleChip(appState.users[1], 'user2Role', item.event);
+                }
+            };
+
+            const renderSecondaryEvent = (item, label = 'NEXT') => {
+                nextLabelEl.textContent = label;
+                if (item) {
+                    nextEventEl.textContent = `${item.event.title} · ${item.event.leader}`;
+                    nextTimeEl.textContent = `${item.day.title} ${item.event.start}`;
+                } else {
+                    nextEventEl.textContent = '다음 일정이 없습니다.';
+                    nextTimeEl.textContent = '-';
+                }
+            };
+
+            if (currentItem) {
                 ctxEl.textContent = "현재 진행중";
                 ctxEl.className = "text-[11px] font-bold text-amber-600 dark:text-amber-400";
                 pingEl.style.display = 'flex';
-                titleEl.textContent = currentEvent.title;
-                leaderEl.textContent = `${currentEvent.start} - ${currentEvent.end} | ${currentEvent.leader}`;
-                
-                roleBoxContainer.innerHTML += createRoleBox(appState.users[0], 'user1Role', currentEvent);
-                if (appState.mode === 2) roleBoxContainer.innerHTML += createRoleBox(appState.users[1], 'user2Role', currentEvent);
-
-            } else if (nextEvent) {
-                ctxEl.textContent = "대기중 (휴식)";
+                countdownEl.textContent = `${formatRemaining(currentItem.endTime - now)} 후 종료`;
+                renderPrimaryEvent(currentItem);
+                renderSecondaryEvent(nextItem);
+            } else if (nextItem) {
+                const isBeforeStart = timeline.length > 0 && now < timeline[0].startTime;
+                ctxEl.textContent = isBeforeStart ? "행사 시작 전" : "다음 일정 대기";
                 ctxEl.className = "text-[11px] font-bold text-slate-500 dark:text-gray-400";
                 pingEl.style.display = 'none';
-                titleEl.textContent = "자유 시간 / 휴식";
-                leaderEl.textContent = "충전의 시간을 가지세요!";
-                
-                roleBoxContainer.innerHTML += createRoleBox(appState.users[0], 'user1Role', null);
-                if (appState.mode === 2) roleBoxContainer.innerHTML += createRoleBox(appState.users[1], 'user2Role', null);
+                countdownEl.textContent = `${formatRemaining(nextItem.startTime - now)} 후 시작`;
+                renderPrimaryEvent(nextItem);
+                renderSecondaryEvent(followingItem, '이후');
             } else {
                 ctxEl.textContent = "일정 종료";
                 ctxEl.className = "text-[11px] font-bold text-slate-500 dark:text-gray-400";
                 pingEl.style.display = 'none';
+                countdownEl.textContent = '모든 일정 완료';
                 titleEl.textContent = "모든 일정이 종료되었습니다";
                 leaderEl.textContent = "수고하셨습니다!";
-                
-                roleBoxContainer.innerHTML += createRoleBox(appState.users[0], 'user1Role', null);
-                if (appState.mode === 2) roleBoxContainer.innerHTML += createRoleBox(appState.users[1], 'user2Role', null);
-            }
-
-            const nextEventEl = document.getElementById('dashNextEvent');
-            const nextTimeEl = document.getElementById('dashNextTime');
-            if (nextEvent) {
-                nextEventEl.textContent = `${nextEvent.title} (${nextEvent.leader})`;
-                nextTimeEl.textContent = nextEvent.start;
-            } else {
-                nextEventEl.textContent = "다음 일정이 없습니다.";
-                nextTimeEl.textContent = "-";
+                roleBoxContainer.innerHTML = '';
+                renderSecondaryEvent(null);
             }
         }
 
@@ -1335,7 +1445,7 @@
             scheduleData[dayIdx].events[evIdx].user1Role = u1Role;
             scheduleData[dayIdx].events[evIdx].user2Role = u2Role;
             
-            localStorage.setItem('dt_schedule_v7', JSON.stringify(scheduleData));
+            localStorage.setItem(STORAGE_KEYS.schedule, JSON.stringify(scheduleData));
             
             closeModal();
             if (currentView === 'card') renderSchedule();
