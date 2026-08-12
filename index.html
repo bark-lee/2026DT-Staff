@@ -164,7 +164,7 @@
     <div class="px-4 py-1.5 flex gap-2 overflow-x-auto no-scrollbar hidden" id="filterBar"></div>
 
     <div id="tableLegendContainer" class="hidden px-4 py-2 flex justify-end items-center border-b border-slate-200 dark:border-gray-800/50 bg-slate-50 dark:bg-gray-900/30 transition-colors">
-        <div id="table-legend" class="flex gap-3 text-[10px] font-medium text-slate-500 dark:text-gray-400"></div>
+        <div id="table-legend" class="flex flex-wrap justify-end gap-x-3 gap-y-1 text-[10px] font-medium text-slate-500 dark:text-gray-400"></div>
     </div>
 
     <main class="flex-1 px-4 py-4 overflow-y-auto no-scrollbar relative fade-in hidden" id="scheduleContainer"></main>
@@ -173,7 +173,7 @@
 
     <div id="setupFinishBanner" class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] p-4 z-40 hidden flex-col pb-safe">
         <div class="bg-slate-800/95 dark:bg-amber-500/95 backdrop-blur-md rounded-2xl p-4 shadow-xl flex flex-col gap-2 border border-slate-700 dark:border-amber-400">
-            <p class="text-xs text-white dark:text-gray-900 font-medium text-center">☝️ 위 표에서 내 일정을 터치해 역할을 배정하세요!</p>
+            <p class="text-xs text-white dark:text-gray-900 font-medium text-center">☝️ 메인 역할을 배정하고, 필요하면 외부 지원 일정도 추가하세요!</p>
             <button onclick="finishSetup()" class="w-full py-3 bg-white text-slate-900 dark:bg-gray-900 dark:text-white rounded-xl font-bold text-sm shadow-md active:scale-95 transition-transform">
                 역할 배정 완료 & 시작하기
             </button>
@@ -201,6 +201,85 @@
             </div>
             <input type="hidden" id="modalDayId">
             <input type="hidden" id="modalEventId">
+        </div>
+    </div>
+
+    <!-- External Support Schedule Modal -->
+    <div id="externalSupportModal" class="fixed inset-0 bg-slate-900/40 dark:bg-black/80 backdrop-blur-sm z-[60] flex items-end sm:items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div id="externalSupportModalContent" class="bg-white dark:bg-[#1e293b] w-full sm:w-[420px] rounded-t-3xl sm:rounded-3xl border-t border-slate-200 dark:border-gray-700 sm:border p-6 pb-safe transform translate-y-full sm:translate-y-0 transition-transform duration-300 flex flex-col max-h-[92vh]">
+            <div class="flex justify-between items-start mb-4 shrink-0">
+                <div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="w-7 h-7 rounded-lg bg-violet-100 text-violet-600 dark:bg-violet-500/20 dark:text-violet-400 flex items-center justify-center"><i class="fa-solid fa-people-arrows"></i></span>
+                        <h3 id="externalSupportModalTitle" class="text-lg font-bold text-slate-900 dark:text-white">외부 지원 일정 추가</h3>
+                    </div>
+                    <p class="text-[11px] text-slate-500 dark:text-gray-400">시간과 담당자, 역할을 자유롭게 설정할 수 있어요.</p>
+                </div>
+                <button type="button" onclick="closeExternalSupportModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-gray-800 text-slate-400 hover:text-slate-600 dark:hover:text-white">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto no-scrollbar pr-0.5 space-y-5 mb-4">
+                <div class="grid grid-cols-2 gap-3">
+                    <label class="block col-span-2">
+                        <span class="block text-[11px] font-bold text-slate-600 dark:text-gray-300 mb-1.5">지원 일정</span>
+                        <select id="externalSupportProgram" class="w-full rounded-xl border border-slate-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-800 px-3 py-3 text-sm font-bold text-slate-800 dark:text-white outline-none focus:border-violet-400">
+                            <option value="youth">Youth · 실로암 성전</option>
+                            <option value="kids">Kids · 베데스다 성전 (다니엘 2·3부)</option>
+                            <option value="hadash">Hadash · 벧엘 성전 (다니엘 1부)</option>
+                            <option value="custom">직접입력</option>
+                        </select>
+                    </label>
+                    <div id="externalCustomFields" class="hidden col-span-2 rounded-xl border border-violet-200 dark:border-violet-500/30 bg-violet-50/60 dark:bg-violet-500/5 p-3 grid grid-cols-1 gap-3">
+                        <label class="block">
+                            <span class="block text-[10px] font-bold text-violet-700 dark:text-violet-300 mb-1.5">일정명 <span class="text-red-400">*</span></span>
+                            <input id="externalSupportCustomTitle" type="text" maxlength="30" placeholder="예: 안내데스크 지원" class="w-full rounded-lg border border-violet-200 dark:border-violet-500/30 bg-white dark:bg-gray-800 px-3 py-2.5 text-sm font-bold text-slate-800 dark:text-white outline-none focus:border-violet-400 placeholder:text-slate-300 dark:placeholder:text-gray-600">
+                        </label>
+                        <label class="block">
+                            <span class="block text-[10px] font-bold text-violet-700 dark:text-violet-300 mb-1.5">장소 <span class="font-normal text-violet-400">(선택)</span></span>
+                            <input id="externalSupportCustomLocation" type="text" maxlength="30" placeholder="예: 교육관 2층" class="w-full rounded-lg border border-violet-200 dark:border-violet-500/30 bg-white dark:bg-gray-800 px-3 py-2.5 text-sm text-slate-800 dark:text-white outline-none focus:border-violet-400 placeholder:text-slate-300 dark:placeholder:text-gray-600">
+                        </label>
+                    </div>
+                    <label class="block col-span-2">
+                        <span class="block text-[11px] font-bold text-slate-600 dark:text-gray-300 mb-1.5">날짜</span>
+                        <select id="externalSupportDay" class="w-full rounded-xl border border-slate-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-800 px-3 py-3 text-sm font-bold text-slate-800 dark:text-white outline-none focus:border-violet-400"></select>
+                    </label>
+                    <label class="block">
+                        <span class="block text-[11px] font-bold text-slate-600 dark:text-gray-300 mb-1.5">시작 시간</span>
+                        <input id="externalSupportStart" type="time" step="60" class="w-full rounded-xl border border-slate-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-800 px-3 py-3 text-sm font-bold text-slate-800 dark:text-white outline-none focus:border-violet-400">
+                    </label>
+                    <label class="block">
+                        <span class="block text-[11px] font-bold text-slate-600 dark:text-gray-300 mb-1.5">종료 시간</span>
+                        <input id="externalSupportEnd" type="time" step="60" class="w-full rounded-xl border border-slate-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-800 px-3 py-3 text-sm font-bold text-slate-800 dark:text-white outline-none focus:border-violet-400">
+                    </label>
+                    <p class="col-span-2 text-[10px] text-slate-400 dark:text-gray-500 -mt-1">종료 시간이 시작 시간보다 빠르면 다음 날 종료로 계산됩니다.</p>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-[11px] font-bold text-slate-600 dark:text-gray-300">지원 담당자</span>
+                        <span class="text-[10px] text-violet-500 font-bold">1명 이상 선택</span>
+                    </div>
+                    <div id="externalAssigneeArea" class="grid grid-cols-2 gap-2"></div>
+                </div>
+
+                <div id="externalSupportRoleArea" class="space-y-5"></div>
+
+                <label class="block">
+                    <span class="block text-[11px] font-bold text-slate-600 dark:text-gray-300 mb-1.5">메모 <span class="font-normal text-slate-400">(선택)</span></span>
+                    <textarea id="externalSupportNote" rows="2" maxlength="100" placeholder="집합 장소나 전달 사항을 적어주세요." class="w-full resize-none rounded-xl border border-slate-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-800 px-3 py-3 text-sm text-slate-800 dark:text-white outline-none focus:border-violet-400 placeholder:text-slate-300 dark:placeholder:text-gray-600"></textarea>
+                </label>
+
+                <div id="externalSupportConflict" class="hidden rounded-xl border border-amber-200 bg-amber-50 dark:border-amber-500/30 dark:bg-amber-500/10 p-3 text-[11px] text-amber-700 dark:text-amber-400 leading-relaxed"></div>
+            </div>
+
+            <div class="flex gap-2 shrink-0">
+                <button id="deleteExternalSupportButton" type="button" onclick="deleteExternalSupport()" class="hidden w-12 py-3 rounded-xl bg-red-50 text-red-500 dark:bg-red-500/10 dark:text-red-400 border border-red-100 dark:border-red-500/20"><i class="fa-solid fa-trash-can"></i></button>
+                <button type="button" onclick="closeExternalSupportModal()" class="flex-1 py-3 rounded-xl bg-slate-100 dark:bg-gray-800 text-slate-600 dark:text-white font-bold border border-slate-200 dark:border-gray-700 text-sm">취소</button>
+                <button type="button" onclick="saveExternalSupport()" class="flex-1 py-3 rounded-xl bg-violet-600 text-white dark:bg-violet-500 font-bold shadow-md text-sm">저장하기</button>
+            </div>
+            <input type="hidden" id="externalSupportId">
         </div>
     </div>
 
@@ -244,7 +323,7 @@
                     </div>
                     <div class="flex-1 min-w-0">
                         <div id="updateAppTitle" class="font-bold text-blue-800 dark:text-blue-400 text-sm">업데이트 반영하기</div>
-                        <div id="updateAppDesc" class="text-[11px] text-blue-600/70 dark:text-blue-400/70 mt-0.5">최신 일정·기능 적용 · 기존 역할 유지</div>
+                        <div id="updateAppDesc" class="text-[11px] text-blue-600/70 dark:text-blue-400/70 mt-0.5">최신 기능 적용 · 역할·외부 일정 유지</div>
                     </div>
                 </button>
 
@@ -419,6 +498,52 @@
             'other': { label: '기타' }
         };
 
+        const externalSupportPrograms = {
+            youth: 'Youth',
+            kids: 'Kids',
+            hadash: 'Hadash',
+            custom: '직접입력'
+        };
+
+        const externalSupportLocations = {
+            youth: '실로암 성전',
+            kids: '베데스다 성전',
+            hadash: '벧엘 성전',
+            custom: ''
+        };
+
+        const externalSupportAliases = {
+            youth: '',
+            kids: '다니엘 2·3부',
+            hadash: '다니엘 1부',
+            custom: ''
+        };
+
+        const legacyExternalSupportPrograms = {
+            daniel1: 'hadash',
+            daniel2: 'kids',
+            daniel3: 'kids'
+        };
+
+        function getExternalSupportTitle(item) {
+            if (item?.program === 'custom') return item.customTitle || '직접입력 일정';
+            return externalSupportPrograms[item?.program] || '외부 지원';
+        }
+
+        function getExternalSupportLocation(item) {
+            if (item?.program === 'custom') return item.customLocation || '';
+            return externalSupportLocations[item?.program] || '';
+        }
+
+        function getExternalSupportMeta(item) {
+            return [getExternalSupportLocation(item), externalSupportAliases[item?.program]].filter(Boolean).join(' · ');
+        }
+
+        function getExternalSupportSummary(item) {
+            const location = getExternalSupportLocation(item);
+            return `${getExternalSupportTitle(item)}${location ? ` (${location})` : ''}`;
+        }
+
         function normalizeRoleSelection(value) {
             const candidates = Array.isArray(value) ? value.flat(2) : [value];
             return [...new Set(candidates)]
@@ -554,9 +679,10 @@
         const STORAGE_KEYS = {
             appState: 'dt_appState_v7',
             schedule: 'dt_schedule_v7',
+            externalSupport: 'dt_external_support_v1',
             contentVersion: 'dt_content_version'
         };
-        const CONTENT_VERSION = 12;
+        const CONTENT_VERSION = 15;
 
         function safeParseJSON(value) {
             if (!value) return null;
@@ -628,6 +754,89 @@
             return latestSchedule;
         }
 
+        function isValidTimeValue(value) {
+            if (typeof value !== 'string' || !/^\d{2}:\d{2}$/.test(value)) return false;
+            const [hours, minutes] = value.split(':').map(Number);
+            return hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59;
+        }
+
+        function createExternalSupportId() {
+            if (globalThis.crypto?.randomUUID) return `ext-${globalThis.crypto.randomUUID()}`;
+            return `ext-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+        }
+
+        function sanitizeExternalSupportData(value) {
+            if (!Array.isArray(value)) return [];
+
+            const validDayIds = new Set(initialSchedule.map(day => day.id));
+            const seenIds = new Set();
+
+            return value.map(item => {
+                if (!item || !validDayIds.has(item.dayId)) return null;
+                const program = legacyExternalSupportPrograms[item.program] || item.program;
+                if (!externalSupportPrograms[program]) return null;
+                if (!isValidTimeValue(item.start) || !isValidTimeValue(item.end) || item.start === item.end) return null;
+
+                const customTitle = program === 'custom' && typeof item.customTitle === 'string' && !hasBrokenText(item.customTitle)
+                    ? item.customTitle.trim().slice(0, 30)
+                    : '';
+                const customLocation = program === 'custom' && typeof item.customLocation === 'string' && !hasBrokenText(item.customLocation)
+                    ? item.customLocation.trim().slice(0, 30)
+                    : '';
+                if (program === 'custom' && !customTitle) return null;
+
+                let id = typeof item.id === 'string' && item.id.trim() ? item.id.trim() : createExternalSupportId();
+                if (seenIds.has(id)) id = createExternalSupportId();
+                seenIds.add(id);
+
+                const assignees = [...new Set(Array.isArray(item.assignees) ? item.assignees : [0])]
+                    .map(Number)
+                    .filter(index => Number.isInteger(index) && index >= 0 && index < appState.mode);
+                if (assignees.length === 0) assignees.push(0);
+
+                const note = typeof item.note === 'string' && !hasBrokenText(item.note)
+                    ? item.note.trim().slice(0, 100)
+                    : '';
+
+                return {
+                    id,
+                    dayId: item.dayId,
+                    program,
+                    customTitle,
+                    customLocation,
+                    start: item.start,
+                    end: item.end,
+                    assignees,
+                    user1Role: assignees.includes(0) ? normalizeRoleSelection(item.user1Role) : [],
+                    user2Role: assignees.includes(1) ? normalizeRoleSelection(item.user2Role) : [],
+                    note
+                };
+            }).filter(Boolean).sort(compareExternalSupportItems);
+        }
+
+        function compareExternalSupportItems(a, b) {
+            const dayOrder = new Map(initialSchedule.map((day, index) => [day.id, index]));
+            return (dayOrder.get(a.dayId) ?? 99) - (dayOrder.get(b.dayId) ?? 99)
+                || a.start.localeCompare(b.start)
+                || a.end.localeCompare(b.end);
+        }
+
+        function getSupportInterval(item) {
+            const day = scheduleData.find(candidate => candidate.id === item.dayId)
+                || initialSchedule.find(candidate => candidate.id === item.dayId);
+            if (!day) return null;
+
+            const startTime = parseEventTime(day.date, item.start);
+            const endTime = parseEventTime(day.date, item.end);
+            if (endTime <= startTime) endTime.setDate(endTime.getDate() + 1);
+            return { day, startTime, endTime };
+        }
+
+        function saveExternalSupportData() {
+            externalSupportData.sort(compareExternalSupportItems);
+            localStorage.setItem(STORAGE_KEYS.externalSupport, JSON.stringify(externalSupportData));
+        }
+
         let appState = {
             mode: 1,
             users: [
@@ -637,6 +846,7 @@
         };
         
         let scheduleData = [];
+        let externalSupportData = [];
         let currentActiveDay = 'day1';
         let currentFilter = 'all';
         let currentView = 'card';
@@ -649,18 +859,22 @@
 
             const storedState = safeParseJSON(localStorage.getItem(STORAGE_KEYS.appState));
             const storedSchedule = safeParseJSON(localStorage.getItem(STORAGE_KEYS.schedule));
+            const storedExternalSupport = safeParseJSON(localStorage.getItem(STORAGE_KEYS.externalSupport));
             
             if (!storedState) {
                 scheduleData = JSON.parse(JSON.stringify(initialSchedule));
+                externalSupportData = [];
                 openSetupWizard();
                 return;
             }
 
             appState = sanitizeStoredState(storedState);
             scheduleData = mergeScheduleWithLatest(storedSchedule);
+            externalSupportData = sanitizeExternalSupportData(storedExternalSupport);
 
             localStorage.setItem(STORAGE_KEYS.appState, JSON.stringify(appState));
             localStorage.setItem(STORAGE_KEYS.schedule, JSON.stringify(scheduleData));
+            localStorage.setItem(STORAGE_KEYS.externalSupport, JSON.stringify(externalSupportData));
             localStorage.setItem(STORAGE_KEYS.contentVersion, String(CONTENT_VERSION));
 
             if (!appState.isSetupComplete) {
@@ -866,7 +1080,9 @@
             }
 
             if (isEditingProfile) {
+                externalSupportData = sanitizeExternalSupportData(externalSupportData);
                 localStorage.setItem(STORAGE_KEYS.appState, JSON.stringify(appState));
+                localStorage.setItem(STORAGE_KEYS.externalSupport, JSON.stringify(externalSupportData));
                 closeWizard();
                 
                 applyDynamicStyles();
@@ -887,6 +1103,7 @@
             
             localStorage.setItem(STORAGE_KEYS.appState, JSON.stringify(appState));
             localStorage.setItem(STORAGE_KEYS.schedule, JSON.stringify(scheduleData));
+            localStorage.setItem(STORAGE_KEYS.externalSupport, JSON.stringify(externalSupportData));
             
             const wizard = document.getElementById('setupWizard');
             wizard.classList.add('opacity-0');
@@ -944,7 +1161,8 @@
             const compactData = {
                 m: appState.mode,
                 u: appState.users,
-                a: assignments
+                a: assignments,
+                x: externalSupportData
             };
 
             const compressed = LZString.compressToEncodedURIComponent(JSON.stringify(compactData));
@@ -988,8 +1206,11 @@
                     });
                 }
 
+                externalSupportData = sanitizeExternalSupportData(parsed.x);
+
                 localStorage.setItem(STORAGE_KEYS.appState, JSON.stringify(appState));
                 localStorage.setItem(STORAGE_KEYS.schedule, JSON.stringify(scheduleData));
+                localStorage.setItem(STORAGE_KEYS.externalSupport, JSON.stringify(externalSupportData));
                 localStorage.setItem(STORAGE_KEYS.contentVersion, String(CONTENT_VERSION));
                 
                 alert("파트너의 세팅과 일정이 성공적으로 동기화되었습니다! ✨");
@@ -1018,11 +1239,12 @@
             button.disabled = true;
             icon.className = 'fa-solid fa-spinner fa-spin';
             title.textContent = '최신 버전 불러오는 중…';
-            description.textContent = '기존 이름과 역할 배정은 그대로 유지됩니다.';
+            description.textContent = '기존 이름, 역할, 외부 지원 일정은 그대로 유지됩니다.';
 
             try {
                 localStorage.setItem(STORAGE_KEYS.appState, JSON.stringify(appState));
                 localStorage.setItem(STORAGE_KEYS.schedule, JSON.stringify(scheduleData));
+                localStorage.setItem(STORAGE_KEYS.externalSupport, JSON.stringify(externalSupportData));
 
                 const updateURL = new URL(window.location.href);
                 updateURL.hash = '';
@@ -1050,6 +1272,7 @@
             if(confirm("모든 설정과 일정이 초기화됩니다. 처음부터 다시 세팅하시겠습니까?")) {
                 localStorage.removeItem(STORAGE_KEYS.appState);
                 localStorage.removeItem(STORAGE_KEYS.schedule);
+                localStorage.removeItem(STORAGE_KEYS.externalSupport);
                 localStorage.removeItem(STORAGE_KEYS.contentVersion);
                 location.reload();
             }
@@ -1124,6 +1347,75 @@
             tabsContainer.appendChild(createTabBtn('선택강의', '<i class="fa-solid fa-book-open text-[9px] mr-0.5"></i>', currentView === 'electives', () => switchView('electives')));
         }
 
+        function getExternalSupportsOverlappingEvent(day, event) {
+            const eventStart = parseEventTime(day.date, event.start);
+            const eventEnd = parseEventTime(day.date, event.end);
+
+            return externalSupportData.filter(item => {
+                if (item.dayId !== day.id) return false;
+                const interval = getSupportInterval(item);
+                return interval && intervalsOverlap(eventStart, eventEnd, interval.startTime, interval.endTime);
+            });
+        }
+
+        function createExternalInlineNoticesHTML(day, items) {
+            return items.map(item => {
+                const names = item.assignees.map(index => appState.users[index]?.name).filter(Boolean).join(' · ');
+                const meta = getExternalSupportMeta(item);
+                const overnight = item.end <= item.start ? ' · 익일' : '';
+                return `
+                    <button type="button" onclick="event.stopPropagation(); openExternalSupportModal('${day.id}', '${item.id}')" class="group/external w-full flex items-start gap-1.5 mt-2 text-left text-[9px] leading-snug text-rose-500 dark:text-rose-400 whitespace-normal">
+                        <i class="fa-solid fa-circle-exclamation text-[9px] mt-[1px] shrink-0"></i>
+                        <span class="min-w-0 break-keep">
+                            <strong>${escapeHTML(names || '외부 지원')}:</strong>
+                            ${escapeHTML(getExternalSupportTitle(item))}${meta ? ` · ${escapeHTML(meta)}` : ''}
+                            <span class="font-mono opacity-90">(${escapeHTML(item.start)}–${escapeHTML(item.end)}${overnight})</span>
+                            <i class="fa-solid fa-pen ml-1 text-[7px] opacity-0 group-hover/external:opacity-70 transition-opacity"></i>
+                        </span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function createExternalRoleCellHTML(items, userIndex) {
+            const assignedItems = items.filter(item => item.assignees.includes(userIndex));
+            if (assignedItems.length === 0) return '';
+
+            return `
+                <div class="flex flex-col items-center gap-1 mt-1.5 pt-1.5 border-t border-rose-200/70 dark:border-rose-500/20">
+                    ${assignedItems.map(item => {
+                        const labels = getRoleLabels(userIndex === 0 ? item.user1Role : item.user2Role);
+                        const displayLabels = labels.length > 0 ? labels : ['지원'];
+                        return displayLabels.map(label => `<span class="text-[9px] leading-none font-extrabold text-rose-500 dark:text-rose-400 whitespace-nowrap">${escapeHTML(label)}</span>`).join('');
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        function createStandaloneExternalRowHTML(day, item, is2P) {
+            const names = item.assignees.map(index => appState.users[index]?.name).filter(Boolean).join(' · ');
+            const meta = getExternalSupportMeta(item);
+            const overnight = item.end <= item.start ? ' · 익일' : '';
+            return `
+                <tr class="cursor-pointer border-b border-rose-100 dark:border-rose-500/10 bg-rose-50/70 dark:bg-rose-950/15 hover:bg-rose-100/70 dark:hover:bg-rose-950/25 transition-colors" onclick="openExternalSupportModal('${day.id}', '${item.id}')">
+                    <td class="px-2 py-3 font-mono text-[10px] text-rose-500 dark:text-rose-400 align-top leading-tight">
+                        ${escapeHTML(item.start)}<br><span class="opacity-70">~${escapeHTML(item.end)}${overnight}</span>
+                    </td>
+                    <td class="px-2 py-3 whitespace-normal align-top">
+                        <div class="flex items-center gap-1.5">
+                            <span class="rounded bg-rose-500/10 dark:bg-rose-500/15 text-rose-500 dark:text-rose-400 px-1.5 py-0.5 text-[8px] font-extrabold">외부 지원</span>
+                            <span class="text-[10px] font-bold text-slate-400 dark:text-gray-500">${escapeHTML(names)}</span>
+                        </div>
+                        <div class="font-bold text-slate-800 dark:text-gray-200 text-[13px] mt-1 leading-snug">${escapeHTML(getExternalSupportTitle(item))}</div>
+                        ${meta ? `<div class="text-[9px] text-rose-500 dark:text-rose-400 mt-1 leading-snug">${escapeHTML(meta)}</div>` : ''}
+                        ${item.note ? `<div class="text-[9px] text-slate-400 dark:text-gray-500 mt-1 leading-snug">${escapeHTML(item.note)}</div>` : ''}
+                    </td>
+                    <td class="px-1 py-3 text-center align-middle">${createExternalRoleCellHTML([item], 0) || '<span class="text-slate-300 dark:text-gray-700">-</span>'}</td>
+                    ${is2P ? `<td class="px-1 py-3 text-center align-middle">${createExternalRoleCellHTML([item], 1) || '<span class="text-slate-300 dark:text-gray-700">-</span>'}</td>` : ''}
+                </tr>
+            `;
+        }
+
         function renderTable() {
             const container = document.getElementById('tableContainer');
             const is2P = appState.mode === 2;
@@ -1131,53 +1423,85 @@
             const u1Color = colorPalette.find(c => c.id === u1.color);
             const u2 = is2P ? appState.users[1] : null;
             const u2Color = is2P ? colorPalette.find(c => c.id === u2.color) : null;
+            const hasExternalSupport = externalSupportData.length > 0;
 
             const legendContainer = document.getElementById('table-legend');
             legendContainer.innerHTML = '';
             if (is2P) legendContainer.innerHTML += `<span class="flex items-center gap-1"><div class="w-2.5 h-2.5 bg-amber-400 rounded-sm"></div>함께</span>`;
-            legendContainer.innerHTML += `<span class="flex items-center gap-1"><div class="w-2.5 h-2.5 rounded-sm" style="background-color: ${u1Color.code}"></div>${u1.name}</span>`;
-            if (is2P) legendContainer.innerHTML += `<span class="flex items-center gap-1"><div class="w-2.5 h-2.5 rounded-sm" style="background-color: ${u2Color.code}"></div>${u2.name}</span>`;
+            legendContainer.innerHTML += `<span class="flex items-center gap-1"><div class="w-2.5 h-2.5 rounded-sm" style="background-color: ${u1Color.code}"></div>${escapeHTML(u1.name)}</span>`;
+            if (is2P) legendContainer.innerHTML += `<span class="flex items-center gap-1"><div class="w-2.5 h-2.5 rounded-sm" style="background-color: ${u2Color.code}"></div>${escapeHTML(u2.name)}</span>`;
+            if (hasExternalSupport) legendContainer.innerHTML += `<span class="flex items-center gap-1"><div class="w-2.5 h-2.5 bg-rose-500 rounded-sm"></div>외부지원</span>`;
 
-            let html = '<div class="w-full pb-4 bg-white dark:bg-transparent rounded-xl shadow-sm dark:shadow-none border border-slate-200 dark:border-transparent overflow-hidden"><table class="w-full text-left text-xs whitespace-nowrap border-collapse">';
+            const actionsHTML = `
+                <div class="flex items-center justify-between gap-3 px-1 mb-3">
+                    <div class="min-w-0">
+                        <div class="text-[12px] font-extrabold text-slate-800 dark:text-gray-200">${isSettingUp ? '내 일정과 역할 세팅' : '메인텐트 전체 일정'}</div>
+                        <div class="text-[9px] text-slate-400 dark:text-gray-500 mt-0.5">${hasExternalSupport ? `외부 지원 ${externalSupportData.length}건 · 겹치는 메인 일정 아래 함께 표시` : isSettingUp ? '메인 역할을 배정하고 외부 지원도 추가할 수 있어요.' : '외부 지원은 메인 일정 안에 함께 표시됩니다.'}</div>
+                    </div>
+                    <button type="button" onclick="openExternalSupportModal()" class="shrink-0 rounded-xl bg-rose-500 dark:bg-rose-500 text-white px-3 py-2 text-[10px] font-extrabold shadow-sm active:scale-95 transition-transform">
+                        <i class="fa-solid fa-plus mr-1"></i>외부 지원 추가
+                    </button>
+                </div>
+            `;
+
+            let html = actionsHTML + '<div class="w-full pb-4 bg-white dark:bg-transparent rounded-xl shadow-sm dark:shadow-none border border-slate-200 dark:border-transparent overflow-hidden"><table class="w-full text-left text-xs whitespace-nowrap border-collapse">';
             
             scheduleData.forEach(day => {
+                const daySupportItems = externalSupportData.filter(item => item.dayId === day.id);
+                const standaloneSupportItems = daySupportItems.filter(item =>
+                    !day.events.some(event => getExternalSupportsOverlappingEvent(day, event).some(overlap => overlap.id === item.id))
+                );
+                const timelineRows = [
+                    ...day.events.map(event => ({ type: 'main', start: event.start, event })),
+                    ...standaloneSupportItems.map(item => ({ type: 'external', start: item.start, item }))
+                ].sort((first, second) => first.start.localeCompare(second.start) || (first.type === 'main' ? -1 : 1));
+
                 html += `
                     <thead>
                         <tr>
                             <th colspan="${is2P ? 4 : 3}" class="px-2 py-3 bg-slate-100 dark:bg-gray-800 text-slate-800 dark:text-gray-200 font-bold text-sm border-t border-b border-slate-200 dark:border-gray-700 sticky top-0 z-10">
-                                ${day.title} - ${day.theme}
+                                ${escapeHTML(day.title)} - ${escapeHTML(day.theme)}
                             </th>
                         </tr>
                         <tr class="bg-white/90 dark:bg-gray-900/90 text-slate-500 dark:text-gray-400 border-b border-slate-200 dark:border-gray-700 sticky top-[45px] z-10 backdrop-blur-sm">
                             <th class="px-2 py-2 font-medium w-16">시간</th>
                             <th class="px-2 py-2 font-medium w-full min-w-[110px]">일정</th>
-                            <th class="px-1 py-2 font-medium text-center w-12 ${u1Color.tailwindText}">${u1.name}</th>
-                            ${is2P ? `<th class="px-1 py-2 font-medium text-center w-12 ${u2Color.tailwindText}">${u2.name}</th>` : ''}
+                            <th class="px-1 py-2 font-medium text-center w-12 ${u1Color.tailwindText}">${escapeHTML(u1.name)}</th>
+                            ${is2P ? `<th class="px-1 py-2 font-medium text-center w-12 ${u2Color.tailwindText}">${escapeHTML(u2.name)}</th>` : ''}
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 dark:divide-gray-800/30 bg-white dark:bg-transparent">
                 `;
                 
-                day.events.forEach(event => {
+                timelineRows.forEach(row => {
+                    if (row.type === 'external') {
+                        html += createStandaloneExternalRowHTML(day, row.item, is2P);
+                        return;
+                    }
+
+                    const event = row.event;
                     let rowClass = 'hover:bg-slate-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer border-b border-slate-100 dark:border-gray-800/30';
                     const has1 = hasAssignedRole(event.user1Role);
                     const has2 = is2P && hasAssignedRole(event.user2Role);
+                    const overlappingSupports = getExternalSupportsOverlappingEvent(day, event);
                     
                     if (has1 && has2) rowClass += ' row-highlight-both';
                     else if (has1) rowClass += ' row-highlight-u1';
                     else if (has2) rowClass += ' row-highlight-u2';
+                    if (overlappingSupports.length > 0) rowClass += ' border-l-2 border-l-rose-400/70';
                     
-                    const r1 = createRolePillsHTML(event.user1Role, u1Color);
-                    const r2 = is2P ? createRolePillsHTML(event.user2Role, u2Color) : '';
+                    const r1 = `<div class="flex flex-col items-center">${createRolePillsHTML(event.user1Role, u1Color)}${createExternalRoleCellHTML(overlappingSupports, 0)}</div>`;
+                    const r2 = is2P ? `<div class="flex flex-col items-center">${createRolePillsHTML(event.user2Role, u2Color)}${createExternalRoleCellHTML(overlappingSupports, 1)}</div>` : '';
                     
                     html += `
                         <tr class="${rowClass}" onclick="openEditModal('${day.id}', '${event.id}')">
                             <td class="px-2 py-3 font-mono text-[10px] text-slate-500 dark:text-gray-400 align-top leading-tight">
-                                ${event.start}<br><span class="opacity-60">~${event.end}</span>
+                                ${escapeHTML(event.start)}<br><span class="opacity-60">~${escapeHTML(event.end)}</span>
                             </td>
                             <td class="px-2 py-3 whitespace-normal align-top">
-                                <div class="font-bold text-slate-800 dark:text-gray-200 text-[13px] mb-0.5 leading-snug">${event.title}</div>
-                                <div class="text-[10px] text-slate-500 dark:text-gray-500 leading-none">${event.leader}</div>
+                                <div class="font-bold text-slate-800 dark:text-gray-200 text-[13px] mb-0.5 leading-snug">${escapeHTML(event.title)}</div>
+                                <div class="text-[10px] text-slate-500 dark:text-gray-500 leading-none">${escapeHTML(event.leader)}</div>
+                                ${createExternalInlineNoticesHTML(day, overlappingSupports)}
                             </td>
                             <td class="px-1 py-3 text-center align-middle">${r1}</td>
                             ${is2P ? `<td class="px-1 py-3 text-center align-middle">${r2}</td>` : ''}
@@ -1392,20 +1716,32 @@
             const minutes = now.getMinutes().toString().padStart(2, '0');
             document.getElementById('dashCurrentTime').textContent = `${month}/${date} ${hours}:${minutes}`;
 
-            const timeline = scheduleData.flatMap(day => day.events.map(event => ({
+            const mainTimeline = scheduleData.flatMap(day => day.events.map(event => ({
                 day,
                 event,
+                isExternal: false,
                 startTime: parseEventTime(day.date, event.start),
                 endTime: parseEventTime(day.date, event.end)
-            }))).sort((a, b) => a.startTime - b.startTime);
+            })));
+            const externalTimeline = externalSupportData.map(event => {
+                const interval = getSupportInterval(event);
+                return interval ? {
+                    day: interval.day,
+                    event,
+                    isExternal: true,
+                    startTime: interval.startTime,
+                    endTime: interval.endTime
+                } : null;
+            }).filter(Boolean);
+            const timeline = [...mainTimeline, ...externalTimeline].sort((a, b) =>
+                a.startTime - b.startTime || Number(b.isExternal) - Number(a.isExternal)
+            );
 
-            const currentIndex = timeline.findIndex(item => now >= item.startTime && now < item.endTime);
-            const nextIndex = currentIndex >= 0
-                ? currentIndex + 1
-                : timeline.findIndex(item => now < item.startTime);
-            const currentItem = currentIndex >= 0 ? timeline[currentIndex] : null;
-            const nextItem = nextIndex >= 0 && nextIndex < timeline.length ? timeline[nextIndex] : null;
-            const followingItem = nextItem && nextIndex + 1 < timeline.length ? timeline[nextIndex + 1] : null;
+            const activeItems = timeline.filter(item => now >= item.startTime && now < item.endTime);
+            const currentItem = activeItems.find(item => item.isExternal) || activeItems[0] || null;
+            const upcomingItems = timeline.filter(item => item.startTime > now);
+            const nextItem = upcomingItems[0] || null;
+            const followingItem = upcomingItems[1] || null;
 
             const ctxEl = document.getElementById('dashTimeContext');
             const pingEl = document.getElementById('dashPingIndicator');
@@ -1418,7 +1754,7 @@
             const nextRolesEl = document.getElementById('dashNextRoles');
             const nextTimeEl = document.getElementById('dashNextTime');
 
-            const createRoleChip = (user, roleKey, event) => {
+            const createRoleChip = (user, roleKey, event, emptyText = '배정 없음') => {
                 const c = colorPalette.find(p => p.id === user.color);
                 const roles = normalizeRoleSelection(event?.[roleKey]);
                 const hasRole = roles.length > 0;
@@ -1431,39 +1767,56 @@
                         <span class="text-[10px] text-slate-500 dark:text-gray-300 truncate mr-0.5">${escapeHTML(user.icon)} ${escapeHTML(user.name)}</span>
                         ${hasRole
                             ? roles.map(role => `<span class="text-[10px] font-extrabold rounded px-1.5 py-0.5 bg-white/80 dark:bg-black/20" style="color:${roleColor}">${escapeHTML(roleMap[role].label)}</span>`).join('')
-                            : `<span class="text-[10px] font-bold" style="color:${roleColor}">배정 없음</span>`}
+                            : `<span class="text-[10px] font-bold" style="color:${roleColor}">${escapeHTML(emptyText)}</span>`}
                     </div>
                 `;
             };
 
             const renderPrimaryEvent = item => {
+                if (item.isExternal) {
+                    const supportMeta = getExternalSupportMeta(item.event);
+                    titleEl.textContent = getExternalSupportTitle(item.event);
+                    leaderEl.textContent = `${item.day.title} · ${item.event.start}–${item.event.end}${item.event.end <= item.event.start ? ' (익일)' : ''}${supportMeta ? ` · ${supportMeta}` : ''} · 외부 지원`;
+                    roleBoxContainer.innerHTML = '<span class="inline-flex items-center rounded-lg border border-violet-200 bg-violet-50 dark:border-violet-500/30 dark:bg-violet-500/10 px-2.5 py-1.5 text-[10px] font-extrabold text-violet-600 dark:text-violet-400"><i class="fa-solid fa-people-arrows mr-1.5"></i>외부 지원</span>';
+                    item.event.assignees.forEach(index => {
+                        const user = appState.users[index];
+                        if (!user) return;
+                        const roleKey = index === 0 ? 'user1Role' : 'user2Role';
+                        roleBoxContainer.innerHTML += createRoleChip(user, roleKey, item.event, '지원');
+                    });
+                    return;
+                }
+
                 titleEl.textContent = item.event.title;
                 leaderEl.textContent = `${item.day.title} · ${item.event.start}–${item.event.end} · ${item.event.leader}`;
                 roleBoxContainer.innerHTML = createRoleChip(appState.users[0], 'user1Role', item.event);
-                if (appState.mode === 2) {
-                    roleBoxContainer.innerHTML += createRoleChip(appState.users[1], 'user2Role', item.event);
-                }
+                if (appState.mode === 2) roleBoxContainer.innerHTML += createRoleChip(appState.users[1], 'user2Role', item.event);
             };
 
             const renderSecondaryEvent = (item, label = 'NEXT') => {
-                nextLabelEl.textContent = label;
+                nextLabelEl.textContent = item?.isExternal ? '지원' : label;
                 nextRolesEl.innerHTML = '';
                 nextRolesEl.classList.add('hidden');
 
                 if (item) {
-                    nextEventEl.textContent = `${item.event.title} · ${item.event.leader}`;
+                    nextEventEl.textContent = item.isExternal
+                        ? `${getExternalSupportSummary(item.event)} · 외부 지원`
+                        : `${item.event.title} · ${item.event.leader}`;
                     nextTimeEl.textContent = `${item.day.title} ${item.event.start}`;
 
                     const usersWithRoles = appState.users.map((user, index) => {
+                        if (item.isExternal && !item.event.assignees.includes(index)) return '';
                         const roleKey = index === 0 ? 'user1Role' : 'user2Role';
                         const roles = normalizeRoleSelection(item.event[roleKey]);
-                        if (roles.length === 0) return '';
+                        if (!item.isExternal && roles.length === 0) return '';
 
                         const color = colorPalette.find(palette => palette.id === user.color);
                         return `
                             <span class="inline-flex flex-wrap items-center gap-1 rounded-md border px-1.5 py-1 text-[9px] font-bold" style="border-color:${color.code}55;background-color:${color.bgRgba}">
                                 <span class="text-slate-500 dark:text-gray-300">${escapeHTML(user.icon)} ${escapeHTML(user.name)}</span>
-                                ${roles.map(role => `<span class="rounded px-1 py-0.5 bg-white/80 dark:bg-black/20" style="color:${color.code}">${escapeHTML(roleMap[role].label)}</span>`).join('')}
+                                ${roles.length > 0
+                                    ? roles.map(role => `<span class="rounded px-1 py-0.5 bg-white/80 dark:bg-black/20" style="color:${color.code}">${escapeHTML(roleMap[role].label)}</span>`).join('')
+                                    : `<span class="rounded px-1 py-0.5 bg-white/80 dark:bg-black/20" style="color:${color.code}">지원</span>`}
                             </span>
                         `;
                     }).filter(Boolean);
@@ -1536,6 +1889,273 @@
                 input.checked = false;
             });
             updateRoleSelectionUI(roleKey);
+        }
+
+        function createExternalRoleGridHTML(user, userIndex, selectedRoles) {
+            const color = colorPalette.find(candidate => candidate.id === user.color);
+            const roleKey = `externalUser${userIndex + 1}Role`;
+            let html = `
+                <div id="externalRoleSection${userIndex}">
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="block text-sm font-bold ${color.tailwindText}">${escapeHTML(user.icon)} ${escapeHTML(user.name)} 역할</label>
+                        <div class="flex items-center gap-2">
+                            <span id="${roleKey}Count" class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 dark:bg-gray-800 dark:text-gray-400">${selectedRoles.length}/2</span>
+                            <button type="button" onclick="clearRoleSelection('${roleKey}')" class="text-[10px] font-bold text-slate-400 dark:text-gray-500 px-1.5 py-1 rounded hover:bg-slate-100 dark:hover:bg-gray-800">선택 해제</button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-4 gap-2">
+            `;
+
+            Object.keys(roleMap).filter(key => key !== 'none').forEach(key => {
+                const isChecked = selectedRoles.includes(key);
+                html += `
+                    <label class="cursor-pointer min-w-0" style="--role-color:${color.code};--role-shadow:${color.code}33">
+                        <input type="checkbox" name="${roleKey}" value="${key}" class="role-option-input hidden" onchange="handleRoleSelectionChange(this, '${roleKey}')" ${isChecked ? 'checked' : ''}>
+                        <div class="role-option-card relative bg-slate-50 dark:bg-gray-800 border border-slate-200 dark:border-gray-700 text-slate-500 dark:text-gray-400 text-[11px] py-2.5 px-1 text-center rounded-lg transition-all font-bold truncate">
+                            <i class="role-check-icon fa-solid fa-check absolute top-1 right-1 text-[7px] opacity-0 scale-50 transition-all"></i>
+                            ${escapeHTML(roleMap[key].label)}
+                        </div>
+                    </label>
+                `;
+            });
+
+            return `${html}</div></div>`;
+        }
+
+        function updateExternalAssigneeUI(clearUncheckedRoles = true) {
+            appState.users.forEach((user, index) => {
+                const checkbox = document.querySelector(`input[name="externalAssignee"][value="${index}"]`);
+                const roleSection = document.getElementById(`externalRoleSection${index}`);
+                const roleKey = `externalUser${index + 1}Role`;
+                if (!checkbox || !roleSection) return;
+
+                roleSection.classList.toggle('hidden', !checkbox.checked);
+                if (!checkbox.checked && clearUncheckedRoles) clearRoleSelection(roleKey);
+                updateRoleSelectionUI(roleKey);
+            });
+            updateExternalSupportConflictPreview();
+        }
+
+        function intervalsOverlap(firstStart, firstEnd, secondStart, secondEnd) {
+            return firstStart < secondEnd && secondStart < firstEnd;
+        }
+
+        function getExternalSupportConflicts(item, ignoreId = '') {
+            const interval = getSupportInterval(item);
+            if (!interval) return [];
+            const conflicts = [];
+
+            const day = scheduleData.find(candidate => candidate.id === item.dayId);
+            day?.events.forEach(event => {
+                const eventStart = parseEventTime(day.date, event.start);
+                const eventEnd = parseEventTime(day.date, event.end);
+                if (!intervalsOverlap(interval.startTime, interval.endTime, eventStart, eventEnd)) return;
+
+                const overlappingUsers = item.assignees.filter(index => {
+                    const roleKey = index === 0 ? 'user1Role' : 'user2Role';
+                    return hasAssignedRole(event[roleKey]);
+                });
+                if (overlappingUsers.length === 0) return;
+
+                const names = overlappingUsers.map(index => appState.users[index]?.name).filter(Boolean).join(', ');
+                conflicts.push(`${names}: 메인텐트 ${event.start}–${event.end} ${event.title}`);
+            });
+
+            externalSupportData.forEach(other => {
+                if (other.id === ignoreId || other.dayId !== item.dayId) return;
+                const sharedUsers = item.assignees.filter(index => other.assignees.includes(index));
+                if (sharedUsers.length === 0) return;
+
+                const otherInterval = getSupportInterval(other);
+                if (!otherInterval || !intervalsOverlap(interval.startTime, interval.endTime, otherInterval.startTime, otherInterval.endTime)) return;
+
+                const names = sharedUsers.map(index => appState.users[index]?.name).filter(Boolean).join(', ');
+                conflicts.push(`${names}: 외부 지원 ${other.start}–${other.end} ${getExternalSupportSummary(other)}`);
+            });
+
+            return [...new Set(conflicts)];
+        }
+
+        function readExternalSupportForm(includeRoles = false) {
+            const assignees = [...document.querySelectorAll('input[name="externalAssignee"]:checked')]
+                .map(input => Number(input.value));
+            const item = {
+                id: document.getElementById('externalSupportId').value || createExternalSupportId(),
+                dayId: document.getElementById('externalSupportDay').value,
+                program: document.getElementById('externalSupportProgram').value,
+                customTitle: document.getElementById('externalSupportCustomTitle').value.trim(),
+                customLocation: document.getElementById('externalSupportCustomLocation').value.trim(),
+                start: document.getElementById('externalSupportStart').value,
+                end: document.getElementById('externalSupportEnd').value,
+                assignees,
+                user1Role: [],
+                user2Role: [],
+                note: document.getElementById('externalSupportNote').value.trim()
+            };
+
+            if (includeRoles) {
+                item.user1Role = assignees.includes(0)
+                    ? [...document.querySelectorAll('input[name="externalUser1Role"]:checked')].map(input => input.value).slice(0, 2)
+                    : [];
+                item.user2Role = assignees.includes(1)
+                    ? [...document.querySelectorAll('input[name="externalUser2Role"]:checked')].map(input => input.value).slice(0, 2)
+                    : [];
+            }
+            return item;
+        }
+
+        function updateExternalSupportConflictPreview() {
+            const box = document.getElementById('externalSupportConflict');
+            if (!box) return;
+
+            const draft = readExternalSupportForm(false);
+            const canCheck = draft.assignees.length > 0
+                && externalSupportPrograms[draft.program]
+                && (draft.program !== 'custom' || Boolean(draft.customTitle))
+                && isValidTimeValue(draft.start)
+                && isValidTimeValue(draft.end)
+                && draft.start !== draft.end;
+            const conflicts = canCheck ? getExternalSupportConflicts(draft, draft.id) : [];
+
+            if (conflicts.length === 0) {
+                box.classList.add('hidden');
+                box.innerHTML = '';
+                return;
+            }
+
+            box.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1"></i><strong>겹치는 일정이 있어요.</strong><br>${conflicts.map(conflict => `• ${escapeHTML(conflict)}`).join('<br>')}`;
+            box.classList.remove('hidden');
+        }
+
+        function toggleExternalCustomFields(updatePreview = true) {
+            const isCustom = document.getElementById('externalSupportProgram').value === 'custom';
+            document.getElementById('externalCustomFields').classList.toggle('hidden', !isCustom);
+            if (updatePreview) updateExternalSupportConflictPreview();
+        }
+
+        function openExternalSupportModal(dayId = '', supportId = '') {
+            const existing = supportId ? externalSupportData.find(item => item.id === supportId) : null;
+            const selectedDayId = existing?.dayId
+                || (scheduleData.some(day => day.id === dayId) ? dayId : currentActiveDay)
+                || scheduleData[0]?.id;
+            const assignees = existing?.assignees || [0];
+
+            document.getElementById('externalSupportModalTitle').textContent = existing ? '외부 지원 일정 수정' : '외부 지원 일정 추가';
+            document.getElementById('externalSupportId').value = existing?.id || '';
+            document.getElementById('externalSupportProgram').value = existing?.program || 'hadash';
+            document.getElementById('externalSupportCustomTitle').value = existing?.customTitle || '';
+            document.getElementById('externalSupportCustomLocation').value = existing?.customLocation || '';
+            document.getElementById('externalSupportStart').value = existing?.start || '09:00';
+            document.getElementById('externalSupportEnd').value = existing?.end || '11:00';
+            document.getElementById('externalSupportNote').value = existing?.note || '';
+
+            const daySelect = document.getElementById('externalSupportDay');
+            daySelect.innerHTML = scheduleData.map(day => `<option value="${day.id}">${escapeHTML(day.title)} · ${escapeHTML(day.theme)}</option>`).join('');
+            daySelect.value = selectedDayId;
+
+            const assigneeArea = document.getElementById('externalAssigneeArea');
+            assigneeArea.className = appState.mode === 1 ? 'grid grid-cols-1 gap-2' : 'grid grid-cols-2 gap-2';
+            assigneeArea.innerHTML = appState.users.map((user, index) => {
+                const color = colorPalette.find(candidate => candidate.id === user.color);
+                return `
+                    <label class="cursor-pointer min-w-0" style="--assignee-color:${color.code}">
+                        <input type="checkbox" name="externalAssignee" value="${index}" class="hidden peer" onchange="updateExternalAssigneeUI()" ${assignees.includes(index) ? 'checked' : ''}>
+                        <div class="rounded-xl border-2 border-slate-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-800 p-3 text-center transition-all peer-checked:border-[var(--assignee-color)] peer-checked:bg-white dark:peer-checked:bg-gray-800">
+                            <div class="text-xl">${escapeHTML(user.icon)}</div>
+                            <div class="text-[11px] font-extrabold text-slate-700 dark:text-gray-200 mt-1 truncate">${escapeHTML(user.name)}</div>
+                        </div>
+                    </label>
+                `;
+            }).join('');
+
+            document.getElementById('externalSupportRoleArea').innerHTML = appState.users.map((user, index) => {
+                const roleKey = index === 0 ? 'user1Role' : 'user2Role';
+                return createExternalRoleGridHTML(user, index, normalizeRoleSelection(existing?.[roleKey]));
+            }).join('<div class="h-px bg-slate-200 dark:bg-gray-800"></div>');
+
+            appState.users.forEach((user, index) => updateRoleSelectionUI(`externalUser${index + 1}Role`));
+            toggleExternalCustomFields(false);
+            updateExternalAssigneeUI(false);
+
+            const deleteButton = document.getElementById('deleteExternalSupportButton');
+            deleteButton.classList.toggle('hidden', !existing);
+
+            document.getElementById('externalSupportProgram').onchange = () => toggleExternalCustomFields(true);
+            ['externalSupportDay', 'externalSupportStart', 'externalSupportEnd', 'externalSupportCustomTitle', 'externalSupportCustomLocation'].forEach(id => {
+                document.getElementById(id).onchange = updateExternalSupportConflictPreview;
+                document.getElementById(id).oninput = updateExternalSupportConflictPreview;
+            });
+
+            const modal = document.getElementById('externalSupportModal');
+            const content = document.getElementById('externalSupportModalContent');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                content.classList.remove('translate-y-full');
+            }, 10);
+        }
+
+        function closeExternalSupportModal() {
+            const modal = document.getElementById('externalSupportModal');
+            const content = document.getElementById('externalSupportModalContent');
+            modal.classList.add('opacity-0');
+            content.classList.add('translate-y-full');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        function saveExternalSupport() {
+            const draft = readExternalSupportForm(true);
+            if (!externalSupportPrograms[draft.program] || !scheduleData.some(day => day.id === draft.dayId)) {
+                alert('지원 일정과 날짜를 다시 확인해주세요.');
+                return;
+            }
+            if (draft.program === 'custom' && !draft.customTitle) {
+                alert('직접입력 일정의 일정명을 입력해주세요.');
+                document.getElementById('externalSupportCustomTitle').focus();
+                return;
+            }
+            if (!isValidTimeValue(draft.start) || !isValidTimeValue(draft.end) || draft.start === draft.end) {
+                alert('시작 시간과 종료 시간을 올바르게 입력해주세요.');
+                return;
+            }
+            if (draft.assignees.length === 0) {
+                alert('지원 담당자를 1명 이상 선택해주세요.');
+                return;
+            }
+
+            const normalized = sanitizeExternalSupportData([draft])[0];
+            if (!normalized) {
+                alert('입력한 일정을 저장할 수 없습니다. 내용을 다시 확인해주세요.');
+                return;
+            }
+
+            const conflicts = getExternalSupportConflicts(normalized, normalized.id);
+            if (conflicts.length > 0) {
+                const conflictText = conflicts.map(conflict => `• ${conflict}`).join('\n');
+                if (!confirm(`겹치는 일정이 있습니다.\n\n${conflictText}\n\n그래도 저장하시겠습니까?`)) return;
+            }
+
+            const existingIndex = externalSupportData.findIndex(item => item.id === normalized.id);
+            if (existingIndex >= 0) externalSupportData[existingIndex] = normalized;
+            else externalSupportData.push(normalized);
+
+            saveExternalSupportData();
+            closeExternalSupportModal();
+            if (currentView === 'table') renderTable();
+            updateCurrentStatus();
+        }
+
+        function deleteExternalSupport() {
+            const id = document.getElementById('externalSupportId').value;
+            const existing = externalSupportData.find(item => item.id === id);
+            if (!existing) return;
+            if (!confirm(`${getExternalSupportSummary(existing)} 일정을 삭제하시겠습니까?`)) return;
+
+            externalSupportData = externalSupportData.filter(item => item.id !== id);
+            saveExternalSupportData();
+            closeExternalSupportModal();
+            if (currentView === 'table') renderTable();
+            updateCurrentStatus();
         }
 
         function openEditModal(dayId, eventId) {
@@ -1659,7 +2279,7 @@
                 const updateNotice = sessionStorage.getItem('dt_update_notice');
                 if (updateNotice) {
                     sessionStorage.removeItem('dt_update_notice');
-                    setTimeout(() => alert(`${updateNotice}\n기존 이름과 역할 배정은 그대로 유지되었습니다.`), 400);
+                    setTimeout(() => alert(`${updateNotice}\n기존 이름, 역할 배정, 외부 지원 일정은 그대로 유지되었습니다.`), 400);
                 }
 
                 const cleanURL = new URL(window.location.href);
