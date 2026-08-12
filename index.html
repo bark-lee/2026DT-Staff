@@ -103,7 +103,7 @@
                     </span>
                 </div>
                 <h1 class="text-[18px] font-extrabold tracking-tight text-slate-900 dark:text-white flex items-end gap-1.5">
-                    <a href="https://youtube.com/@globaldavidstent?si=cehq9jznUrgwpstv" target="_blank" rel="noopener noreferrer" class="hover:text-red-500 dark:hover:text-red-400 active:opacity-70 transition-colors" aria-label="Global David's Tent 유튜브 채널 열기">David Tent</a>
+                    <button id="davidTentTitleButton" type="button" onclick="handleDavidTentTitleClick()" class="text-left cursor-pointer hover:text-red-500 dark:hover:text-red-400 active:opacity-70 transition-colors" aria-label="Global David's Tent 유튜브 채널 열기">David Tent</button>
                     <span id="headerNameSpan" class="text-[14px] font-medium text-slate-400 dark:text-slate-500 tracking-normal pb-[2px]"></span>
                 </h1>
             </div>
@@ -301,6 +301,17 @@
                     </div>
                 </button>
 
+                <button id="youtubeLinkSettingButton" type="button" onclick="toggleDavidTentYoutube()" class="flex items-center gap-3 w-full p-4 rounded-xl bg-slate-50 dark:bg-gray-800/50 border border-slate-200 dark:border-gray-700 text-left active:bg-slate-100 dark:active:bg-gray-800 transition-colors group" aria-pressed="true">
+                    <div class="w-10 h-10 rounded-full bg-red-100 text-red-500 dark:bg-red-500/20 dark:text-red-400 flex items-center justify-center text-lg group-hover:scale-110 transition-transform"><i class="fa-brands fa-youtube"></i></div>
+                    <div class="flex-1 min-w-0">
+                        <div class="font-bold text-slate-800 dark:text-gray-200 text-sm">David Tent 유튜브 연결</div>
+                        <div id="youtubeLinkSettingDesc" class="text-[11px] text-slate-500 dark:text-gray-400 mt-0.5">제목을 누르면 유튜브 채널 열기</div>
+                    </div>
+                    <div id="youtubeLinkSwitch" class="w-11 h-6 rounded-full bg-red-500 p-0.5 transition-colors shrink-0" aria-hidden="true">
+                        <span id="youtubeLinkSwitchKnob" class="block w-5 h-5 rounded-full bg-white shadow-sm translate-x-5 transition-transform"></span>
+                    </div>
+                </button>
+
                 <button onclick="exportConfigCode()" class="flex items-center gap-3 w-full p-4 rounded-xl bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/30 text-left active:bg-amber-100 dark:active:bg-amber-900/20 transition-colors group">
                     <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400 flex items-center justify-center text-lg group-hover:scale-110 transition-transform"><i class="fa-solid fa-copy"></i></div>
                     <div>
@@ -334,6 +345,50 @@
                         <div class="text-[11px] text-red-500/70 mt-0.5">모든 설정 및 배정 역할 초기화</div>
                     </div>
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Edit Modal -->
+    <div id="profileEditModal" class="fixed inset-0 bg-slate-900/40 dark:bg-black/80 backdrop-blur-sm z-[70] flex items-end sm:items-center justify-center hidden opacity-0 transition-opacity duration-300 sm:px-4">
+        <div id="profileEditModalContent" class="bg-white dark:bg-[#1e293b] w-full sm:max-w-[420px] max-h-[92vh] rounded-t-3xl sm:rounded-3xl border-t sm:border border-slate-200 dark:border-gray-700 shadow-2xl translate-y-full sm:translate-y-0 sm:scale-95 transition-transform duration-300 flex flex-col pb-safe">
+            <div class="flex justify-between items-start gap-3 p-6 pb-4 shrink-0 border-b border-slate-100 dark:border-gray-700/70">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900 dark:text-white">사용자 정보 수정</h3>
+                    <p class="text-[11px] text-slate-500 dark:text-gray-400 mt-1">이름, 아이콘, 색상과 사용 인원을 바로 바꿀 수 있어요.</p>
+                </div>
+                <button type="button" onclick="closeProfileEditModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-gray-800 text-slate-400 hover:text-slate-600 dark:hover:text-white shrink-0">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div id="profileEditScroller" class="flex-1 overflow-y-auto no-scrollbar p-6 pt-5">
+                <div class="mb-5">
+                    <label class="block text-[11px] font-bold text-slate-600 dark:text-gray-300 mb-2">사용 인원</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="profileEditMode" value="1" class="hidden peer" onchange="handleProfileEditModeChange()">
+                            <div class="peer-checked:border-amber-500 peer-checked:bg-amber-50 dark:peer-checked:bg-amber-900/20 border-2 border-slate-200 dark:border-gray-700 rounded-xl p-3 text-center transition-all">
+                                <span class="text-xl block mb-1">👤</span>
+                                <span class="font-bold text-slate-800 dark:text-white text-xs">1명</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="profileEditMode" value="2" class="hidden peer" onchange="handleProfileEditModeChange()">
+                            <div class="peer-checked:border-amber-500 peer-checked:bg-amber-50 dark:peer-checked:bg-amber-900/20 border-2 border-slate-200 dark:border-gray-700 rounded-xl p-3 text-center transition-all">
+                                <span class="text-xl block mb-1">👥</span>
+                                <span class="font-bold text-slate-800 dark:text-white text-xs">2명</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="profileEditProfilesArea" class="space-y-4"></div>
+            </div>
+
+            <div class="flex gap-3 p-6 pt-4 shrink-0 border-t border-slate-100 dark:border-gray-700/70 bg-white dark:bg-[#1e293b] sm:rounded-b-3xl">
+                <button type="button" onclick="closeProfileEditModal()" class="flex-1 py-3 rounded-xl bg-slate-100 dark:bg-gray-800 text-slate-600 dark:text-white font-bold border border-slate-200 dark:border-gray-700 text-sm">취소</button>
+                <button type="button" onclick="saveProfileEdit()" class="flex-1 py-3 rounded-xl bg-slate-900 text-white dark:bg-amber-500 dark:text-gray-900 font-bold shadow-md text-sm">변경사항 저장</button>
             </div>
         </div>
     </div>
@@ -682,7 +737,8 @@
             externalSupport: 'dt_external_support_v1',
             contentVersion: 'dt_content_version'
         };
-        const CONTENT_VERSION = 16;
+        const CONTENT_VERSION = 17;
+        const DAVID_TENT_YOUTUBE_URL = 'https://youtube.com/@globaldavidstent?si=cehq9jznUrgwpstv';
 
         function safeParseJSON(value) {
             if (!value) return null;
@@ -722,7 +778,8 @@
             return {
                 mode,
                 users,
-                isSetupComplete: Boolean(storedState?.isSetupComplete)
+                isSetupComplete: Boolean(storedState?.isSetupComplete),
+                youtubeLinkEnabled: storedState?.youtubeLinkEnabled !== false
             };
         }
 
@@ -842,7 +899,8 @@
             users: [
                 { name: '', icon: '👨', color: 'lime' }
             ],
-            isSetupComplete: false
+            isSetupComplete: false,
+            youtubeLinkEnabled: true
         };
         
         let scheduleData = [];
@@ -853,6 +911,7 @@
         let clockInterval;
         let isSettingUp = false;
         let isEditingProfile = false;
+        let profileEditDraft = null;
 
         function initApp() {
             renderElectives();
@@ -899,6 +958,7 @@
             
             const names = appState.users.map(u => u.name).join(' & ');
             document.getElementById('headerNameSpan').textContent = names ? `- ${names}` : '';
+            updateDavidTentYoutubeUI();
 
             updateThemeIcon();
 
@@ -1128,6 +1188,7 @@
         function openSettingsModal() {
             const modal = document.getElementById('settingsModal');
             const content = document.getElementById('settingsModalContent');
+            updateDavidTentYoutubeUI();
             modal.classList.remove('hidden');
             setTimeout(() => {
                 modal.classList.remove('opacity-0');
@@ -1145,11 +1206,209 @@
             setTimeout(() => modal.classList.add('hidden'), 300);
         }
 
+        function handleDavidTentTitleClick() {
+            if (appState.youtubeLinkEnabled === false) return;
+            window.open(DAVID_TENT_YOUTUBE_URL, '_blank', 'noopener,noreferrer');
+        }
+
+        function toggleDavidTentYoutube() {
+            appState.youtubeLinkEnabled = appState.youtubeLinkEnabled === false;
+            localStorage.setItem(STORAGE_KEYS.appState, JSON.stringify(appState));
+            updateDavidTentYoutubeUI();
+        }
+
+        function updateDavidTentYoutubeUI() {
+            const enabled = appState.youtubeLinkEnabled !== false;
+            const titleButton = document.getElementById('davidTentTitleButton');
+            const settingButton = document.getElementById('youtubeLinkSettingButton');
+            const settingDesc = document.getElementById('youtubeLinkSettingDesc');
+            const switchEl = document.getElementById('youtubeLinkSwitch');
+            const knob = document.getElementById('youtubeLinkSwitchKnob');
+
+            if (titleButton) {
+                titleButton.classList.toggle('cursor-pointer', enabled);
+                titleButton.classList.toggle('hover:text-red-500', enabled);
+                titleButton.classList.toggle('dark:hover:text-red-400', enabled);
+                titleButton.classList.toggle('active:opacity-70', enabled);
+                titleButton.classList.toggle('cursor-default', !enabled);
+                titleButton.setAttribute('aria-label', enabled
+                    ? "Global David's Tent 유튜브 채널 열기"
+                    : 'David Tent');
+            }
+
+            if (settingButton) settingButton.setAttribute('aria-pressed', String(enabled));
+            if (settingDesc) settingDesc.textContent = enabled
+                ? '제목을 누르면 유튜브 채널 열기 · 켜짐'
+                : '제목을 눌러도 이동하지 않음 · 꺼짐';
+            if (switchEl) {
+                switchEl.classList.toggle('bg-red-500', enabled);
+                switchEl.classList.toggle('bg-slate-300', !enabled);
+                switchEl.classList.toggle('dark:bg-gray-600', !enabled);
+            }
+            if (knob) knob.classList.toggle('translate-x-5', enabled);
+        }
+
         function editProfile() {
             closeSettingsModal();
             setTimeout(() => {
-                openSetupWizard(true);
+                openProfileEditModal();
+            }, 250);
+        }
+
+        function createProfileEditUser(user, index) {
+            const label = index === 1 ? '내 정보' : '두 번째 사용자 정보';
+            let html = `
+                <div class="bg-slate-50 dark:bg-gray-900 rounded-2xl p-4 border border-slate-200 dark:border-gray-800">
+                    <h4 class="font-bold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
+                        <span class="bg-slate-200 dark:bg-gray-700 text-slate-600 dark:text-gray-300 w-5 h-5 rounded-full flex items-center justify-center text-[10px]">${index}</span>
+                        ${label}
+                    </h4>
+                    <label class="block mb-3">
+                        <span class="block text-[11px] font-bold text-slate-500 dark:text-gray-400 mb-1.5">이름 (또는 닉네임)</span>
+                        <input type="text" id="profileEditName${index}" value="${escapeHTML(user.name)}" maxlength="20" placeholder="이름을 입력하세요" class="w-full bg-white dark:bg-black border border-slate-300 dark:border-gray-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-amber-500 transition-colors">
+                    </label>
+                    <div class="mb-3">
+                        <span class="block text-[11px] font-bold text-slate-500 dark:text-gray-400 mb-1.5">아이콘</span>
+                        <div class="flex gap-1.5 flex-wrap">
+            `;
+
+            iconsList.forEach(icon => {
+                html += `
+                    <label class="cursor-pointer">
+                        <input type="radio" name="profileEditIcon${index}" value="${icon}" class="hidden icon-radio" ${icon === user.icon ? 'checked' : ''}>
+                        <div class="w-9 h-9 rounded-lg border border-slate-200 dark:border-gray-700 flex items-center justify-center text-base hover:bg-slate-100 dark:hover:bg-gray-800 transition-all">${icon}</div>
+                    </label>
+                `;
+            });
+
+            html += `</div></div><div><span class="block text-[11px] font-bold text-slate-500 dark:text-gray-400 mb-1.5">테마 색상</span><div class="flex gap-2 flex-wrap">`;
+
+            colorPalette.forEach(color => {
+                const selected = color.id === user.color;
+                html += `
+                    <label class="cursor-pointer relative">
+                        <input type="radio" name="profileEditColor${index}" value="${color.id}" class="hidden color-radio" ${selected ? 'checked' : ''}>
+                        <div class="w-8 h-8 rounded-full border-2 border-transparent transition-all flex justify-center items-center text-white text-[10px] font-bold shadow-sm" style="background-color: ${color.code};">
+                            <i class="fa-solid fa-check ${selected ? 'opacity-100' : 'opacity-0'}"></i>
+                        </div>
+                    </label>
+                `;
+            });
+
+            html += `</div></div></div>`;
+            return html;
+        }
+
+        function openProfileEditModal() {
+            const defaults = [
+                { name: '사용자1', icon: '👨', color: 'lime' },
+                { name: '사용자2', icon: '👩', color: 'pink' }
+            ];
+            profileEditDraft = {
+                mode: appState.mode,
+                users: [0, 1].map(index => ({ ...(appState.users[index] || defaults[index]) }))
+            };
+
+            const modeInput = document.querySelector(`input[name="profileEditMode"][value="${profileEditDraft.mode}"]`);
+            if (modeInput) modeInput.checked = true;
+            renderProfileEditor();
+
+            const modal = document.getElementById('profileEditModal');
+            const content = document.getElementById('profileEditModalContent');
+            const scroller = document.getElementById('profileEditScroller');
+            modal.classList.remove('hidden');
+            scroller.scrollTop = 0;
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                content.classList.remove('translate-y-full', 'sm:scale-95');
+                content.classList.add('sm:scale-100');
+                scroller.scrollTop = 0;
+            }, 10);
+        }
+
+        function closeProfileEditModal() {
+            const modal = document.getElementById('profileEditModal');
+            const content = document.getElementById('profileEditModalContent');
+            modal.classList.add('opacity-0');
+            content.classList.add('translate-y-full', 'sm:scale-95');
+            content.classList.remove('sm:scale-100');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                profileEditDraft = null;
             }, 300);
+        }
+
+        function captureProfileEditDraft() {
+            if (!profileEditDraft) return;
+            for (let index = 1; index <= profileEditDraft.mode; index++) {
+                const nameInput = document.getElementById(`profileEditName${index}`);
+                const iconInput = document.querySelector(`input[name="profileEditIcon${index}"]:checked`);
+                const colorInput = document.querySelector(`input[name="profileEditColor${index}"]:checked`);
+                if (!nameInput || !iconInput || !colorInput) continue;
+                profileEditDraft.users[index - 1] = {
+                    name: nameInput.value.trim(),
+                    icon: iconInput.value,
+                    color: colorInput.value
+                };
+            }
+        }
+
+        function handleProfileEditModeChange() {
+            captureProfileEditDraft();
+            const selectedMode = document.querySelector('input[name="profileEditMode"]:checked');
+            if (!profileEditDraft || !selectedMode) return;
+            profileEditDraft.mode = Number(selectedMode.value) === 2 ? 2 : 1;
+            renderProfileEditor();
+        }
+
+        function renderProfileEditor() {
+            if (!profileEditDraft) return;
+            const area = document.getElementById('profileEditProfilesArea');
+            area.innerHTML = '';
+            for (let index = 1; index <= profileEditDraft.mode; index++) {
+                area.innerHTML += createProfileEditUser(profileEditDraft.users[index - 1], index);
+            }
+
+            area.querySelectorAll('.color-radio').forEach(radio => {
+                radio.addEventListener('change', event => {
+                    const groupName = event.target.name;
+                    area.querySelectorAll(`input[name="${groupName}"]`).forEach(input => {
+                        const icon = input.nextElementSibling?.querySelector('.fa-check');
+                        if (icon) icon.classList.toggle('opacity-100', input.checked);
+                        if (icon) icon.classList.toggle('opacity-0', !input.checked);
+                    });
+                });
+            });
+        }
+
+        function saveProfileEdit() {
+            if (!profileEditDraft) return;
+            captureProfileEditDraft();
+
+            const mode = profileEditDraft.mode;
+            const users = profileEditDraft.users.slice(0, mode).map((user, index) => ({
+                name: user.name || `사용자${index + 1}`,
+                icon: user.icon,
+                color: user.color
+            }));
+
+            appState.mode = mode;
+            appState.users = users;
+            externalSupportData = sanitizeExternalSupportData(externalSupportData);
+            if (mode === 1 && currentFilter === 'u2') currentFilter = 'u1';
+
+            localStorage.setItem(STORAGE_KEYS.appState, JSON.stringify(appState));
+            localStorage.setItem(STORAGE_KEYS.externalSupport, JSON.stringify(externalSupportData));
+            closeProfileEditModal();
+
+            applyDynamicStyles();
+            const names = appState.users.map(user => user.name).join(' & ');
+            document.getElementById('headerNameSpan').textContent = names ? `- ${names}` : '';
+            renderFilterBar();
+            renderTabs();
+            if (currentView === 'card') renderSchedule();
+            if (currentView === 'table') renderTable();
+            updateCurrentStatus();
         }
 
         function exportConfigCode() {
