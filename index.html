@@ -610,6 +610,29 @@
             return normalizeRoleSelection(value).length > 0;
         }
 
+        function getAssignmentHighlightClass(has1, has2) {
+            if (has1 && has2) return 'row-highlight-both';
+            if (has1) return 'row-highlight-u1';
+            if (has2) return 'row-highlight-u2';
+            return '';
+        }
+
+        function getExternalAssigneeState(items) {
+            const supportItems = Array.isArray(items) ? items : [items];
+            return {
+                has1: supportItems.some(item => item?.assignees?.includes(0)),
+                has2: appState.mode === 2 && supportItems.some(item => item?.assignees?.includes(1))
+            };
+        }
+
+        function getExternalSupportSection(item) {
+            const hour = Number.parseInt(String(item?.start || '0').split(':')[0], 10);
+            if (hour < 6) return 1;
+            if (hour < 12) return 2;
+            if (hour < 18) return 3;
+            return 4;
+        }
+
         function getRoleLabels(value) {
             return normalizeRoleSelection(value).map(role => roleMap[role].label);
         }
@@ -737,7 +760,7 @@
             externalSupport: 'dt_external_support_v1',
             contentVersion: 'dt_content_version'
         };
-        const CONTENT_VERSION = 17;
+        const CONTENT_VERSION = 18;
         const DAVID_TENT_YOUTUBE_URL = 'https://youtube.com/@globaldavidstent?si=cehq9jznUrgwpstv';
 
         function safeParseJSON(value) {
@@ -1661,8 +1684,10 @@
             const names = item.assignees.map(index => appState.users[index]?.name).filter(Boolean).join(' · ');
             const meta = getExternalSupportMeta(item);
             const overnight = item.end <= item.start ? ' · 익일' : '';
+            const { has1, has2 } = getExternalAssigneeState(item);
+            const highlightClass = getAssignmentHighlightClass(has1, has2);
             return `
-                <tr class="cursor-pointer border-b border-rose-100 dark:border-rose-500/10 bg-rose-50/70 dark:bg-rose-950/15 hover:bg-rose-100/70 dark:hover:bg-rose-950/25 transition-colors" onclick="openExternalSupportModal('${day.id}', '${item.id}')">
+                <tr class="cursor-pointer border-b border-rose-100 dark:border-rose-500/10 border-l-2 border-l-rose-400/70 hover:brightness-[0.98] dark:hover:brightness-110 transition-all ${highlightClass}" onclick="openExternalSupportModal('${day.id}', '${item.id}')">
                     <td class="px-2 py-3 font-mono text-[10px] text-rose-500 dark:text-rose-400 align-top leading-tight">
                         ${escapeHTML(item.start)}<br><span class="opacity-70">~${escapeHTML(item.end)}${overnight}</span>
                     </td>
@@ -1749,10 +1774,13 @@
                     const has1 = hasAssignedRole(event.user1Role);
                     const has2 = is2P && hasAssignedRole(event.user2Role);
                     const overlappingSupports = getExternalSupportsOverlappingEvent(day, event);
+                    const externalAssignees = getExternalAssigneeState(overlappingSupports);
+                    const highlightClass = getAssignmentHighlightClass(
+                        has1 || externalAssignees.has1,
+                        has2 || externalAssignees.has2
+                    );
                     
-                    if (has1 && has2) rowClass += ' row-highlight-both';
-                    else if (has1) rowClass += ' row-highlight-u1';
-                    else if (has2) rowClass += ' row-highlight-u2';
+                    if (highlightClass) rowClass += ` ${highlightClass}`;
                     if (overlappingSupports.length > 0) rowClass += ' border-l-2 border-l-rose-400/70';
                     
                     const r1 = `<div class="flex flex-col items-center">${createRolePillsHTML(event.user1Role, u1Color)}${createExternalRoleCellHTML(overlappingSupports, 0)}</div>`;
@@ -1811,6 +1839,21 @@
             if (currentView === 'card') renderSchedule();
         }
 
+        function createExternalDateBadgeHTML(item, userIndex, color) {
+            const user = appState.users[userIndex];
+            if (!user || !item.assignees.includes(userIndex)) return '';
+            const roleValue = userIndex === 0 ? item.user1Role : item.user2Role;
+            const labels = getRoleLabels(roleValue);
+            const displayLabels = labels.length > 0 ? labels : ['지원'];
+
+            return `
+                <div class="flex flex-wrap items-center gap-1 rounded-lg border px-2 py-1" style="border-color:${color.code}45;background-color:${color.bgRgba}">
+                    <span class="text-[9px] font-bold text-slate-500 dark:text-gray-300 mr-0.5">${escapeHTML(user.icon)} ${escapeHTML(user.name)}</span>
+                    ${displayLabels.map(label => `<span class="text-[9px] font-extrabold rounded px-1.5 py-0.5 bg-white/80 dark:bg-black/20" style="color:${color.code}">${escapeHTML(label)}</span>`).join('')}
+                </div>
+            `;
+        }
+
         function renderSchedule() {
             const container = document.getElementById('scheduleContainer');
             container.innerHTML = '';
@@ -1827,20 +1870,48 @@
             const sections = { 1: [], 2: [], 3: [], 4: [] };
             let visibleCount = 0;
 
+            const matchesCurrentFilter = (has1, has2) => {
+                if (currentFilter === 'all') return true;
+                if (currentFilter === 'u1') return has1;
+                if (currentFilter === 'u2') return has2;
+                if (currentFilter === 'together') return has1 && has2;
+                return false;
+            };
+
             activeDayData.events.forEach(event => {
-                let show = false;
                 const has1 = hasAssignedRole(event.user1Role);
                 const has2 = is2P && hasAssignedRole(event.user2Role);
+                if (!matchesCurrentFilter(has1, has2)) return;
 
-                if (currentFilter === 'all') show = true;
-                else if (currentFilter === 'u1' && has1) show = true;
-                else if (currentFilter === 'u2' && has2) show = true;
-                else if (currentFilter === 'together' && has1 && has2) show = true;
-                
-                if (show) {
-                    sections[event.section].push(event);
+                sections[event.section].push({
+                    type: 'main',
+                    start: event.start,
+                    end: event.end,
+                    event
+                });
+                visibleCount++;
+            });
+
+            externalSupportData
+                .filter(item => item.dayId === activeDayData.id)
+                .forEach(item => {
+                    const { has1, has2 } = getExternalAssigneeState(item);
+                    if (!matchesCurrentFilter(has1, has2)) return;
+
+                    sections[getExternalSupportSection(item)].push({
+                        type: 'external',
+                        start: item.start,
+                        end: item.end,
+                        item
+                    });
                     visibleCount++;
-                }
+                });
+
+            Object.values(sections).forEach(items => {
+                items.sort((first, second) => first.start.localeCompare(second.start)
+                    || (first.type === second.type
+                        ? first.end.localeCompare(second.end)
+                        : (first.type === 'main' ? -1 : 1)));
             });
 
             if (visibleCount === 0) {
@@ -1857,54 +1928,90 @@
             const getSecTitle = (sec) => ["심야~새벽", "오전", "오후", "저녁~심야"][sec-1];
 
             [1, 2, 3, 4].forEach(secNum => {
-                const secEvents = sections[secNum];
-                if (secEvents && secEvents.length > 0) {
-                    const secWrapper = document.createElement('div');
-                    secWrapper.className = 'mb-8';
-                    secWrapper.innerHTML = `
-                        <div class="flex items-center gap-3 mb-4">
-                            <div class="h-px bg-slate-200 dark:bg-gray-700 flex-1"></div>
-                            <span class="text-[11px] font-bold text-slate-400 dark:text-gray-500 tracking-wider">${getSecTitle(secNum)}</span>
-                            <div class="h-px bg-slate-200 dark:bg-gray-700 flex-1"></div>
-                        </div>
-                        <div class="flex flex-col gap-3" id="sec-cards-${secNum}"></div>
-                    `;
-                    container.appendChild(secWrapper);
-                    const cardsContainer = secWrapper.querySelector(`#sec-cards-${secNum}`);
+                const sectionItems = sections[secNum];
+                if (!sectionItems || sectionItems.length === 0) return;
 
-                    secEvents.forEach(event => {
+                const secWrapper = document.createElement('div');
+                secWrapper.className = 'mb-8';
+                secWrapper.innerHTML = `
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="h-px bg-slate-200 dark:bg-gray-700 flex-1"></div>
+                        <span class="text-[11px] font-bold text-slate-400 dark:text-gray-500 tracking-wider">${getSecTitle(secNum)}</span>
+                        <div class="h-px bg-slate-200 dark:bg-gray-700 flex-1"></div>
+                    </div>
+                    <div class="flex flex-col gap-3" id="sec-cards-${secNum}"></div>
+                `;
+                container.appendChild(secWrapper);
+                const cardsContainer = secWrapper.querySelector(`#sec-cards-${secNum}`);
+
+                sectionItems.forEach(scheduleItem => {
+                    if (scheduleItem.type === 'external') {
+                        const item = scheduleItem.item;
                         const card = document.createElement('div');
-                        const has1 = hasAssignedRole(event.user1Role);
-                        const has2 = is2P && hasAssignedRole(event.user2Role);
-                        const hasRole = has1 || has2;
-                        
-                        let baseCardClass = "rounded-xl p-4 flex flex-col cursor-pointer border transition-colors shadow-sm dark:shadow-none bg-white dark:bg-slate-800/80 ";
-                        if(hasRole) baseCardClass += "border-amber-200 dark:border-amber-500/30";
-                        else baseCardClass += "border-slate-200 dark:border-transparent";
-                        
-                        card.className = baseCardClass;
-                        card.onclick = () => openEditModal(activeDayData.id, event.id);
-                        
-                        let badgesHTML = '';
-                        if (has1) badgesHTML += createUserRoleBadgeHTML(u1, event.user1Role, u1Color);
-                        if (has2) badgesHTML += createUserRoleBadgeHTML(u2, event.user2Role, u2Color);
+                        const { has1, has2 } = getExternalAssigneeState(item);
+                        const highlightClass = getAssignmentHighlightClass(has1, has2);
+                        const meta = getExternalSupportMeta(item);
+                        const overnight = item.end <= item.start ? ' · 익일' : '';
+                        const names = item.assignees.map(index => appState.users[index]?.name).filter(Boolean).join(' · ');
+                        const badgesHTML = [
+                            createExternalDateBadgeHTML(item, 0, u1Color),
+                            is2P ? createExternalDateBadgeHTML(item, 1, u2Color) : ''
+                        ].filter(Boolean).join('');
 
+                        card.className = `rounded-xl p-4 flex flex-col cursor-pointer border border-rose-200 dark:border-rose-500/30 border-l-4 border-l-rose-400 shadow-sm dark:shadow-none hover:brightness-[0.98] dark:hover:brightness-110 transition-all ${highlightClass}`;
+                        card.onclick = () => openExternalSupportModal(activeDayData.id, item.id);
                         card.innerHTML = `
-                            <div class="flex justify-between items-start mb-2">
-                                <span class="text-[11px] font-mono font-bold text-slate-500 bg-slate-100 dark:text-gray-300 dark:bg-gray-700/50 px-2 py-0.5 rounded">${event.start} - ${event.end}</span>
-                                <button class="text-slate-400 hover:text-amber-500 dark:text-gray-500 dark:hover:text-amber-400 transition-colors"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <div class="flex justify-between items-start gap-3 mb-2">
+                                <div class="flex items-center gap-2 flex-wrap min-w-0">
+                                    <span class="text-[11px] font-mono font-bold text-slate-500 bg-white/70 dark:text-gray-300 dark:bg-black/20 px-2 py-0.5 rounded">${escapeHTML(item.start)} - ${escapeHTML(item.end)}${overnight}</span>
+                                    <span class="rounded bg-rose-500/10 dark:bg-rose-500/15 text-rose-500 dark:text-rose-400 px-1.5 py-0.5 text-[8px] font-extrabold">외부 지원</span>
+                                </div>
+                                <button type="button" class="text-rose-400 hover:text-rose-500 dark:text-rose-400/70 dark:hover:text-rose-300 transition-colors shrink-0" aria-label="외부 지원 일정 수정"><i class="fa-solid fa-pen-to-square"></i></button>
                             </div>
                             <div class="mt-1">
-                                <h3 class="text-[16px] font-bold text-slate-900 dark:text-white leading-tight break-keep">${event.title}</h3>
-                                <p class="text-[11px] text-slate-500 dark:text-gray-400 mt-1">${event.leader}</p>
-                                <div class="flex flex-col gap-1.5 items-start mt-3 ${badgesHTML ? '' : 'hidden'}">
-                                    ${badgesHTML}
-                                </div>
+                                <h3 class="text-[16px] font-bold text-slate-900 dark:text-white leading-tight break-keep">${escapeHTML(getExternalSupportTitle(item))}</h3>
+                                ${meta ? `<p class="text-[11px] font-semibold text-rose-500 dark:text-rose-400 mt-1">${escapeHTML(meta)}</p>` : ''}
+                                <p class="text-[10px] text-slate-500 dark:text-gray-400 mt-1">담당 · ${escapeHTML(names)}</p>
+                                ${item.note ? `<p class="text-[10px] text-slate-500 dark:text-gray-400 mt-2 leading-relaxed">${escapeHTML(item.note)}</p>` : ''}
+                                <div class="flex flex-col gap-1.5 items-start mt-3">${badgesHTML}</div>
                             </div>
                         `;
                         cardsContainer.appendChild(card);
-                    });
-                }
+                        return;
+                    }
+
+                    const event = scheduleItem.event;
+                    const card = document.createElement('div');
+                    const has1 = hasAssignedRole(event.user1Role);
+                    const has2 = is2P && hasAssignedRole(event.user2Role);
+                    const hasRole = has1 || has2;
+                    
+                    let baseCardClass = "rounded-xl p-4 flex flex-col cursor-pointer border transition-colors shadow-sm dark:shadow-none bg-white dark:bg-slate-800/80 ";
+                    if(hasRole) baseCardClass += "border-amber-200 dark:border-amber-500/30";
+                    else baseCardClass += "border-slate-200 dark:border-transparent";
+                    
+                    card.className = baseCardClass;
+                    card.onclick = () => openEditModal(activeDayData.id, event.id);
+                    
+                    let badgesHTML = '';
+                    if (has1) badgesHTML += createUserRoleBadgeHTML(u1, event.user1Role, u1Color);
+                    if (has2) badgesHTML += createUserRoleBadgeHTML(u2, event.user2Role, u2Color);
+
+                    card.innerHTML = `
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-[11px] font-mono font-bold text-slate-500 bg-slate-100 dark:text-gray-300 dark:bg-gray-700/50 px-2 py-0.5 rounded">${escapeHTML(event.start)} - ${escapeHTML(event.end)}</span>
+                            <button class="text-slate-400 hover:text-amber-500 dark:text-gray-500 dark:hover:text-amber-400 transition-colors"><i class="fa-solid fa-pen-to-square"></i></button>
+                        </div>
+                        <div class="mt-1">
+                            <h3 class="text-[16px] font-bold text-slate-900 dark:text-white leading-tight break-keep">${escapeHTML(event.title)}</h3>
+                            <p class="text-[11px] text-slate-500 dark:text-gray-400 mt-1">${escapeHTML(event.leader)}</p>
+                            <div class="flex flex-col gap-1.5 items-start mt-3 ${badgesHTML ? '' : 'hidden'}">
+                                ${badgesHTML}
+                            </div>
+                        </div>
+                    `;
+                    cardsContainer.appendChild(card);
+                });
             });
         }
 
@@ -2407,6 +2514,7 @@
             saveExternalSupportData();
             closeExternalSupportModal();
             if (currentView === 'table') renderTable();
+            if (currentView === 'card') renderSchedule();
             updateCurrentStatus();
         }
 
@@ -2420,6 +2528,7 @@
             saveExternalSupportData();
             closeExternalSupportModal();
             if (currentView === 'table') renderTable();
+            if (currentView === 'card') renderSchedule();
             updateCurrentStatus();
         }
 
