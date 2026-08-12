@@ -77,6 +77,16 @@
         html.dark .color-radio:checked + div { border-color: #f8fafc; }
         .icon-radio:checked + div { background-color: #f1f5f9; border-color: #94a3b8; }
         html.dark .icon-radio:checked + div { background-color: #334155; border-color: #64748b; }
+
+        .role-option-input:checked + .role-option-card {
+            background-color: var(--role-color);
+            border-color: var(--role-color);
+            color: white;
+            box-shadow: 0 6px 14px var(--role-shadow);
+            transform: translateY(-1px);
+        }
+        .role-option-input:checked + .role-option-card .role-check-icon { opacity: 1; transform: scale(1); }
+        .role-option-input:disabled + .role-option-card { opacity: 0.38; cursor: not-allowed; }
     </style>
 </head>
 <body class="antialiased min-h-screen bg-slate-100 dark:bg-black text-slate-800 dark:text-gray-100 flex justify-center transition-colors duration-300">
@@ -178,6 +188,7 @@
                     <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-1">역할 배정</h3>
                     <p class="text-sm text-slate-500 dark:text-gray-400" id="modalEventTitle">이벤트 제목</p>
                     <p class="text-xs text-amber-500 mt-1" id="modalEventTime">00:00 ~ 00:00</p>
+                    <p class="text-[10px] text-slate-400 dark:text-gray-500 mt-1">한 사람당 최대 2개까지 선택할 수 있어요.</p>
                 </div>
                 <button onclick="closeModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-gray-800 text-slate-400 hover:text-slate-600 dark:hover:text-white">
                     <i class="fa-solid fa-xmark"></i>
@@ -408,6 +419,46 @@
             'other': { label: '기타' }
         };
 
+        function normalizeRoleSelection(value) {
+            const candidates = Array.isArray(value) ? value.flat(2) : [value];
+            return [...new Set(candidates)]
+                .filter(role => role && role !== 'none' && Boolean(roleMap[role]))
+                .slice(0, 2);
+        }
+
+        function hasAssignedRole(value) {
+            return normalizeRoleSelection(value).length > 0;
+        }
+
+        function getRoleLabels(value) {
+            return normalizeRoleSelection(value).map(role => roleMap[role].label);
+        }
+
+        function createRolePillsHTML(value, color, size = 'text-[9px]') {
+            const labels = getRoleLabels(value);
+            if (labels.length === 0) return '<span class="text-slate-300 dark:text-gray-600 font-normal">-</span>';
+
+            return `
+                <div class="flex flex-col items-center gap-1">
+                    ${labels.map(label => `
+                        <span class="${size} leading-none font-extrabold rounded-md border px-1.5 py-1 whitespace-nowrap" style="border-color:${color.code}55;background-color:${color.bgRgba};color:${color.code}">${escapeHTML(label)}</span>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function createUserRoleBadgeHTML(user, value, color) {
+            const labels = getRoleLabels(value);
+            if (labels.length === 0) return '';
+
+            return `
+                <div class="flex flex-wrap items-center justify-end gap-1 rounded-lg border px-2 py-1" style="border-color:${color.code}45;background-color:${color.bgRgba}">
+                    <span class="text-[9px] font-bold text-slate-500 dark:text-gray-300 mr-0.5">${escapeHTML(user.icon)} ${escapeHTML(user.name)}</span>
+                    ${labels.map(label => `<span class="text-[9px] font-extrabold rounded px-1.5 py-0.5 bg-white/80 dark:bg-black/20" style="color:${color.code}">${escapeHTML(label)}</span>`).join('')}
+                </div>
+            `;
+        }
+
         const electivesData = [
             {
                 dateStr: '8/15(토) 14:00 ~ 16:00',
@@ -505,7 +556,7 @@
             schedule: 'dt_schedule_v7',
             contentVersion: 'dt_content_version'
         };
-        const CONTENT_VERSION = 11;
+        const CONTENT_VERSION = 12;
 
         function safeParseJSON(value) {
             if (!value) return null;
@@ -565,11 +616,10 @@
             latestSchedule.forEach(day => {
                 day.events.forEach(event => {
                     const previous = previousEvents.get(event.id);
-                    if (!previous) return;
+                    event.user1Role = normalizeRoleSelection(previous?.user1Role ?? event.user1Role);
+                    event.user2Role = normalizeRoleSelection(previous?.user2Role ?? event.user2Role);
 
-                    if (roleMap[previous.user1Role]) event.user1Role = previous.user1Role;
-                    if (roleMap[previous.user2Role]) event.user2Role = previous.user2Role;
-                    if (typeof previous.note === 'string' && !hasBrokenText(previous.note)) {
+                    if (previous && typeof previous.note === 'string' && !hasBrokenText(previous.note)) {
                         event.note = previous.note;
                     }
                 });
@@ -883,8 +933,10 @@
             const assignments = {};
             scheduleData.forEach(day => {
                 day.events.forEach(ev => {
-                    if (ev.user1Role !== 'none' || ev.user2Role !== 'none') {
-                        assignments[ev.id] = [ev.user1Role, ev.user2Role];
+                    const user1Roles = normalizeRoleSelection(ev.user1Role);
+                    const user2Roles = normalizeRoleSelection(ev.user2Role);
+                    if (user1Roles.length > 0 || user2Roles.length > 0) {
+                        assignments[ev.id] = [user1Roles, user2Roles];
                     }
                 });
             });
@@ -929,8 +981,8 @@
                     scheduleData.forEach(day => {
                         day.events.forEach(ev => {
                             if (parsed.a[ev.id]) {
-                                ev.user1Role = parsed.a[ev.id][0] || 'none';
-                                ev.user2Role = parsed.a[ev.id][1] || 'none';
+                                ev.user1Role = normalizeRoleSelection(parsed.a[ev.id][0]);
+                                ev.user2Role = normalizeRoleSelection(parsed.a[ev.id][1]);
                             }
                         });
                     });
@@ -1108,15 +1160,15 @@
                 
                 day.events.forEach(event => {
                     let rowClass = 'hover:bg-slate-50 dark:hover:bg-gray-800/50 transition-colors cursor-pointer border-b border-slate-100 dark:border-gray-800/30';
-                    const has1 = event.user1Role !== 'none';
-                    const has2 = is2P && event.user2Role !== 'none';
+                    const has1 = hasAssignedRole(event.user1Role);
+                    const has2 = is2P && hasAssignedRole(event.user2Role);
                     
                     if (has1 && has2) rowClass += ' row-highlight-both';
                     else if (has1) rowClass += ' row-highlight-u1';
                     else if (has2) rowClass += ' row-highlight-u2';
                     
-                    const r1 = roleMap[event.user1Role].label;
-                    const r2 = is2P ? roleMap[event.user2Role].label : '';
+                    const r1 = createRolePillsHTML(event.user1Role, u1Color);
+                    const r2 = is2P ? createRolePillsHTML(event.user2Role, u2Color) : '';
                     
                     html += `
                         <tr class="${rowClass}" onclick="openEditModal('${day.id}', '${event.id}')">
@@ -1127,8 +1179,8 @@
                                 <div class="font-bold text-slate-800 dark:text-gray-200 text-[13px] mb-0.5 leading-snug">${event.title}</div>
                                 <div class="text-[10px] text-slate-500 dark:text-gray-500 leading-none">${event.leader}</div>
                             </td>
-                            <td class="px-1 py-3 text-center align-middle font-bold text-[11px] ${has1 ? u1Color.tailwindText : 'text-slate-300 dark:text-gray-600 font-normal'}">${r1}</td>
-                            ${is2P ? `<td class="px-1 py-3 text-center align-middle font-bold text-[11px] ${has2 ? u2Color.tailwindText : 'text-slate-300 dark:text-gray-600 font-normal'}">${r2}</td>` : ''}
+                            <td class="px-1 py-3 text-center align-middle">${r1}</td>
+                            ${is2P ? `<td class="px-1 py-3 text-center align-middle">${r2}</td>` : ''}
                         </tr>
                     `;
                 });
@@ -1188,8 +1240,8 @@
 
             activeDayData.events.forEach(event => {
                 let show = false;
-                const has1 = event.user1Role !== 'none';
-                const has2 = is2P && event.user2Role !== 'none';
+                const has1 = hasAssignedRole(event.user1Role);
+                const has2 = is2P && hasAssignedRole(event.user2Role);
 
                 if (currentFilter === 'all') show = true;
                 else if (currentFilter === 'u1' && has1) show = true;
@@ -1233,8 +1285,8 @@
 
                     secEvents.forEach(event => {
                         const card = document.createElement('div');
-                        const has1 = event.user1Role !== 'none';
-                        const has2 = is2P && event.user2Role !== 'none';
+                        const has1 = hasAssignedRole(event.user1Role);
+                        const has2 = is2P && hasAssignedRole(event.user2Role);
                         const hasRole = has1 || has2;
                         
                         let baseCardClass = "rounded-xl p-4 flex flex-col cursor-pointer border transition-colors shadow-sm dark:shadow-none bg-white dark:bg-slate-800/80 ";
@@ -1245,20 +1297,18 @@
                         card.onclick = () => openEditModal(activeDayData.id, event.id);
                         
                         let badgesHTML = '';
-                        if (has1) badgesHTML += `<span class="text-[10px] px-2 py-0.5 rounded-md font-bold bg-slate-100 dark:bg-gray-700/50 border border-slate-200 dark:border-gray-600 ${u1Color.tailwindText}">${u1.name}: ${roleMap[event.user1Role].label}</span>`;
-                        if (has2) badgesHTML += `<span class="text-[10px] px-2 py-0.5 rounded-md font-bold bg-slate-100 dark:bg-gray-700/50 border border-slate-200 dark:border-gray-600 ${u2Color.tailwindText}">${u2.name}: ${roleMap[event.user2Role].label}</span>`;
+                        if (has1) badgesHTML += createUserRoleBadgeHTML(u1, event.user1Role, u1Color);
+                        if (has2) badgesHTML += createUserRoleBadgeHTML(u2, event.user2Role, u2Color);
 
                         card.innerHTML = `
                             <div class="flex justify-between items-start mb-2">
                                 <span class="text-[11px] font-mono font-bold text-slate-500 bg-slate-100 dark:text-gray-300 dark:bg-gray-700/50 px-2 py-0.5 rounded">${event.start} - ${event.end}</span>
                                 <button class="text-slate-400 hover:text-amber-500 dark:text-gray-500 dark:hover:text-amber-400 transition-colors"><i class="fa-solid fa-pen-to-square"></i></button>
                             </div>
-                            <div class="flex justify-between items-end mt-1">
-                                <div>
-                                    <h3 class="text-[16px] font-bold text-slate-900 dark:text-white leading-tight break-keep">${event.title}</h3>
-                                    <p class="text-[11px] text-slate-500 dark:text-gray-400 mt-1">${event.leader}</p>
-                                </div>
-                                <div class="flex flex-col gap-1.5 items-end shrink-0 ml-2">
+                            <div class="mt-1">
+                                <h3 class="text-[16px] font-bold text-slate-900 dark:text-white leading-tight break-keep">${event.title}</h3>
+                                <p class="text-[11px] text-slate-500 dark:text-gray-400 mt-1">${event.leader}</p>
+                                <div class="flex flex-col gap-1.5 items-start mt-3 ${badgesHTML ? '' : 'hidden'}">
                                     ${badgesHTML}
                                 </div>
                             </div>
@@ -1370,17 +1420,18 @@
 
             const createRoleChip = (user, roleKey, event) => {
                 const c = colorPalette.find(p => p.id === user.color);
-                const role = event?.[roleKey] || 'none';
-                const hasRole = role !== 'none' && Boolean(roleMap[role]);
-                const label = hasRole ? roleMap[role].label : '배정 없음';
+                const roles = normalizeRoleSelection(event?.[roleKey]);
+                const hasRole = roles.length > 0;
                 const borderColor = hasRole ? `${c.code}55` : 'rgba(148, 163, 184, 0.28)';
                 const backgroundColor = hasRole ? c.bgRgba : 'rgba(148, 163, 184, 0.08)';
                 const roleColor = hasRole ? c.code : '#94a3b8';
 
                 return `
-                    <div class="min-w-0 flex items-center gap-2 rounded-lg border px-2.5 py-1.5" style="border-color:${borderColor};background-color:${backgroundColor}">
-                        <span class="text-[11px] text-slate-500 dark:text-gray-300 truncate">${escapeHTML(user.icon)} ${escapeHTML(user.name)}</span>
-                        <span class="text-[11px] font-extrabold shrink-0" style="color:${roleColor}">${escapeHTML(label)}</span>
+                    <div class="min-w-0 flex flex-wrap items-center gap-1.5 rounded-lg border px-2.5 py-1.5" style="border-color:${borderColor};background-color:${backgroundColor}">
+                        <span class="text-[10px] text-slate-500 dark:text-gray-300 truncate mr-0.5">${escapeHTML(user.icon)} ${escapeHTML(user.name)}</span>
+                        ${hasRole
+                            ? roles.map(role => `<span class="text-[10px] font-extrabold rounded px-1.5 py-0.5 bg-white/80 dark:bg-black/20" style="color:${roleColor}">${escapeHTML(roleMap[role].label)}</span>`).join('')
+                            : `<span class="text-[10px] font-bold" style="color:${roleColor}">배정 없음</span>`}
                     </div>
                 `;
             };
@@ -1405,13 +1456,14 @@
 
                     const usersWithRoles = appState.users.map((user, index) => {
                         const roleKey = index === 0 ? 'user1Role' : 'user2Role';
-                        const role = item.event[roleKey];
-                        if (!role || role === 'none' || !roleMap[role]) return '';
+                        const roles = normalizeRoleSelection(item.event[roleKey]);
+                        if (roles.length === 0) return '';
 
                         const color = colorPalette.find(palette => palette.id === user.color);
                         return `
-                            <span class="inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[9px] font-bold" style="border-color:${color.code}55;background-color:${color.bgRgba};color:${color.code}">
-                                ${escapeHTML(user.icon)} ${escapeHTML(user.name)} · ${escapeHTML(roleMap[role].label)}
+                            <span class="inline-flex flex-wrap items-center gap-1 rounded-md border px-1.5 py-1 text-[9px] font-bold" style="border-color:${color.code}55;background-color:${color.bgRgba}">
+                                <span class="text-slate-500 dark:text-gray-300">${escapeHTML(user.icon)} ${escapeHTML(user.name)}</span>
+                                ${roles.map(role => `<span class="rounded px-1 py-0.5 bg-white/80 dark:bg-black/20" style="color:${color.code}">${escapeHTML(roleMap[role].label)}</span>`).join('')}
                             </span>
                         `;
                     }).filter(Boolean);
@@ -1453,6 +1505,39 @@
             }
         }
 
+        function updateRoleSelectionUI(roleKey) {
+            const inputs = [...document.querySelectorAll(`input[name="${roleKey}"]`)];
+            const selected = inputs.filter(input => input.checked);
+            const countElement = document.getElementById(`${roleKey}Count`);
+
+            if (countElement) {
+                countElement.textContent = `${selected.length}/2`;
+                countElement.className = selected.length === 2
+                    ? 'text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400'
+                    : 'text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 dark:bg-gray-800 dark:text-gray-400';
+            }
+
+            inputs.forEach(input => {
+                input.disabled = selected.length >= 2 && !input.checked;
+            });
+        }
+
+        function handleRoleSelectionChange(input, roleKey) {
+            const selected = [...document.querySelectorAll(`input[name="${roleKey}"]:checked`)];
+            if (selected.length > 2) {
+                input.checked = false;
+                alert('역할은 한 일정에서 최대 2개까지 선택할 수 있어요.');
+            }
+            updateRoleSelectionUI(roleKey);
+        }
+
+        function clearRoleSelection(roleKey) {
+            document.querySelectorAll(`input[name="${roleKey}"]`).forEach(input => {
+                input.checked = false;
+            });
+            updateRoleSelectionUI(roleKey);
+        }
+
         function openEditModal(dayId, eventId) {
             const day = scheduleData.find(d => d.id === dayId);
             const ev = day.events.find(e => e.id === eventId);
@@ -1467,19 +1552,29 @@
 
             const createRoleGrid = (user, roleKey) => {
                 const c = colorPalette.find(p => p.id === user.color);
+                const selectedRoles = normalizeRoleSelection(ev[roleKey]);
                 let html = `
                     <div class="mb-2">
-                        <label class="block text-sm font-bold ${c.tailwindText} mb-2">${user.icon} ${user.name} 역할</label>
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-sm font-bold ${c.tailwindText}">${escapeHTML(user.icon)} ${escapeHTML(user.name)} 역할</label>
+                            <div class="flex items-center gap-2">
+                                <span id="${roleKey}Count" class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 dark:bg-gray-800 dark:text-gray-400">${selectedRoles.length}/2</span>
+                                <button type="button" onclick="clearRoleSelection('${roleKey}')" class="text-[10px] font-bold text-slate-400 dark:text-gray-500 px-1.5 py-1 rounded hover:bg-slate-100 dark:hover:bg-gray-800">선택 해제</button>
+                            </div>
+                        </div>
                         <div class="grid grid-cols-4 gap-2">
                 `;
                 
-                Object.keys(roleMap).forEach(key => {
-                    const isChecked = ev[roleKey] === key;
+                Object.keys(roleMap).filter(key => key !== 'none').forEach(key => {
+                    const isChecked = selectedRoles.includes(key);
                     const label = roleMap[key].label;
                     html += `
-                        <label class="cursor-pointer">
-                            <input type="radio" name="${roleKey}" value="${key}" class="hidden peer" ${isChecked ? 'checked' : ''}>
-                            <div class="peer-checked:${c.tailwindBg} peer-checked:text-white peer-checked:border-transparent bg-slate-50 dark:bg-gray-800 border border-slate-200 dark:border-gray-700 text-slate-500 dark:text-gray-400 text-[11px] py-2 text-center rounded-lg transition-all font-medium">${label}</div>
+                        <label class="cursor-pointer min-w-0" style="--role-color:${c.code};--role-shadow:${c.code}33">
+                            <input type="checkbox" name="${roleKey}" value="${key}" class="role-option-input hidden" onchange="handleRoleSelectionChange(this, '${roleKey}')" ${isChecked ? 'checked' : ''}>
+                            <div class="role-option-card relative bg-slate-50 dark:bg-gray-800 border border-slate-200 dark:border-gray-700 text-slate-500 dark:text-gray-400 text-[11px] py-2.5 px-1 text-center rounded-lg transition-all font-bold truncate">
+                                <i class="role-check-icon fa-solid fa-check absolute top-1 right-1 text-[7px] opacity-0 scale-50 transition-all"></i>
+                                ${escapeHTML(label)}
+                            </div>
                         </label>
                     `;
                 });
@@ -1492,6 +1587,9 @@
                 area.innerHTML += `<div class="h-px bg-slate-200 dark:bg-gray-800 my-4"></div>`;
                 area.innerHTML += createRoleGrid(appState.users[1], 'user2Role');
             }
+
+            updateRoleSelectionUI('user1Role');
+            if (appState.mode === 2) updateRoleSelectionUI('user2Role');
 
             const modal = document.getElementById('editModal');
             const content = document.getElementById('editModalContent');
@@ -1514,17 +1612,17 @@
         function saveAssignment() {
             const dayId = document.getElementById('modalDayId').value;
             const eventId = document.getElementById('modalEventId').value;
-            const u1Role = document.querySelector('input[name="user1Role"]:checked').value;
-            let u2Role = 'none';
+            const u1Roles = [...document.querySelectorAll('input[name="user1Role"]:checked')].map(input => input.value).slice(0, 2);
+            let u2Roles = [];
             if (appState.mode === 2) {
-                u2Role = document.querySelector('input[name="user2Role"]:checked').value;
+                u2Roles = [...document.querySelectorAll('input[name="user2Role"]:checked')].map(input => input.value).slice(0, 2);
             }
             
             const dayIdx = scheduleData.findIndex(d => d.id === dayId);
             const evIdx = scheduleData[dayIdx].events.findIndex(e => e.id === eventId);
             
-            scheduleData[dayIdx].events[evIdx].user1Role = u1Role;
-            scheduleData[dayIdx].events[evIdx].user2Role = u2Role;
+            scheduleData[dayIdx].events[evIdx].user1Role = u1Roles;
+            scheduleData[dayIdx].events[evIdx].user2Role = u2Roles;
             
             localStorage.setItem(STORAGE_KEYS.schedule, JSON.stringify(scheduleData));
             
