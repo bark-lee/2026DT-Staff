@@ -139,11 +139,14 @@
             <div class="relative flex flex-wrap gap-2 mt-3" id="dashboardRolesBox"></div>
 
             <div class="relative flex justify-between items-center gap-2 bg-slate-50 dark:bg-gray-900/60 rounded-xl px-3 py-2 mt-3 border border-slate-100 dark:border-gray-700/50 transition-colors">
-                <div class="flex items-center gap-2 min-w-0">
+                <div class="flex items-start gap-2 min-w-0 flex-1">
                     <div id="dashNextLabel" class="text-[9px] bg-slate-200 text-slate-600 dark:bg-amber-500/20 dark:text-amber-400 px-1.5 py-0.5 rounded font-bold shrink-0">NEXT</div>
-                    <div id="dashNextEvent" class="text-[11px] text-slate-600 dark:text-gray-300 font-semibold truncate">다음 일정</div>
+                    <div class="min-w-0 flex-1">
+                        <div id="dashNextEvent" class="text-[11px] text-slate-600 dark:text-gray-300 font-semibold truncate">다음 일정</div>
+                        <div id="dashNextRoles" class="hidden flex flex-wrap gap-1 mt-1.5"></div>
+                    </div>
                 </div>
-                <div id="dashNextTime" class="text-[10px] font-mono font-semibold text-slate-400 dark:text-gray-500 shrink-0">--:--</div>
+                <div id="dashNextTime" class="text-[10px] font-mono font-semibold text-slate-400 dark:text-gray-500 shrink-0 pt-0.5">--:--</div>
             </div>
         </div>
     </div>
@@ -492,7 +495,7 @@
             schedule: 'dt_schedule_v7',
             contentVersion: 'dt_content_version'
         };
-        const CONTENT_VERSION = 8;
+        const CONTENT_VERSION = 9;
 
         function safeParseJSON(value) {
             if (!value) return null;
@@ -1306,6 +1309,7 @@
             const roleBoxContainer = document.getElementById('dashboardRolesBox');
             const nextLabelEl = document.getElementById('dashNextLabel');
             const nextEventEl = document.getElementById('dashNextEvent');
+            const nextRolesEl = document.getElementById('dashNextRoles');
             const nextTimeEl = document.getElementById('dashNextTime');
 
             const createRoleChip = (user, roleKey, event) => {
@@ -1336,9 +1340,30 @@
 
             const renderSecondaryEvent = (item, label = 'NEXT') => {
                 nextLabelEl.textContent = label;
+                nextRolesEl.innerHTML = '';
+                nextRolesEl.classList.add('hidden');
+
                 if (item) {
                     nextEventEl.textContent = `${item.event.title} · ${item.event.leader}`;
                     nextTimeEl.textContent = `${item.day.title} ${item.event.start}`;
+
+                    const usersWithRoles = appState.users.map((user, index) => {
+                        const roleKey = index === 0 ? 'user1Role' : 'user2Role';
+                        const role = item.event[roleKey];
+                        if (!role || role === 'none' || !roleMap[role]) return '';
+
+                        const color = colorPalette.find(palette => palette.id === user.color);
+                        return `
+                            <span class="inline-flex items-center gap-1 rounded-md border px-1.5 py-0.5 text-[9px] font-bold" style="border-color:${color.code}55;background-color:${color.bgRgba};color:${color.code}">
+                                ${escapeHTML(user.icon)} ${escapeHTML(user.name)} · ${escapeHTML(roleMap[role].label)}
+                            </span>
+                        `;
+                    }).filter(Boolean);
+
+                    if (usersWithRoles.length > 0) {
+                        nextRolesEl.innerHTML = usersWithRoles.join('');
+                        nextRolesEl.classList.remove('hidden');
+                    }
                 } else {
                     nextEventEl.textContent = '다음 일정이 없습니다.';
                     nextTimeEl.textContent = '-';
