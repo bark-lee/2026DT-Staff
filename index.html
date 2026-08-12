@@ -195,7 +195,7 @@
 
     <!-- Settings Modal (Popup) -->
     <div id="settingsModal" class="fixed inset-0 bg-slate-900/40 dark:bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300 px-4">
-        <div class="bg-white dark:bg-[#1e293b] w-full max-w-[340px] rounded-3xl border border-slate-200 dark:border-gray-700 p-6 shadow-2xl scale-95 transition-transform duration-300" id="settingsModalContent">
+        <div class="bg-white dark:bg-[#1e293b] w-full max-w-[340px] max-h-[85vh] overflow-y-auto no-scrollbar rounded-3xl border border-slate-200 dark:border-gray-700 p-6 shadow-2xl scale-95 transition-transform duration-300" id="settingsModalContent">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-lg font-bold text-slate-900 dark:text-white">설정</h3>
                 <button onclick="closeSettingsModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-gray-800 text-slate-400 hover:text-slate-600 dark:hover:text-white">
@@ -224,6 +224,16 @@
                     <div>
                         <div class="font-bold text-emerald-800 dark:text-emerald-400 text-sm">공유 코드 입력하기</div>
                         <div class="text-[11px] text-emerald-600/70 dark:text-emerald-400/70 mt-0.5">파트너의 코드를 붙여넣어 동기화</div>
+                    </div>
+                </button>
+
+                <button id="updateAppButton" onclick="applyLatestUpdate()" class="flex items-center gap-3 w-full p-4 rounded-xl bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30 text-left active:bg-blue-100 dark:active:bg-blue-900/20 transition-colors group disabled:opacity-60 disabled:cursor-wait">
+                    <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400 flex items-center justify-center text-lg group-hover:scale-110 transition-transform">
+                        <i id="updateAppIcon" class="fa-solid fa-cloud-arrow-down"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div id="updateAppTitle" class="font-bold text-blue-800 dark:text-blue-400 text-sm">업데이트 반영하기</div>
+                        <div id="updateAppDesc" class="text-[11px] text-blue-600/70 dark:text-blue-400/70 mt-0.5">최신 일정·기능 적용 · 기존 역할 유지</div>
                     </div>
                 </button>
 
@@ -495,7 +505,7 @@
             schedule: 'dt_schedule_v7',
             contentVersion: 'dt_content_version'
         };
-        const CONTENT_VERSION = 9;
+        const CONTENT_VERSION = 11;
 
         function safeParseJSON(value) {
             if (!value) return null;
@@ -936,6 +946,52 @@
                 alert("코드가 올바르지 않거나 손상되었습니다. 다시 확인해주세요.");
             }
             closeSettingsModal();
+        }
+
+        function applyLatestUpdate() {
+            const button = document.getElementById('updateAppButton');
+            const icon = document.getElementById('updateAppIcon');
+            const title = document.getElementById('updateAppTitle');
+            const description = document.getElementById('updateAppDesc');
+
+            if (!button || button.disabled) return;
+
+            if (navigator.onLine === false) {
+                icon.className = 'fa-solid fa-wifi';
+                title.textContent = '인터넷 연결이 필요합니다';
+                description.textContent = '연결 후 다시 눌러주세요.';
+                return;
+            }
+
+            button.disabled = true;
+            icon.className = 'fa-solid fa-spinner fa-spin';
+            title.textContent = '최신 버전 불러오는 중…';
+            description.textContent = '기존 이름과 역할 배정은 그대로 유지됩니다.';
+
+            try {
+                localStorage.setItem(STORAGE_KEYS.appState, JSON.stringify(appState));
+                localStorage.setItem(STORAGE_KEYS.schedule, JSON.stringify(scheduleData));
+
+                const updateURL = new URL(window.location.href);
+                updateURL.hash = '';
+                updateURL.searchParams.set('update', Date.now().toString());
+
+                try {
+                    sessionStorage.setItem('dt_update_notice', '최신 버전이 반영되었습니다.');
+                } catch (error) {
+                    // 저장이 제한된 환경에서도 업데이트는 계속 진행합니다.
+                }
+
+                icon.className = 'fa-solid fa-cloud-arrow-down fa-bounce';
+                title.textContent = '업데이트 적용 중…';
+                description.textContent = '잠시만 기다려주세요.';
+                window.location.replace(updateURL.toString());
+            } catch (error) {
+                icon.className = 'fa-solid fa-triangle-exclamation';
+                title.textContent = '업데이트를 시작하지 못했습니다';
+                description.textContent = '앱을 닫았다가 다시 열어주세요.';
+                button.disabled = false;
+            }
         }
 
         function confirmReset() {
@@ -1498,7 +1554,25 @@
             setTimeout(() => modal.classList.add('hidden'), 300);
         }
 
-        window.addEventListener('DOMContentLoaded', initApp);
+        window.addEventListener('DOMContentLoaded', () => {
+            initApp();
+
+            try {
+                const updateNotice = sessionStorage.getItem('dt_update_notice');
+                if (updateNotice) {
+                    sessionStorage.removeItem('dt_update_notice');
+                    setTimeout(() => alert(`${updateNotice}\n기존 이름과 역할 배정은 그대로 유지되었습니다.`), 400);
+                }
+
+                const cleanURL = new URL(window.location.href);
+                if (cleanURL.searchParams.has('update')) {
+                    cleanURL.searchParams.delete('update');
+                    window.history.replaceState(null, '', `${cleanURL.pathname}${cleanURL.search}${cleanURL.hash}`);
+                }
+            } catch (error) {
+                // 일부 브라우저에서 저장소 접근이 제한돼도 앱 사용에는 영향이 없습니다.
+            }
+        });
     </script>
 </body>
 </html>
