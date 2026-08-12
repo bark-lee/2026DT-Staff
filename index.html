@@ -103,7 +103,7 @@
                     </span>
                 </div>
                 <h1 class="text-[18px] font-extrabold tracking-tight text-slate-900 dark:text-white flex items-end gap-1.5">
-                    David Tent
+                    <a href="https://youtube.com/@globaldavidstent?si=cehq9jznUrgwpstv" target="_blank" rel="noopener noreferrer" class="hover:text-red-500 dark:hover:text-red-400 active:opacity-70 transition-colors" aria-label="Global David's Tent 유튜브 채널 열기">David Tent</a>
                     <span id="headerNameSpan" class="text-[14px] font-medium text-slate-400 dark:text-slate-500 tracking-normal pb-[2px]"></span>
                 </h1>
             </div>
@@ -343,7 +343,7 @@
         <button id="wizardCloseBtn" onclick="closeWizard()" class="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-slate-100 dark:bg-gray-800 text-slate-400 hover:text-slate-600 dark:hover:text-white z-20 hidden">
             <i class="fa-solid fa-xmark"></i>
         </button>
-        <div class="flex-1 overflow-y-auto no-scrollbar p-6 max-w-[480px] mx-auto w-full relative">
+        <div id="setupWizardScroller" class="flex-1 overflow-y-auto no-scrollbar p-6 max-w-[480px] mx-auto w-full relative">
             <div class="pt-8 pb-6">
                 <h2 id="wizardTitle" class="text-2xl font-extrabold text-slate-900 dark:text-white mb-2">환영합니다! 👋</h2>
                 <p id="wizardDesc" class="text-slate-500 dark:text-gray-400 text-sm">나만의 David Tent 일정표를 만들어보세요.</p>
@@ -682,7 +682,7 @@
             externalSupport: 'dt_external_support_v1',
             contentVersion: 'dt_content_version'
         };
-        const CONTENT_VERSION = 15;
+        const CONTENT_VERSION = 16;
 
         function safeParseJSON(value) {
             if (!value) return null;
@@ -889,7 +889,7 @@
             }
         }
 
-        function completeAppLaunch() {
+        function completeAppLaunch(initialView = 'card') {
             isSettingUp = false;
             document.getElementById('setupFinishBanner').classList.add('hidden');
             document.getElementById('setupFinishBanner').classList.remove('flex');
@@ -907,7 +907,7 @@
             if(foundDay) currentActiveDay = foundDay.id;
 
             renderFilterBar();
-            switchView('card');
+            switchView(initialView);
             updateCurrentStatus();
             
             if(!clockInterval) clockInterval = setInterval(updateCurrentStatus, 60000); 
@@ -948,6 +948,7 @@
         function openSetupWizard(isEdit = false) {
             isEditingProfile = isEdit;
             const wizard = document.getElementById('setupWizard');
+            const wizardScroller = document.getElementById('setupWizardScroller');
             const titleEl = document.getElementById('wizardTitle');
             const descEl = document.getElementById('wizardDesc');
             const btnEl = document.getElementById('wizardSubmitBtn');
@@ -974,8 +975,13 @@
             }
 
             wizard.classList.remove('hidden');
-            setTimeout(() => wizard.classList.remove('opacity-0'), 10);
+            wizardScroller.scrollTop = 0;
             renderWizardProfiles();
+            wizardScroller.scrollTop = 0;
+            setTimeout(() => {
+                wizard.classList.remove('opacity-0');
+                wizardScroller.scrollTop = 0;
+            }, 10);
         }
 
         function renderWizardProfiles() {
@@ -993,7 +999,7 @@
                         
                         <div class="mb-3">
                             <label class="block text-[11px] font-bold text-slate-500 dark:text-gray-400 mb-1.5">이름 (또는 닉네임)</label>
-                            <input type="text" id="wizardName${index}" value="${defaultName}" placeholder="예: 바크리" class="w-full bg-white dark:bg-black border border-slate-300 dark:border-gray-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-amber-500 dark:focus:border-amber-500 transition-colors">
+                            <input type="text" id="wizardName${index}" value="${escapeHTML(defaultName)}" placeholder="예: 바크리" class="w-full bg-white dark:bg-black border border-slate-300 dark:border-gray-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-amber-500 dark:focus:border-amber-500 transition-colors">
                         </div>
 
                         <div class="mb-3">
@@ -1116,7 +1122,7 @@
         function finishSetup() {
             appState.isSetupComplete = true;
             localStorage.setItem(STORAGE_KEYS.appState, JSON.stringify(appState));
-            completeAppLaunch();
+            completeAppLaunch('table');
         }
 
         function openSettingsModal() {
