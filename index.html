@@ -95,20 +95,24 @@
 
     <header class="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-gray-800 transition-colors">
         <div class="flex justify-between items-center px-4 py-3">
-            <div class="flex flex-col">
+            <div class="flex flex-col min-w-0 mr-2">
                 <div class="flex items-center gap-2 mb-0.5 cursor-pointer group" onclick="openBibleModal()">
                     <div class="w-1 h-3 bg-amber-500 rounded-full shadow-[0_0_8px_rgba(245,158,11,0.5)] group-hover:bg-amber-400 transition-colors"></div>
                     <span class="text-[10px] font-bold tracking-widest text-slate-500 dark:text-amber-500/90 uppercase group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors flex items-center gap-1">
                         주제: 열왕기상 18장 <i class="fa-solid fa-book-open text-[9px] opacity-70 mb-0.5"></i>
                     </span>
                 </div>
-                <h1 class="text-[18px] font-extrabold tracking-tight text-slate-900 dark:text-white flex items-end gap-1.5">
-                    <button id="davidTentTitleButton" type="button" onclick="handleDavidTentTitleClick()" class="text-left cursor-pointer hover:text-red-500 dark:hover:text-red-400 active:opacity-70 transition-colors" aria-label="Global David's Tent 유튜브 채널 열기">David Tent</button>
-                    <span id="headerNameSpan" class="text-[14px] font-medium text-slate-400 dark:text-slate-500 tracking-normal pb-[2px]"></span>
+                <h1 class="text-[18px] font-extrabold tracking-tight text-slate-900 dark:text-white flex items-end gap-1.5 min-w-0">
+                    <button id="davidTentTitleButton" type="button" onclick="handleDavidTentTitleClick()" class="text-left cursor-pointer hover:text-red-500 dark:hover:text-red-400 active:opacity-70 transition-colors shrink-0" aria-label="Global David's Tent 유튜브 채널 열기">David Tent</button>
+                    <span id="headerNameSpan" class="text-[14px] font-medium text-slate-400 dark:text-slate-500 tracking-normal pb-[2px] truncate min-w-0"></span>
                 </h1>
             </div>
             
-            <div class="flex gap-2">
+            <div class="flex gap-2 shrink-0">
+                <button type="button" onclick="openMemoModal()" class="relative w-8 h-8 rounded-full bg-slate-100 dark:bg-gray-800 border border-slate-200 dark:border-gray-700 text-slate-600 dark:text-emerald-400 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-gray-700 active:scale-95 transition-all shadow-sm" aria-label="메모 열기">
+                    <i class="fa-solid fa-note-sticky text-sm"></i>
+                    <span id="memoCountBadge" class="hidden absolute -top-1 -right-1 min-w-[15px] h-[15px] px-1 rounded-full bg-emerald-500 text-white text-[8px] font-extrabold leading-[15px] text-center border border-white dark:border-slate-900">0</span>
+                </button>
                 <button onclick="toggleDarkMode()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-gray-800 border border-slate-200 dark:border-gray-700 text-slate-600 dark:text-amber-500 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-gray-700 active:scale-95 transition-all shadow-sm">
                     <i id="themeToggleIcon" class="fa-solid fa-moon text-sm"></i>
                 </button>
@@ -334,7 +338,7 @@
                     </div>
                     <div class="flex-1 min-w-0">
                         <div id="updateAppTitle" class="font-bold text-blue-800 dark:text-blue-400 text-sm">업데이트 반영하기</div>
-                        <div id="updateAppDesc" class="text-[11px] text-blue-600/70 dark:text-blue-400/70 mt-0.5">최신 기능 적용 · 역할·외부 일정 유지</div>
+                        <div id="updateAppDesc" class="text-[11px] text-blue-600/70 dark:text-blue-400/70 mt-0.5">최신 기능 적용 · 역할·외부 일정·메모 유지</div>
                     </div>
                 </button>
 
@@ -345,6 +349,71 @@
                         <div class="text-[11px] text-red-500/70 mt-0.5">모든 설정 및 배정 역할 초기화</div>
                     </div>
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Memo Modal -->
+    <div id="memoModal" class="fixed inset-0 bg-slate-900/40 dark:bg-black/80 backdrop-blur-sm z-[70] flex items-end sm:items-center justify-center hidden opacity-0 transition-opacity duration-300 sm:px-4">
+        <div id="memoModalContent" class="bg-white dark:bg-[#1e293b] w-full sm:max-w-[420px] h-[82vh] sm:h-[76vh] max-h-[720px] rounded-t-3xl sm:rounded-3xl border-t sm:border border-slate-200 dark:border-gray-700 shadow-2xl translate-y-full sm:translate-y-0 sm:scale-95 transition-transform duration-300 flex flex-col pb-safe overflow-hidden">
+            <div class="flex justify-between items-start gap-3 p-5 pb-4 shrink-0 border-b border-slate-100 dark:border-gray-700/70">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400 flex items-center justify-center text-lg shrink-0">
+                        <i class="fa-solid fa-note-sticky"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-white">메모</h3>
+                            <span id="memoHeaderCount" class="text-[9px] font-extrabold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-500/10 rounded-full px-2 py-0.5">0개</span>
+                        </div>
+                        <p class="text-[10px] text-slate-500 dark:text-gray-400 mt-0.5">이 기기에 자동 저장되며 업데이트 후에도 유지됩니다.</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeMemoModal()" class="w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 dark:bg-gray-800 text-slate-400 hover:text-slate-600 dark:hover:text-white shrink-0">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div id="memoListView" class="flex-1 min-h-0 flex flex-col">
+                <div class="p-4 pb-3 shrink-0">
+                    <button type="button" onclick="openMemoEditor()" class="w-full py-3 rounded-xl bg-emerald-500 text-white dark:bg-emerald-500 dark:text-white font-extrabold text-sm shadow-sm active:scale-[0.98] transition-transform">
+                        <i class="fa-solid fa-plus mr-1.5"></i>새 메모 작성
+                    </button>
+                </div>
+                <div id="memoList" class="flex-1 overflow-y-auto no-scrollbar px-4 pb-5 space-y-3"></div>
+            </div>
+
+            <div id="memoEditorView" class="hidden flex-1 min-h-0 flex-col">
+                <div class="flex items-center justify-between px-5 py-3 border-b border-slate-100 dark:border-gray-700/60 shrink-0">
+                    <button type="button" onclick="showMemoList()" class="text-[11px] font-bold text-slate-500 dark:text-gray-400 hover:text-slate-800 dark:hover:text-white transition-colors">
+                        <i class="fa-solid fa-chevron-left mr-1"></i>목록
+                    </button>
+                    <span id="memoEditorStatus" class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">새 메모</span>
+                    <button id="deleteMemoButton" type="button" onclick="deleteActiveMemo()" class="hidden text-[11px] font-bold text-red-500 dark:text-red-400 hover:text-red-600 transition-colors">
+                        <i class="fa-solid fa-trash-can mr-1"></i>삭제
+                    </button>
+                    <span id="memoDeletePlaceholder" class="w-10"></span>
+                </div>
+
+                <div class="flex-1 min-h-0 overflow-y-auto no-scrollbar p-5 space-y-3">
+                    <label class="block">
+                        <span class="block text-[10px] font-bold text-slate-500 dark:text-gray-400 mb-1.5">제목</span>
+                        <input id="memoTitleInput" type="text" maxlength="60" placeholder="메모 제목" class="w-full rounded-xl border border-slate-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-900 px-4 py-3 text-sm font-bold text-slate-900 dark:text-white outline-none focus:border-emerald-400 placeholder:text-slate-300 dark:placeholder:text-gray-600">
+                    </label>
+                    <label class="block">
+                        <span class="block text-[10px] font-bold text-slate-500 dark:text-gray-400 mb-1.5">내용</span>
+                        <textarea id="memoBodyInput" maxlength="5000" placeholder="집합 장소, 준비물, 전달 사항 등을 자유롭게 적어보세요." class="w-full h-[38vh] min-h-[220px] resize-none rounded-xl border border-slate-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-900 px-4 py-3 text-sm leading-relaxed text-slate-800 dark:text-gray-200 outline-none focus:border-emerald-400 placeholder:text-slate-300 dark:placeholder:text-gray-600"></textarea>
+                    </label>
+                    <div class="flex justify-between items-center text-[9px] text-slate-400 dark:text-gray-500">
+                        <span>제목이 없으면 내용 첫 줄로 자동 생성돼요.</span>
+                        <span id="memoBodyCount">0 / 5000</span>
+                    </div>
+                </div>
+
+                <div class="flex gap-3 p-5 pt-4 shrink-0 border-t border-slate-100 dark:border-gray-700/70 bg-white dark:bg-[#1e293b] sm:rounded-b-3xl">
+                    <button type="button" onclick="showMemoList()" class="flex-1 py-3 rounded-xl bg-slate-100 dark:bg-gray-800 text-slate-600 dark:text-white font-bold border border-slate-200 dark:border-gray-700 text-sm">취소</button>
+                    <button type="button" onclick="saveMemo()" class="flex-1 py-3 rounded-xl bg-emerald-500 text-white font-bold shadow-md text-sm">메모 저장</button>
+                </div>
             </div>
         </div>
     </div>
@@ -758,9 +827,10 @@
             appState: 'dt_appState_v7',
             schedule: 'dt_schedule_v7',
             externalSupport: 'dt_external_support_v1',
+            memos: 'dt_memos_v1',
             contentVersion: 'dt_content_version'
         };
-        const CONTENT_VERSION = 18;
+        const CONTENT_VERSION = 19;
         const DAVID_TENT_YOUTUBE_URL = 'https://youtube.com/@globaldavidstent?si=cehq9jznUrgwpstv';
 
         function safeParseJSON(value) {
@@ -774,6 +844,42 @@
 
         function hasBrokenText(value) {
             return typeof value === 'string' && /\uFFFD|ï¿½|Ã|Â|ì|ë|ê/.test(value);
+        }
+
+        function createMemoId() {
+            if (globalThis.crypto?.randomUUID) return `memo-${globalThis.crypto.randomUUID()}`;
+            return `memo-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+        }
+
+        function sanitizeMemoData(value) {
+            if (!Array.isArray(value)) return [];
+            const seenIds = new Set();
+
+            return value.map(item => {
+                if (!item || typeof item !== 'object') return null;
+                const title = typeof item.title === 'string' && !hasBrokenText(item.title)
+                    ? item.title.trim().slice(0, 60)
+                    : '';
+                const body = typeof item.body === 'string' && !hasBrokenText(item.body)
+                    ? item.body.slice(0, 5000)
+                    : '';
+                if (!title && !body.trim()) return null;
+
+                let id = typeof item.id === 'string' && /^memo-[a-zA-Z0-9-]+$/.test(item.id)
+                    ? item.id
+                    : createMemoId();
+                if (seenIds.has(id)) id = createMemoId();
+                seenIds.add(id);
+
+                const createdAt = Number.isFinite(Date.parse(item.createdAt))
+                    ? new Date(item.createdAt).toISOString()
+                    : new Date().toISOString();
+                const updatedAt = Number.isFinite(Date.parse(item.updatedAt))
+                    ? new Date(item.updatedAt).toISOString()
+                    : createdAt;
+
+                return { id, title: title || '메모', body, createdAt, updatedAt };
+            }).filter(Boolean).sort((first, second) => Date.parse(second.updatedAt) - Date.parse(first.updatedAt));
         }
 
         function sanitizeStoredState(storedState) {
@@ -928,6 +1034,8 @@
         
         let scheduleData = [];
         let externalSupportData = [];
+        let memoData = [];
+        let activeMemoId = '';
         let currentActiveDay = 'day1';
         let currentFilter = 'all';
         let currentView = 'card';
@@ -942,6 +1050,9 @@
             const storedState = safeParseJSON(localStorage.getItem(STORAGE_KEYS.appState));
             const storedSchedule = safeParseJSON(localStorage.getItem(STORAGE_KEYS.schedule));
             const storedExternalSupport = safeParseJSON(localStorage.getItem(STORAGE_KEYS.externalSupport));
+            memoData = sanitizeMemoData(safeParseJSON(localStorage.getItem(STORAGE_KEYS.memos)));
+            localStorage.setItem(STORAGE_KEYS.memos, JSON.stringify(memoData));
+            updateMemoCountUI();
             
             if (!storedState) {
                 scheduleData = JSON.parse(JSON.stringify(initialSchedule));
@@ -1026,6 +1137,187 @@
             if(icon) {
                 icon.className = isDark ? 'fa-solid fa-sun text-sm' : 'fa-solid fa-moon text-slate-600 text-sm';
             }
+        }
+
+        function saveMemoData() {
+            memoData = sanitizeMemoData(memoData);
+            localStorage.setItem(STORAGE_KEYS.memos, JSON.stringify(memoData));
+            updateMemoCountUI();
+        }
+
+        function updateMemoCountUI() {
+            const badge = document.getElementById('memoCountBadge');
+            const headerCount = document.getElementById('memoHeaderCount');
+            const count = memoData.length;
+
+            if (badge) {
+                badge.textContent = count > 99 ? '99+' : String(count);
+                badge.classList.toggle('hidden', count === 0);
+            }
+            if (headerCount) headerCount.textContent = `${count}개`;
+        }
+
+        function formatMemoTimestamp(timestamp) {
+            const date = new Date(timestamp);
+            if (Number.isNaN(date.getTime())) return '';
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${month}/${day} ${hours}:${minutes}`;
+        }
+
+        function renderMemoList() {
+            const list = document.getElementById('memoList');
+            if (!list) return;
+            updateMemoCountUI();
+
+            if (memoData.length === 0) {
+                list.innerHTML = `
+                    <div class="h-full min-h-[260px] flex flex-col items-center justify-center text-center text-slate-400 dark:text-gray-500 px-6 pb-10">
+                        <div class="w-14 h-14 rounded-2xl bg-emerald-50 dark:bg-emerald-500/10 text-emerald-400 dark:text-emerald-500 flex items-center justify-center text-2xl mb-4">
+                            <i class="fa-regular fa-note-sticky"></i>
+                        </div>
+                        <p class="text-sm font-bold text-slate-500 dark:text-gray-400">아직 작성한 메모가 없어요</p>
+                        <p class="text-[11px] mt-1.5 leading-relaxed">집합 장소, 준비물, 전달 사항 등을<br>자유롭게 기록해보세요.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            list.innerHTML = memoData.map(memo => {
+                const preview = memo.body.trim().replace(/\s+/g, ' ').slice(0, 120);
+                return `
+                    <button type="button" onclick="openMemoEditor('${memo.id}')" class="group w-full rounded-2xl border border-slate-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-800/70 p-4 text-left shadow-sm hover:border-emerald-300 dark:hover:border-emerald-500/40 active:scale-[0.99] transition-all">
+                        <div class="flex justify-between items-start gap-3">
+                            <div class="min-w-0 flex-1">
+                                <h4 class="text-[14px] font-extrabold text-slate-800 dark:text-gray-100 truncate">${escapeHTML(memo.title)}</h4>
+                                <p class="text-[11px] text-slate-500 dark:text-gray-400 leading-relaxed mt-1.5 line-clamp-2 break-all">${preview ? escapeHTML(preview) : '내용 없음'}</p>
+                            </div>
+                            <i class="fa-solid fa-chevron-right text-[10px] text-slate-300 dark:text-gray-600 mt-1 group-hover:text-emerald-400 transition-colors shrink-0"></i>
+                        </div>
+                        <div class="flex items-center justify-between mt-3 pt-2.5 border-t border-slate-200/70 dark:border-gray-700/70">
+                            <span class="text-[9px] font-bold text-emerald-600 dark:text-emerald-400"><i class="fa-regular fa-clock mr-1"></i>최근 수정</span>
+                            <span class="text-[9px] font-mono text-slate-400 dark:text-gray-500">${formatMemoTimestamp(memo.updatedAt)}</span>
+                        </div>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function openMemoModal() {
+            memoData = sanitizeMemoData(safeParseJSON(localStorage.getItem(STORAGE_KEYS.memos)) || memoData);
+            activeMemoId = '';
+            showMemoList();
+
+            const modal = document.getElementById('memoModal');
+            const content = document.getElementById('memoModalContent');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                content.classList.remove('translate-y-full', 'sm:scale-95');
+                content.classList.add('sm:scale-100');
+            }, 10);
+        }
+
+        function closeMemoModal() {
+            const modal = document.getElementById('memoModal');
+            const content = document.getElementById('memoModalContent');
+            modal.classList.add('opacity-0');
+            content.classList.add('translate-y-full', 'sm:scale-95');
+            content.classList.remove('sm:scale-100');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                activeMemoId = '';
+                showMemoList();
+            }, 300);
+        }
+
+        function showMemoList() {
+            activeMemoId = '';
+            document.getElementById('memoListView')?.classList.remove('hidden');
+            const editorView = document.getElementById('memoEditorView');
+            if (editorView) {
+                editorView.classList.add('hidden');
+                editorView.classList.remove('flex');
+            }
+            renderMemoList();
+        }
+
+        function openMemoEditor(memoId = '') {
+            const memo = memoId ? memoData.find(item => item.id === memoId) : null;
+            activeMemoId = memo?.id || '';
+
+            document.getElementById('memoListView').classList.add('hidden');
+            const editorView = document.getElementById('memoEditorView');
+            editorView.classList.remove('hidden');
+            editorView.classList.add('flex');
+
+            const titleInput = document.getElementById('memoTitleInput');
+            const bodyInput = document.getElementById('memoBodyInput');
+            const deleteButton = document.getElementById('deleteMemoButton');
+            const deletePlaceholder = document.getElementById('memoDeletePlaceholder');
+
+            titleInput.value = memo?.title || '';
+            bodyInput.value = memo?.body || '';
+            document.getElementById('memoEditorStatus').textContent = memo ? '메모 수정' : '새 메모';
+            deleteButton.classList.toggle('hidden', !memo);
+            deletePlaceholder.classList.toggle('hidden', Boolean(memo));
+
+            const updateBodyCount = () => {
+                document.getElementById('memoBodyCount').textContent = `${bodyInput.value.length} / 5000`;
+            };
+            bodyInput.oninput = updateBodyCount;
+            updateBodyCount();
+            setTimeout(() => titleInput.focus(), 50);
+        }
+
+        function saveMemo() {
+            const titleInput = document.getElementById('memoTitleInput');
+            const bodyInput = document.getElementById('memoBodyInput');
+            const rawTitle = titleInput.value.trim();
+            const body = bodyInput.value.slice(0, 5000);
+
+            if (!rawTitle && !body.trim()) {
+                alert('메모 제목이나 내용을 입력해주세요.');
+                titleInput.focus();
+                return;
+            }
+
+            const firstBodyLine = body.split(/\r?\n/).map(line => line.trim()).find(Boolean) || '';
+            const title = (rawTitle || firstBodyLine || '메모').slice(0, 60);
+            const now = new Date().toISOString();
+            const existingIndex = memoData.findIndex(item => item.id === activeMemoId);
+
+            if (existingIndex >= 0) {
+                memoData[existingIndex] = {
+                    ...memoData[existingIndex],
+                    title,
+                    body,
+                    updatedAt: now
+                };
+            } else {
+                memoData.unshift({
+                    id: createMemoId(),
+                    title,
+                    body,
+                    createdAt: now,
+                    updatedAt: now
+                });
+            }
+
+            saveMemoData();
+            showMemoList();
+        }
+
+        function deleteActiveMemo() {
+            const memo = memoData.find(item => item.id === activeMemoId);
+            if (!memo) return;
+            if (!confirm(`“${memo.title}” 메모를 삭제하시겠습니까?`)) return;
+
+            memoData = memoData.filter(item => item.id !== activeMemoId);
+            saveMemoData();
+            showMemoList();
         }
 
         function openSetupWizard(isEdit = false) {
@@ -1527,12 +1819,13 @@
             button.disabled = true;
             icon.className = 'fa-solid fa-spinner fa-spin';
             title.textContent = '최신 버전 불러오는 중…';
-            description.textContent = '기존 이름, 역할, 외부 지원 일정은 그대로 유지됩니다.';
+            description.textContent = '기존 이름, 역할, 외부 지원 일정과 메모는 그대로 유지됩니다.';
 
             try {
                 localStorage.setItem(STORAGE_KEYS.appState, JSON.stringify(appState));
                 localStorage.setItem(STORAGE_KEYS.schedule, JSON.stringify(scheduleData));
                 localStorage.setItem(STORAGE_KEYS.externalSupport, JSON.stringify(externalSupportData));
+                localStorage.setItem(STORAGE_KEYS.memos, JSON.stringify(memoData));
 
                 const updateURL = new URL(window.location.href);
                 updateURL.hash = '';
@@ -2653,7 +2946,7 @@
                 const updateNotice = sessionStorage.getItem('dt_update_notice');
                 if (updateNotice) {
                     sessionStorage.removeItem('dt_update_notice');
-                    setTimeout(() => alert(`${updateNotice}\n기존 이름, 역할 배정, 외부 지원 일정은 그대로 유지되었습니다.`), 400);
+                    setTimeout(() => alert(`${updateNotice}\n기존 이름, 역할 배정, 외부 지원 일정과 메모는 그대로 유지되었습니다.`), 400);
                 }
 
                 const cleanURL = new URL(window.location.href);
