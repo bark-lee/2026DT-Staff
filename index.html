@@ -383,10 +383,40 @@
                 <div id="memoList" class="flex-1 overflow-y-auto no-scrollbar px-4 pb-5 space-y-3"></div>
             </div>
 
-            <div id="memoEditorView" class="hidden flex-1 min-h-0 flex-col">
+            <div id="memoReadView" class="hidden flex-1 min-h-0 flex-col">
                 <div class="flex items-center justify-between px-5 py-3 border-b border-slate-100 dark:border-gray-700/60 shrink-0">
                     <button type="button" onclick="showMemoList()" class="text-[11px] font-bold text-slate-500 dark:text-gray-400 hover:text-slate-800 dark:hover:text-white transition-colors">
                         <i class="fa-solid fa-chevron-left mr-1"></i>목록
+                    </button>
+                    <span class="rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-[9px] font-extrabold text-emerald-600 dark:text-emerald-400 px-2.5 py-1">
+                        <i class="fa-solid fa-eye mr-1"></i>보기 모드
+                    </span>
+                    <button type="button" onclick="editActiveMemo()" class="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 transition-colors">
+                        <i class="fa-solid fa-pen mr-1"></i>수정
+                    </button>
+                </div>
+
+                <div class="flex-1 min-h-0 overflow-y-auto no-scrollbar p-5">
+                    <div class="rounded-2xl border border-slate-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-900/70 p-5 min-h-full">
+                        <h4 id="memoReadTitle" class="text-xl font-extrabold text-slate-900 dark:text-white leading-snug break-words"></h4>
+                        <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-3 pb-4 border-b border-slate-200 dark:border-gray-700 text-[9px] text-slate-400 dark:text-gray-500">
+                            <span><i class="fa-regular fa-clock mr-1"></i>수정 <span id="memoReadUpdatedAt" class="font-mono"></span></span>
+                            <span id="memoReadCreatedWrap"><i class="fa-regular fa-calendar mr-1"></i>작성 <span id="memoReadCreatedAt" class="font-mono"></span></span>
+                        </div>
+                        <div id="memoReadBody" class="mt-5 text-[14px] leading-7 text-slate-700 dark:text-gray-200 whitespace-pre-wrap break-words"></div>
+                    </div>
+                </div>
+
+                <div class="flex gap-3 p-5 pt-4 shrink-0 border-t border-slate-100 dark:border-gray-700/70 bg-white dark:bg-[#1e293b] sm:rounded-b-3xl">
+                    <button type="button" onclick="showMemoList()" class="flex-1 py-3 rounded-xl bg-slate-100 dark:bg-gray-800 text-slate-600 dark:text-white font-bold border border-slate-200 dark:border-gray-700 text-sm">목록으로</button>
+                    <button type="button" onclick="editActiveMemo()" class="flex-1 py-3 rounded-xl bg-emerald-500 text-white font-bold shadow-md text-sm"><i class="fa-solid fa-pen mr-1.5"></i>수정하기</button>
+                </div>
+            </div>
+
+            <div id="memoEditorView" class="hidden flex-1 min-h-0 flex-col">
+                <div class="flex items-center justify-between px-5 py-3 border-b border-slate-100 dark:border-gray-700/60 shrink-0">
+                    <button type="button" onclick="cancelMemoEdit()" class="text-[11px] font-bold text-slate-500 dark:text-gray-400 hover:text-slate-800 dark:hover:text-white transition-colors">
+                        <i class="fa-solid fa-chevron-left mr-1"></i>이전
                     </button>
                     <span id="memoEditorStatus" class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">새 메모</span>
                     <button id="deleteMemoButton" type="button" onclick="deleteActiveMemo()" class="hidden text-[11px] font-bold text-red-500 dark:text-red-400 hover:text-red-600 transition-colors">
@@ -411,7 +441,7 @@
                 </div>
 
                 <div class="flex gap-3 p-5 pt-4 shrink-0 border-t border-slate-100 dark:border-gray-700/70 bg-white dark:bg-[#1e293b] sm:rounded-b-3xl">
-                    <button type="button" onclick="showMemoList()" class="flex-1 py-3 rounded-xl bg-slate-100 dark:bg-gray-800 text-slate-600 dark:text-white font-bold border border-slate-200 dark:border-gray-700 text-sm">취소</button>
+                    <button type="button" onclick="cancelMemoEdit()" class="flex-1 py-3 rounded-xl bg-slate-100 dark:bg-gray-800 text-slate-600 dark:text-white font-bold border border-slate-200 dark:border-gray-700 text-sm">취소</button>
                     <button type="button" onclick="saveMemo()" class="flex-1 py-3 rounded-xl bg-emerald-500 text-white font-bold shadow-md text-sm">메모 저장</button>
                 </div>
             </div>
@@ -830,7 +860,7 @@
             memos: 'dt_memos_v1',
             contentVersion: 'dt_content_version'
         };
-        const CONTENT_VERSION = 19;
+        const CONTENT_VERSION = 20;
         const DAVID_TENT_YOUTUBE_URL = 'https://youtube.com/@globaldavidstent?si=cehq9jznUrgwpstv';
 
         function safeParseJSON(value) {
@@ -1050,7 +1080,17 @@
             const storedState = safeParseJSON(localStorage.getItem(STORAGE_KEYS.appState));
             const storedSchedule = safeParseJSON(localStorage.getItem(STORAGE_KEYS.schedule));
             const storedExternalSupport = safeParseJSON(localStorage.getItem(STORAGE_KEYS.externalSupport));
-            memoData = sanitizeMemoData(safeParseJSON(localStorage.getItem(STORAGE_KEYS.memos)));
+            let storedMemos = safeParseJSON(localStorage.getItem(STORAGE_KEYS.memos));
+            try {
+                const updateBackup = safeParseJSON(sessionStorage.getItem('dt_memo_update_backup'));
+                if ((!Array.isArray(storedMemos) || storedMemos.length === 0) && Array.isArray(updateBackup) && updateBackup.length > 0) {
+                    storedMemos = updateBackup;
+                }
+                sessionStorage.removeItem('dt_memo_update_backup');
+            } catch (error) {
+                // 세션 저장소가 제한된 환경에서는 기존 로컬 메모를 그대로 사용합니다.
+            }
+            memoData = sanitizeMemoData(storedMemos);
             localStorage.setItem(STORAGE_KEYS.memos, JSON.stringify(memoData));
             updateMemoCountUI();
             
@@ -1188,7 +1228,7 @@
             list.innerHTML = memoData.map(memo => {
                 const preview = memo.body.trim().replace(/\s+/g, ' ').slice(0, 120);
                 return `
-                    <button type="button" onclick="openMemoEditor('${memo.id}')" class="group w-full rounded-2xl border border-slate-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-800/70 p-4 text-left shadow-sm hover:border-emerald-300 dark:hover:border-emerald-500/40 active:scale-[0.99] transition-all">
+                    <button type="button" onclick="openMemoViewer('${memo.id}')" class="group w-full rounded-2xl border border-slate-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-800/70 p-4 text-left shadow-sm hover:border-emerald-300 dark:hover:border-emerald-500/40 active:scale-[0.99] transition-all">
                         <div class="flex justify-between items-start gap-3">
                             <div class="min-w-0 flex-1">
                                 <h4 class="text-[14px] font-extrabold text-slate-800 dark:text-gray-100 truncate">${escapeHTML(memo.title)}</h4>
@@ -1236,6 +1276,11 @@
         function showMemoList() {
             activeMemoId = '';
             document.getElementById('memoListView')?.classList.remove('hidden');
+            const readView = document.getElementById('memoReadView');
+            if (readView) {
+                readView.classList.add('hidden');
+                readView.classList.remove('flex');
+            }
             const editorView = document.getElementById('memoEditorView');
             if (editorView) {
                 editorView.classList.add('hidden');
@@ -1244,11 +1289,38 @@
             renderMemoList();
         }
 
+        function openMemoViewer(memoId) {
+            const memo = memoData.find(item => item.id === memoId);
+            if (!memo) {
+                showMemoList();
+                return;
+            }
+
+            activeMemoId = memo.id;
+            document.getElementById('memoListView').classList.add('hidden');
+
+            const editorView = document.getElementById('memoEditorView');
+            editorView.classList.add('hidden');
+            editorView.classList.remove('flex');
+
+            const readView = document.getElementById('memoReadView');
+            readView.classList.remove('hidden');
+            readView.classList.add('flex');
+
+            document.getElementById('memoReadTitle').textContent = memo.title;
+            document.getElementById('memoReadBody').textContent = memo.body || '작성된 내용이 없습니다.';
+            document.getElementById('memoReadUpdatedAt').textContent = formatMemoTimestamp(memo.updatedAt);
+            document.getElementById('memoReadCreatedAt').textContent = formatMemoTimestamp(memo.createdAt);
+        }
+
         function openMemoEditor(memoId = '') {
             const memo = memoId ? memoData.find(item => item.id === memoId) : null;
             activeMemoId = memo?.id || '';
 
             document.getElementById('memoListView').classList.add('hidden');
+            const readView = document.getElementById('memoReadView');
+            readView.classList.add('hidden');
+            readView.classList.remove('flex');
             const editorView = document.getElementById('memoEditorView');
             editorView.classList.remove('hidden');
             editorView.classList.add('flex');
@@ -1272,6 +1344,19 @@
             setTimeout(() => titleInput.focus(), 50);
         }
 
+        function editActiveMemo() {
+            if (!activeMemoId) return;
+            openMemoEditor(activeMemoId);
+        }
+
+        function cancelMemoEdit() {
+            if (activeMemoId && memoData.some(item => item.id === activeMemoId)) {
+                openMemoViewer(activeMemoId);
+                return;
+            }
+            showMemoList();
+        }
+
         function saveMemo() {
             const titleInput = document.getElementById('memoTitleInput');
             const bodyInput = document.getElementById('memoBodyInput');
@@ -1288,6 +1373,7 @@
             const title = (rawTitle || firstBodyLine || '메모').slice(0, 60);
             const now = new Date().toISOString();
             const existingIndex = memoData.findIndex(item => item.id === activeMemoId);
+            let savedMemoId = activeMemoId;
 
             if (existingIndex >= 0) {
                 memoData[existingIndex] = {
@@ -1297,8 +1383,9 @@
                     updatedAt: now
                 };
             } else {
+                savedMemoId = createMemoId();
                 memoData.unshift({
-                    id: createMemoId(),
+                    id: savedMemoId,
                     title,
                     body,
                     createdAt: now,
@@ -1307,7 +1394,7 @@
             }
 
             saveMemoData();
-            showMemoList();
+            openMemoViewer(savedMemoId);
         }
 
         function deleteActiveMemo() {
@@ -1825,7 +1912,7 @@
                 localStorage.setItem(STORAGE_KEYS.appState, JSON.stringify(appState));
                 localStorage.setItem(STORAGE_KEYS.schedule, JSON.stringify(scheduleData));
                 localStorage.setItem(STORAGE_KEYS.externalSupport, JSON.stringify(externalSupportData));
-                localStorage.setItem(STORAGE_KEYS.memos, JSON.stringify(memoData));
+                saveMemoData();
 
                 const updateURL = new URL(window.location.href);
                 updateURL.hash = '';
@@ -1833,6 +1920,7 @@
 
                 try {
                     sessionStorage.setItem('dt_update_notice', '최신 버전이 반영되었습니다.');
+                    sessionStorage.setItem('dt_memo_update_backup', JSON.stringify(memoData));
                 } catch (error) {
                     // 저장이 제한된 환경에서도 업데이트는 계속 진행합니다.
                 }
