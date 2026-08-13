@@ -111,7 +111,6 @@
             <div class="flex gap-2 shrink-0">
                 <button type="button" onclick="openMemoModal()" class="relative w-8 h-8 rounded-full bg-slate-100 dark:bg-gray-800 border border-slate-200 dark:border-gray-700 text-slate-600 dark:text-emerald-400 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-gray-700 active:scale-95 transition-all shadow-sm" aria-label="메모 열기">
                     <i class="fa-solid fa-note-sticky text-sm"></i>
-                    <span id="memoCountBadge" class="hidden absolute -top-1 -right-1 min-w-[15px] h-[15px] px-1 rounded-full bg-emerald-500 text-white text-[8px] font-extrabold leading-[15px] text-center border border-white dark:border-slate-900">0</span>
                 </button>
                 <button onclick="toggleDarkMode()" class="w-8 h-8 rounded-full bg-slate-100 dark:bg-gray-800 border border-slate-200 dark:border-gray-700 text-slate-600 dark:text-amber-500 flex items-center justify-center hover:bg-slate-200 dark:hover:bg-gray-700 active:scale-95 transition-all shadow-sm">
                     <i id="themeToggleIcon" class="fa-solid fa-moon text-sm"></i>
@@ -860,7 +859,7 @@
             memos: 'dt_memos_v1',
             contentVersion: 'dt_content_version'
         };
-        const CONTENT_VERSION = 20;
+        const CONTENT_VERSION = 21;
         const DAVID_TENT_YOUTUBE_URL = 'https://youtube.com/@globaldavidstent?si=cehq9jznUrgwpstv';
 
         function safeParseJSON(value) {
@@ -1186,14 +1185,9 @@
         }
 
         function updateMemoCountUI() {
-            const badge = document.getElementById('memoCountBadge');
             const headerCount = document.getElementById('memoHeaderCount');
             const count = memoData.length;
 
-            if (badge) {
-                badge.textContent = count > 99 ? '99+' : String(count);
-                badge.classList.toggle('hidden', count === 0);
-            }
             if (headerCount) headerCount.textContent = `${count}개`;
         }
 
