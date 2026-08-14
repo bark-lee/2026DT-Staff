@@ -859,7 +859,7 @@
             memos: 'dt_memos_v1',
             contentVersion: 'dt_content_version'
         };
-        const CONTENT_VERSION = 21;
+        const CONTENT_VERSION = 22;
         const DAVID_TENT_YOUTUBE_URL = 'https://youtube.com/@globaldavidstent?si=cehq9jznUrgwpstv';
 
         function safeParseJSON(value) {
@@ -1068,6 +1068,7 @@
         let currentActiveDay = 'day1';
         let currentFilter = 'all';
         let currentView = 'card';
+        let collapsedTableDays = new Set();
         let clockInterval;
         let isSettingUp = false;
         let isEditingProfile = false;
@@ -2081,6 +2082,18 @@
             `;
         }
 
+        function toggleTableDay(dayId) {
+            if (!scheduleData.some(day => day.id === dayId)) return;
+
+            if (collapsedTableDays.has(dayId)) {
+                collapsedTableDays.delete(dayId);
+            } else {
+                collapsedTableDays.add(dayId);
+            }
+
+            renderTable();
+        }
+
         function renderTable() {
             const container = document.getElementById('tableContainer');
             const is2P = appState.mode === 2;
@@ -2116,6 +2129,8 @@
                 const standaloneSupportItems = daySupportItems.filter(item =>
                     !day.events.some(event => getExternalSupportsOverlappingEvent(day, event).some(overlap => overlap.id === item.id))
                 );
+                const isCollapsed = collapsedTableDays.has(day.id);
+                const totalItemCount = day.events.length + daySupportItems.length;
                 const timelineRows = [
                     ...day.events.map(event => ({ type: 'main', start: event.start, event })),
                     ...standaloneSupportItems.map(item => ({ type: 'external', start: item.start, item }))
@@ -2124,19 +2139,34 @@
                 html += `
                     <thead>
                         <tr>
-                            <th colspan="${is2P ? 4 : 3}" class="px-2 py-3 bg-slate-100 dark:bg-gray-800 text-slate-800 dark:text-gray-200 font-bold text-sm border-t border-b border-slate-200 dark:border-gray-700 sticky top-0 z-10">
-                                ${escapeHTML(day.title)} - ${escapeHTML(day.theme)}
+                            <th colspan="${is2P ? 4 : 3}" class="p-0 bg-slate-100 dark:bg-gray-800 text-slate-800 dark:text-gray-200 font-bold text-sm border-t border-b border-slate-200 dark:border-gray-700 sticky top-0 z-10">
+                                <button type="button" onclick="toggleTableDay('${day.id}')" aria-expanded="${String(!isCollapsed)}" class="group w-full px-3 py-3 flex items-center justify-between gap-3 text-left active:bg-slate-200/70 dark:active:bg-gray-700/70 transition-colors">
+                                    <span class="min-w-0">
+                                        <span class="block truncate">${escapeHTML(day.title)} - ${escapeHTML(day.theme)}</span>
+                                        <span class="block mt-0.5 text-[9px] font-semibold text-slate-400 dark:text-gray-500">일정 ${totalItemCount}건${daySupportItems.length > 0 ? ` · 외부 지원 ${daySupportItems.length}건 포함` : ''}</span>
+                                    </span>
+                                    <span class="shrink-0 inline-flex items-center gap-1.5 text-[9px] font-extrabold text-slate-500 dark:text-gray-400">
+                                        ${isCollapsed ? '펼치기' : '접기'}
+                                        <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-200 ${isCollapsed ? '-rotate-90' : ''}"></i>
+                                    </span>
+                                </button>
                             </th>
                         </tr>
-                        <tr class="bg-white/90 dark:bg-gray-900/90 text-slate-500 dark:text-gray-400 border-b border-slate-200 dark:border-gray-700 sticky top-[45px] z-10 backdrop-blur-sm">
+                        ${isCollapsed ? '' : `
+                        <tr class="bg-white/90 dark:bg-gray-900/90 text-slate-500 dark:text-gray-400 border-b border-slate-200 dark:border-gray-700 sticky top-[59px] z-10 backdrop-blur-sm">
                             <th class="px-2 py-2 font-medium w-16">시간</th>
                             <th class="px-2 py-2 font-medium w-full min-w-[110px]">일정</th>
                             <th class="px-1 py-2 font-medium text-center w-12 ${u1Color.tailwindText}">${escapeHTML(u1.name)}</th>
                             ${is2P ? `<th class="px-1 py-2 font-medium text-center w-12 ${u2Color.tailwindText}">${escapeHTML(u2.name)}</th>` : ''}
                         </tr>
+                        `}
                     </thead>
+                    ${isCollapsed ? '' : `
                     <tbody class="divide-y divide-slate-100 dark:divide-gray-800/30 bg-white dark:bg-transparent">
+                    `}
                 `;
+
+                if (isCollapsed) return;
                 
                 timelineRows.forEach(row => {
                     if (row.type === 'external') {
